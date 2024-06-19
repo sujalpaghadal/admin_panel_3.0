@@ -2,7 +2,7 @@ import React from 'react';
 import { Autocomplete, Checkbox, Chip, TextField } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
-const RHFAutocomplete1 = ({ name, control, studentName }) => (
+const RHFAutocomplete1 = ({ name, control, studentName, labelName }) => (
   <Controller
     name={name}
     control={control}
@@ -34,7 +34,7 @@ const RHFAutocomplete1 = ({ name, control, studentName }) => (
           ))
         }
         renderInput={(params) => (
-          <TextField {...params} label="Batch Members" placeholder="Batch Members" />
+          <TextField {...params} label={labelName} placeholder={labelName} />
         )}
       />
     )}

@@ -361,7 +361,12 @@ export default function BatchNewEditForm({ batchId }) {
               options={facultyName.map((option) => option)}
               getOptionLabel={(option) => `${option?.firstName} ${option?.lastName}`}
             />
-            <RHFAutocomplete1 name={'batch_members'} control={control} studentName={studentName} />
+            <RHFAutocomplete1
+              name={'batch_members'}
+              labelName="Batch Members"
+              control={control}
+              studentName={studentName}
+            />
           </Stack>
         </Card>
         <Stack sx={{ my: '30px', alignItems: 'flex-end' }}>
