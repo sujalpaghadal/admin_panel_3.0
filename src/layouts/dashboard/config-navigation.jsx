@@ -172,8 +172,7 @@ export function useNavData() {
           {
             title: t('attendance'),
             path: paths.dashboard.attendance.root,
-            icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.attendance.root }],
+            icon: ICONS.external,
           },
 
           // EXPENSES

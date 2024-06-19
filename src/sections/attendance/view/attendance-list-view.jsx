@@ -36,7 +36,7 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import { useGetAllAttendance } from 'src/api/attendance';
+import { useGetCompanyAttendance } from 'src/api/attendance';
 
 import AttendanceAnalytic from '../attendance-analytic';
 import AttendanceTableRow from '../attendance-table-row';
@@ -47,13 +47,12 @@ import AttendanceTableFiltersResult from '../attendance-table-filters-result';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'srNo', label: '#', align: "center" },
   { id: 'name', label: 'Name' },
-  { id: 'Date', label: 'Date' },
-  { id: 'contact', label: 'Contact' },
-  // { id: 'price', label: 'Amount' },
-  // { id: 'sent', label: 'Sent', align: 'center' },
+  { id: 'enroll_no', label: 'Enroll No' },
+  { id: 'email', label: 'Email' },
+  { id: 'course', label: 'Course' },
   { id: 'status', label: 'Status' },
-  { id: '' },
 ];
 
 const defaultFilters = {
@@ -62,6 +61,7 @@ const defaultFilters = {
   status: 'all',
   startDate: null,
   endDate: null,
+  date: new Date()
 };
 
 // ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ export default function AttendanceListView() {
 
   const theme = useTheme();
 
-  const { attendance } = useGetAllAttendance();
+  const { attendance } = useGetCompanyAttendance();
 
   const settings = useSettingsContext();
 
@@ -122,22 +122,22 @@ export default function AttendanceListView() {
   const TABS = [
     { value: 'all', label: 'All', color: 'default', count: tableData.length },
     {
-      value: 'Present',
+      value: 'present',
       label: 'Present',
       color: 'success',
-      count: getInvoiceLength('Present'),
+      count: getInvoiceLength('present'),
     },
     {
-      value: 'Late',
+      value: 'late',
       label: 'Late',
       color: 'warning',
-      count: getInvoiceLength('Late'),
+      count: getInvoiceLength('late'),
     },
     {
-      value: 'Absent',
+      value: 'absent',
       label: 'Absent',
       color: 'error',
-      count: getInvoiceLength('Absent'),
+      count: getInvoiceLength('absent'),
     },
   ];
 
@@ -207,18 +207,14 @@ export default function AttendanceListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Attendance logs"
           links={[
             {
               name: 'Dashboard',
               href: paths.dashboard.root,
             },
             {
-              name: 'Invoice',
-              href: paths.dashboard.invoice.root,
-            },
-            {
-              name: 'List',
+              name: 'Attendance logs',
             },
           ]}
           // action={
@@ -407,10 +403,10 @@ export default function AttendanceListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row, index) => (
                       <AttendanceTableRow
                         key={row.id}
-                        row={row}
+                        row={{ ...row, index }}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
@@ -480,15 +476,16 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
-  }); 
+  });
 
   inputData = stabilizedThis.map((el) => el[0]);
+
+  console.log(inputData);
 
   if (name) {
     inputData = inputData.filter(
       (invoice) =>
-        // invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        invoice.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        invoice?.student_id?.firstName?.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -504,7 +501,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((invoice) => isBetween(invoice.createDate, startDate, endDate));
+      inputData = inputData.filter((invoice) => isBetween(invoice.date, startDate, endDate));
     }
   }
 
