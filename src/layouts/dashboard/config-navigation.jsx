@@ -182,7 +182,7 @@ export function useNavData() {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
             icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           // BATCH
