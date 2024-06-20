@@ -22,6 +22,8 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useRouter } from 'src/routes/hooks';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +35,8 @@ export default function FeesTableRow({
   onSelectRow,
   onDeleteRow,
 }) {
-  const { enrollment_no } = row;
+  const { enrollment_no, fee_detail } = row;
+  
   const {
     profile_pic,
     course,
@@ -43,40 +46,14 @@ export default function FeesTableRow({
     joining_date,
     firstName,
     lastName,
-  } = row.personal_info;
-
+  } = row;
+  
+  const { installments } = fee_detail;
   const confirm = useBoolean();
 
   const collapse = useBoolean();
-
+  const router = useRouter();
   const popover = usePopover();
-
-  const installMent = [
-    {
-      srNo: 1,
-      installMentDate: '23/05/2024',
-      installMentAmount: '11000',
-      paymentDate: '23/05/2024',
-      dewDate: '23/05/2024',
-      mode: 'Cash',
-    },
-    {
-      srNo: 1,
-      installMentDate: '23/05/2024',
-      installMentAmount: '11000',
-      paymentDate: '23/05/2024',
-      dewDate: '23/05/2024',
-      mode: 'Cash',
-    },
-    {
-      srNo: 1,
-      installMentDate: '23/05/2024',
-      installMentAmount: '11000',
-      paymentDate: '23/05/2024',
-      dewDate: '23/05/2024',
-      mode: 'Cash',
-    },
-  ];
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -170,19 +147,6 @@ export default function FeesTableRow({
           }}
         />
       </TableCell>
-      {/* <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
-            'default'
-          }
-        >
-          {status}
-        </Label>
-      </TableCell> */}
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -213,9 +177,9 @@ export default function FeesTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {installMent.map((item, index) => (
+            {installments.map((item, index) => (
               <Stack
-                key={item.seNo}
+                key={index}
                 direction="row"
                 alignItems="center"
                 sx={{
@@ -238,12 +202,29 @@ export default function FeesTableRow({
                   {index + 1}
                 </Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentDate}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentAmount}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.paymentDate}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.dewDate}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>
+                  {fDate(item.installment_date, 'dd MMM yyyy')}
+                </Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.amount}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>
+                  {item.payment_date == null ? '-' : fDate(item.payment_date, 'dd MMM yyyy')}
+                </Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.mode}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.payment_mode}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>
+                  {/* {item.status} */}
+                  <Label
+                    variant="soft"
+                    color={
+                      (item.status === 'paid' && 'success') ||
+                      (item.status === 'pending' && 'warning') ||
+                      (item.status === 'unpaid' && 'error') ||
+                      'default'
+                    }
+                  >
+                    {item.status}
+                  </Label>
+                </Box>
               </Stack>
             ))}
           </Stack>
@@ -251,7 +232,6 @@ export default function FeesTableRow({
       </TableCell>
     </TableRow>
   );
-
   return (
     <>
       {renderPrimary}
@@ -283,6 +263,17 @@ export default function FeesTableRow({
         >
           <Iconify icon="solar:eye-bold" />
           View
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            // onViewRow();
+            
+            router.push(paths.dashboard.general.feesInvoice)
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          Invoice
         </MenuItem>
       </CustomPopover>
 

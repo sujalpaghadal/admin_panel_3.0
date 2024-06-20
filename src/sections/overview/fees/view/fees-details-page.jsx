@@ -9,7 +9,7 @@ import FeesListView from './fees-list-view';
 
 const FeesDetailsPage = () => {
   const settings = useSettingsContext();
-//   const user = useAuthContext();
+  //   const user = useAuthContext();
 
   return (
     <>
@@ -24,7 +24,7 @@ const FeesDetailsPage = () => {
             mb: { xs: 3, md: 5 },
           }}
               /> */}
-              <FeesListView />
+        <FeesListView />
       </Container>
     </>
   );

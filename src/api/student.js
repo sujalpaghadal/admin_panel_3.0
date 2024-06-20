@@ -5,8 +5,7 @@ import { fetcher } from '../utils/axios';
 import { useAuthContext } from '../auth/hooks/index.js';
 
 export function useGetStudents(page, limit) {
-
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
 
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user.company_id}/student`;
 
@@ -20,9 +19,8 @@ export function useGetStudents(page, limit) {
       studentsValidating: isValidating,
       studentsEmpty: !isLoading && !data?.students.length,
     }),
-    [data?.students, error, isLoading, isValidating],
+    [data?.students, error, isLoading, isValidating]
   );
 
   return memoizedValue;
 }
-
