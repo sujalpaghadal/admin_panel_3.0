@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import { useAuthContext } from 'src/auth/hooks';
-import { fetcher } from 'src/utils/axios';
-import useSWR from 'swr';
+import { useMemo } from "react";
+import { useAuthContext } from "src/auth/hooks";
+import { fetcher } from "src/utils/axios";
+import useSWR from "swr";
 
 export function useGetFaculty() {
   const { user } = useAuthContext();

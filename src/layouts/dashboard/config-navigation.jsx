@@ -44,6 +44,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  batches: <Iconify icon="solar:users-group-rounded-bold-duotone" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
@@ -181,7 +182,7 @@ export function useNavData() {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
             icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           //EXAM
@@ -196,11 +197,11 @@ export function useNavData() {
           {
             title: t('batches'),
             path: paths.dashboard.batches.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.batches.root },
-              { title: t('details'), path: paths.dashboard.batches.demo.details },
-            ],
+            icon: ICONS.batches,
+            // children: [
+            // { title: t('list'), path: paths.dashboard.batches.root },
+            // { title: t('details'), path: paths.dashboard.batches.demo.details },
+            // ],
           },
 
           // INVOICE

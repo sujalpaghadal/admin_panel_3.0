@@ -15,9 +15,14 @@ function getLocaleCode() {
   } = getLocales();
 
   return {
-    code: code ?? 'en-US',
-    currency: currency ?? 'USD',
+    code: 'en-IN',
+    currency: 'INR',
   };
+
+  // return {
+  //   code: code ?? 'en-US',
+  //   currency: currency ?? 'USD',
+  // };
 }
 
 // ----------------------------------------------------------------------

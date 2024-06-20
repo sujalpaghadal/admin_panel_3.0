@@ -109,7 +109,9 @@ export const paths = {
       analytics: `${ROOTS.DASHBOARD}/analytics`,
       banking: `${ROOTS.DASHBOARD}/banking`,
       booking: `${ROOTS.DASHBOARD}/booking`,
+
       fees: `${ROOTS.DASHBOARD}/fees`,
+      feesInvoice: `${ROOTS.DASHBOARD}/fees/fee-invoice`,
     },
 
     inquiry: {
