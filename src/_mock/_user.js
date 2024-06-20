@@ -132,9 +132,9 @@ export const _userPlans = [
   },
 ];
 export const USER_STATUS_OPTIONS = [
-  { value: 'Completed', label: 'Completed' },
-  { value: 'Running', label: 'Running' },
-  { value: 'Leaved', label: 'Leaved' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'running', label: 'Running' },
+  { value: 'leaved', label: 'Leaved' },
 ];
 
 export const _userList = [...Array(20)].map((_, index) => ({
