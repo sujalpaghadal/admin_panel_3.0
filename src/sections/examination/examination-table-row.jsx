@@ -13,8 +13,9 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import ExpenseQuickEditForm from './examination-quick-edit-form';
-import { Avatar, ListItemText } from '@mui/material';
+// import ExpenseQuickEditForm from './examination-quick-edit-form';
+import { Avatar, ListItemText, Tooltip } from '@mui/material';
+import ExaminationQuickEditForm from './examination-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -25,8 +26,9 @@ export default function ExaminationTableRow({
   onSelectRow,
   onDeleteRow,
   index,
+  mutate,
 }) {
-  const { conducted_by, date, desc, title } = row;
+  const { conducted_by, date, desc, title, total_marks } = row;
 
   const confirm = useBoolean();
 
@@ -53,18 +55,29 @@ export default function ExaminationTableRow({
           />
         </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{title}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{total_marks}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(date).format('DD/MM/YYYY')}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{desc}</TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+          <Tooltip title="Quick Edit" placement="top" arrow>
+            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
+              <Iconify icon="solar:pen-bold" />
+            </IconButton>
+          </Tooltip>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
       </TableRow>
 
-      <ExpenseQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
+      <ExaminationQuickEditForm
+        mutate={mutate}
+        currentUser={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+      />
 
       <CustomPopover
         open={popover.open}

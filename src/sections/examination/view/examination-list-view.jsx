@@ -53,9 +53,10 @@ const TABLE_HEAD = [
   { id: 'srNo', label: 'Sr No', width: 120 },
   {id:'faculty',label:"Faculty"},
   { id: 'title', label: 'Title', width:170 },
+  { id: 'total marks', label: 'Total Marks', width: 230 },
   { id: 'date', label: 'Date', width: 230 },
   // { id: 'amount', label: 'Amount', width: 320 },
-  { id: 'description', label: 'Description', width: 290 },
+  { id: 'description', label: 'Description' },
   { id: '', width: 88 },
 ];
 
@@ -83,7 +84,6 @@ export default function ExpenseListView() {
       setTableData(exam);
     }
   }, [exam]);
-
   const handleDeleteRow = useCallback(
     async (id) => {
       try {
@@ -270,6 +270,7 @@ export default function ExpenseListView() {
                     .map((row, index) => (
                       <ExaminationTableRow
                         key={row._id}
+                        mutate={mutate}
                         row={row}
                         index={index}
                         selected={table.selected.includes(row._id)}
@@ -347,7 +348,8 @@ function applyFilter({ inputData, comparator, filters }) {
   if (name) {
     inputData = inputData.filter(
       (user) =>
-        user.type.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.title.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.conducted_by.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.desc.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
