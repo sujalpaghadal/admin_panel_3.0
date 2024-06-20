@@ -42,6 +42,8 @@ import AttendanceAnalytic from '../attendance-analytic';
 import AttendanceTableRow from '../attendance-table-row';
 import AttendanceTableToolbar from '../attendance-table-toolbar';
 import AttendanceTableFiltersResult from '../attendance-table-filters-result';
+import Button from '@mui/material/Button';
+import { RouterLink } from '../../../routes/components/index.js';
 
 
 // ----------------------------------------------------------------------
@@ -109,7 +111,7 @@ export default function AttendanceListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
+  const getInvoiceLength = (status) => attendance.filter((item) => item.status === status).length;
 
   const getTotalAmount = (status) =>
     sumBy(
@@ -217,16 +219,16 @@ export default function AttendanceListView() {
               name: 'Attendance logs',
             },
           ]}
-          // action={
-          //   <Button
-          //     component={RouterLink}
-          //     href={paths.dashboard.invoice.new}
-          //     variant="contained"
-          //     startIcon={<Iconify icon="mingcute:add-line" />}
-          //   >
-          //     New Invoice
-          //   </Button>
-          // }
+          action={
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.invoice.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Add Attendance
+            </Button>
+          }
           sx={{
             mb: { xs: 3, md: 5 },
           }}
