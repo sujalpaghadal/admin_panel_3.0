@@ -55,10 +55,10 @@ export default function ExaminationTableRow({
           />
         </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{title}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{desc}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{total_marks}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(date).format('DD/MM/YYYY')}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{desc}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(date).format('ll')}</TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <Tooltip title="Quick Edit" placement="top" arrow>

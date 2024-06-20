@@ -50,13 +50,13 @@ import { useGetExam } from 'src/api/examination';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 120 },
+  { id: 'srNo', label: '#' },
   {id:'faculty',label:"Faculty"},
-  { id: 'title', label: 'Title', width:170 },
-  { id: 'total marks', label: 'Total Marks', width: 230 },
-  { id: 'date', label: 'Date', width: 230 },
+  { id: 'exam', label: 'Exam' },
+  { id: 'description', label: 'Detail' },
+  { id: 'total marks', label: 'Marks' },
+  { id: 'date', label: 'Date' },
   // { id: 'amount', label: 'Amount', width: 320 },
-  { id: 'description', label: 'Description' },
   { id: '', width: 88 },
 ];
 
@@ -186,11 +186,10 @@ export default function ExpenseListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Exams"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Examination', href: paths.dashboard.examination.root },
-            { name: 'List' },
+            { name: 'Exams', href: paths.dashboard.examination.root },
           ]}
           action={
             <Button
@@ -199,7 +198,7 @@ export default function ExpenseListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Examination
+              New Exam
             </Button>
           }
           sx={{
