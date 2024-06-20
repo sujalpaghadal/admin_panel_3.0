@@ -31,7 +31,7 @@ export default function StudentTableRow({
   onGuardianRow,
 }) {
   const { firstName, lastName, profile_pic, course, joining_date, email, contact } =
-    row.personal_info;
+    row;
 
   const confirm = useBoolean();
 

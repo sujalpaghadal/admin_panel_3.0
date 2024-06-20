@@ -43,6 +43,7 @@ import FeesTableFiltersResult from '../fees-table-filters-result';
 import FeesTableRow from '../fees-table-row';
 import FeesTableToolbar from '../fees-table-toolbar';
 import { useGetStudents } from 'src/api/student';
+import InvoiceDetailsView from '../invoice-page';
 
 // ----------------------------------------------------------------------
 
@@ -80,17 +81,6 @@ export default function FeesListView() {
   const confirm = useBoolean();
 
   const { students } = useGetStudents();
-  const dummyData = [
-    {
-      profile_pic: 'https://api-dev-minimal-v510.vercel.app/assets/images/avatar/avatar_1.jpg',
-      enroll_no: 1,
-      course: 'Full Stack',
-      student_name: 'Darshil Thumari',
-      student_email: 'thumari@gmail.com',
-      joining_date: '31 May 2024',
-      contact: '9099257198',
-    },
-  ];
 
   const [tableData, setTableData] = useState(students);
 
@@ -171,154 +161,153 @@ export default function FeesListView() {
     },
     [handleFilters]
   );
-    console.log("tabel : ",table);
   return (
     <>
-        <CustomBreadcrumbs
-          heading="Fees"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Fees',
-              href: paths.dashboard.general.fees,
-            },
-            { name: 'List' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+      <CustomBreadcrumbs
+        heading="Fees"
+        links={[
+          {
+            name: 'Dashboard',
+            href: paths.dashboard.root,
+          },
+          {
+            name: 'Fees',
+            href: paths.dashboard.general.fees,
+          },
+          { name: 'List' },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
 
-        <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
+      <Card>
+        <Tabs
+          value={filters.status}
+          onChange={handleFilterStatus}
+          sx={{
+            px: 2.5,
+            boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+          }}
+        >
+          {STATUS_OPTIONS.map((tab) => (
+            <Tab
+              key={tab.value}
+              iconPosition="end"
+              value={tab.value}
+              label={tab.label}
+              icon={
+                <Label
+                  variant={
+                    ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                  }
+                  color={
+                    (tab.value === 'completed' && 'success') ||
+                    (tab.value === 'pending' && 'warning') ||
+                    (tab.value === 'cancelled' && 'error') ||
+                    'default'
+                  }
+                >
+                  {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
+                    ? tableData.filter((user) => user.status === tab.value).length
+                    : tableData.length}
+                </Label>
+              }
+            />
+          ))}
+        </Tabs>
+
+        <FeesTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
+
+        {canReset && (
+          <FeesTableFiltersResult
+            filters={filters}
+            onFilters={handleFilters}
+            //
+            onResetFilters={handleResetFilters}
+            //
+            results={dataFiltered.length}
+            sx={{ p: 2.5, pt: 0 }}
+          />
+        )}
+
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <TableSelectedAction
+            dense={table.dense}
+            numSelected={table.selected.length}
+            rowCount={dataFiltered.length}
+            onSelectAllRows={(checked) =>
+              table.onSelectAllRows(
+                checked,
+                dataFiltered.map((row) => row.id)
+              )
+            }
+            action={
+              <Tooltip title="Delete">
+                <IconButton color="primary" onClick={confirm.onTrue}>
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                </IconButton>
+              </Tooltip>
+            }
+          />
+
+          <Scrollbar>
+            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <TableHeadCustom
+                order={table.order}
+                orderBy={table.orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={dataFiltered.length}
+                numSelected={table.selected.length}
+                onSort={table.onSort}
+                onSelectAllRows={(checked) =>
+                  table.onSelectAllRows(
+                    checked,
+                    dataFiltered.map((row) => row.id)
+                  )
                 }
               />
-            ))}
-          </Tabs>
 
-          <FeesTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
+              <TableBody>
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row, index) => (
+                    <FeesTableRow
+                      index={index}
+                      key={index}
+                      row={row}
+                      selected={table.selected.includes(row.id)}
+                      onSelectRow={() => table.onSelectRow(row.id)}
+                      onDeleteRow={() => handleDeleteRow(row.id)}
+                      onViewRow={() => handleViewRow(row.id)}
+                    />
+                  ))}
 
-          {canReset && (
-            <FeesTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
-
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                )
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
-              }
-            />
-
-            <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                 />
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row, index) => (
-                      <FeesTableRow
-                        index={index}
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                      />
-                    ))}
+                <TableNoData notFound={notFound} />
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
-            </Scrollbar>
-          </TableContainer>
-
-          <TablePaginationCustom
-            count={dataFiltered.length}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
-        </Card>
+        <TablePaginationCustom
+          count={dataFiltered.length}
+          page={table.page}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+          //
+          dense={table.dense}
+          onChangeDense={table.onChangeDense}
+        />
+      </Card>
 
       <ConfirmDialog
         open={confirm.value}
@@ -342,6 +331,7 @@ export default function FeesListView() {
           </Button>
         }
       />
+      {/* <InvoiceDetailsView id="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2" /> */}
     </>
   );
 }
@@ -350,9 +340,8 @@ export default function FeesListView() {
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
-
   const stabilizedThis = inputData.map((el, index) => [el, index]);
-
+  
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
@@ -360,24 +349,22 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
 
   inputData = stabilizedThis.map((el) => el[0]);
-
   if (name) {
     inputData = inputData.filter(
-      ({personal_info}) =>
-        // console.log("or : ",personal_info),
-        personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        personal_info.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 
-        // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
-    );
+      ( item ) =>
+        item.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        );
   }
 
   if (status !== 'all') {
     inputData = inputData.filter((order) => order.status === status);
   }
-
+  
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
+      // console.log("fil : ",inputData);
+      inputData = inputData.filter((order) => isBetween(order.joining_date, startDate, endDate));
     }
   }
 

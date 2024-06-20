@@ -21,13 +21,16 @@ import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 
+//FEES
+const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
+const InvoiceDetailsView = lazy(() => import('src/sections/overview/fees/invoice-page'));
+
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
 const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
-const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
 
 // Inquiry
 const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
@@ -103,6 +106,10 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'fees', element: <FeesPage /> },
+      {
+        path: 'fees/fee-invoice',
+        element: <InvoiceDetailsView id="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2" />,
+      },
       {
         path: 'inquiry',
         children: [
