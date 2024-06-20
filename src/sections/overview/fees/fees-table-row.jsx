@@ -36,18 +36,17 @@ export default function FeesTableRow({
   onDeleteRow,
 }) {
   const { enrollment_no, fee_detail } = row;
-  
+
   const {
     profile_pic,
     course,
-    student_name,
-    student_email,
+    email,
     contact,
     joining_date,
     firstName,
     lastName,
   } = row;
-  
+
   const { installments } = fee_detail;
   const confirm = useBoolean();
 
@@ -65,6 +64,7 @@ export default function FeesTableRow({
         <Box
           onClick={onViewRow}
           sx={{
+            textAlign: "center",
             cursor: 'pointer',
             '&:hover': {
               textDecoration: 'underline',
@@ -76,11 +76,11 @@ export default function FeesTableRow({
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt="error" src={profile_pic} sx={{ mr: 2 }} />
+        <Avatar alt={`${firstName} ${lastName}`} src={profile_pic} sx={{ mr: 2 }} />
 
         <ListItemText
-          primary={student_name}
-          secondary={student_email}
+          primary={`${firstName} ${lastName}`}
+          secondary={email}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -101,20 +101,7 @@ export default function FeesTableRow({
         />
       </TableCell>
 
-      <TableCell align="center">
-        {' '}
-        <ListItemText
-          primary={firstName + ' ' + lastName}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        />{' '}
-      </TableCell>
-
-      <TableCell align="center">
-        {' '}
+      <TableCell >
         <ListItemText
           primary={course}
           primaryTypographyProps={{ typography: 'body2' }}
@@ -122,7 +109,7 @@ export default function FeesTableRow({
             component: 'span',
             color: 'text.disabled',
           }}
-        />{' '}
+        />
       </TableCell>
 
       <TableCell>
@@ -267,7 +254,7 @@ export default function FeesTableRow({
         <MenuItem
           onClick={() => {
             // onViewRow();
-            
+
             router.push(paths.dashboard.general.feesInvoice)
             popover.onClose();
           }}
