@@ -24,3 +24,18 @@ export function useGetStudents(page, limit) {
 
   return memoizedValue;
 }
+export function useGetStudentsList(id) {
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${id}/student-list`;
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  const memoizedValue = useMemo(
+    () => ({
+      students: data?.students || [],
+      studentsLoading: isLoading,
+      studentsError: error,
+      studentsValidating: isValidating,
+      studentsEmpty: !isLoading && !data?.students.length,
+    }),
+    [data?.students, error, isLoading, isValidating]
+  );
+  return memoizedValue;
+}

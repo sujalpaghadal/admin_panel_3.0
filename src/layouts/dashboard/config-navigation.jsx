@@ -184,6 +184,13 @@ export function useNavData() {
             icon: ICONS.analytics,
             // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
+          // TASK
+          {
+            title: t('task'),
+            path: paths.dashboard.task.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
 
           //EXAM
           {

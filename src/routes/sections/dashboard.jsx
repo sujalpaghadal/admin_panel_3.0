@@ -23,6 +23,9 @@ import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 import ExaminationListPage from 'src/pages/dashboard/examination/list';
 import ExaminationCreatePage from 'src/pages/dashboard/examination/create';
 import ExaminationEditPage from 'src/pages/dashboard/examination/edit';
+import TaskListPage from 'src/pages/dashboard/task/list';
+import TaskCreatePage from 'src/pages/dashboard/task/create';
+import TaskEditPage from 'src/pages/dashboard/task/edit';
 
 //FEES
 const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
@@ -182,6 +185,15 @@ export const dashboardRoutes = [
           { path: 'list', element: <ExpenseListPage /> },
           { path: 'new', element: <ExpensesCreatePage /> },
           { path: ':id/edit', element: <ExpensesEditPage /> },
+        ],
+      },
+      {
+        path: 'task',
+        children: [
+          { element: <TaskListPage />, index: true },
+          { path: 'list', element: <TaskListPage /> },
+          { path: 'new', element: <TaskCreatePage /> },
+          { path: ':id/edit', element: <TaskEditPage /> },
         ],
       },
       {
