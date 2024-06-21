@@ -32,7 +32,7 @@ export default function DashboardDemoInquiryChart({ title, subheader, chart, ...
     },
     tooltip: {
       y: {
-        formatter: (value) => `$${value}`,
+        formatter: (value) => `${value}`,
       },
     },
     ...options,

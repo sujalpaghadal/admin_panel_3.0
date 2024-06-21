@@ -92,9 +92,9 @@ export default function DashboardCourseChart({ title, subheader, chart, ...other
       >
         <Stack sx={{ py: 2, borderRight: `dashed 1px ${theme.palette.divider}` }}>
           <Box component="span" sx={{ mb: 1, typography: 'body2', color: 'text.secondary' }}>
-            Categories
+            Courses
           </Box>
-          9
+          {chart.series.length}
         </Stack>
 
         <Stack sx={{ py: 2 }}>

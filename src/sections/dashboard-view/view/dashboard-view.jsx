@@ -13,14 +13,30 @@ import { Typography } from '@mui/material';
 import DashboardDemoInquiryChart from '../dashboard-demo-inquiry-chart';
 import DashboardUpcomingDemo from '../dashboard-upcoming-demo';
 import DashboardCourseChart from '../dashboard-course-chart';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardView() {
   const theme = useTheme();
+  const [demo,setDemo] = useState([])
+  const getDemos = () => {
+    axios
+      .get('https://admin-panel-dmawv.ondigitalocean.app/api/v2/664ec61d671bf9a7f53664b5/demo')
+      .then((res) =>  setDemo(res?.data?.data[0]?.demos))
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    getDemos()
+    
+  }, [])
+  const dd = [76, 42, 29, 41, 27, 138, 117, 86, 63];
+  const filter = demo.filter((data) => new Date(data?.date) < new Date());
+  // console.log(filter,"fffffff");
 
   const settings = useSettingsContext();
-
+  // https://admin-panel-dmawv.ondigitalocean.app/api/v2/664ec61d671bf9a7f53664b5/demo
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography
@@ -29,7 +45,7 @@ export default function DashboardView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Hi, Welcome back 👋
+        Hi, Welcome back 🍌 🍌 🐗 🐫 😖 💻 🔫 🦓 🐒 
       </Typography>
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
@@ -68,7 +84,7 @@ export default function DashboardView() {
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardDemoInquiryChart
-              title="Balance Statistics"
+              title="Demo - Inquiry"
               subheader="(+43% Income | +12% Expense) than last year"
               chart={{
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
@@ -77,11 +93,11 @@ export default function DashboardView() {
                     type: 'Week',
                     data: [
                       {
-                        name: 'Income',
+                        name: 'Inquiry',
                         data: [10, 41, 35, 151, 49, 62, 69, 91, 48],
                       },
                       {
-                        name: 'Expenses',
+                        name: 'Demo',
                         data: [10, 34, 13, 56, 77, 88, 99, 77, 45],
                       },
                     ],
@@ -90,11 +106,11 @@ export default function DashboardView() {
                     type: 'Month',
                     data: [
                       {
-                        name: 'Income',
+                        name: 'Inquiry',
                         data: [148, 91, 69, 62, 49, 51, 35, 41, 10],
                       },
                       {
-                        name: 'Expenses',
+                        name: 'Demo',
                         data: [45, 77, 99, 88, 77, 56, 13, 34, 10],
                       },
                     ],
@@ -103,11 +119,11 @@ export default function DashboardView() {
                     type: 'Year',
                     data: [
                       {
-                        name: 'Income',
-                        data: [76, 42, 29, 41, 27, 138, 117, 86, 63],
+                        name: 'Inquiry',
+                        data: dd,
                       },
                       {
-                        name: 'Expenses',
+                        name: 'Demo',
                         data: [80, 55, 34, 114, 80, 130, 15, 28, 55],
                       },
                     ],
@@ -120,13 +136,13 @@ export default function DashboardView() {
         <Grid xs={12} md={4}>
           <Stack spacing={3}>
             <DashboardAttendenceChart
-              title="Sale By Gender"
+              title="Student Attendance"
               total={2324}
               chart={{
                 series: [
-                  { label: 'Mens', value: 44 },
-                  { label: 'Womens', value: 75 },
-                  { label: 'other', value: 75 },
+                  { label: 'Present', value: 44 },
+                  { label: 'Late', value: 75 },
+                  { label: 'Absent', value: 75 },
                 ],
               }}
             />
@@ -146,18 +162,18 @@ export default function DashboardView() {
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardCourseChart
-              title="Expenses Categories"
+              title="All Courses"
               chart={{
                 series: [
-                  { label: 'Category 1', value: 14 },
-                  { label: 'Category 2', value: 23 },
-                  { label: 'Category 3', value: 21 },
-                  { label: 'Category 4', value: 17 },
-                  { label: 'Category 5', value: 15 },
-                  { label: 'Category 6', value: 10 },
-                  { label: 'Category 7', value: 12 },
-                  { label: 'Category 8', value: 17 },
-                  { label: 'Category 9', value: 21 },
+                  { label: 'Full-Stack', value: 14 },
+                  { label: 'Flutter', value: 23 },
+                  { label: 'Ui/Ux Designer', value: 21 },
+                  { label: 'C Programing', value: 17 },
+                  { label: 'C++ Programing', value: 15 },
+                  { label: 'CCC Language', value: 10 },
+                  { label: 'Web Designer', value: 12 },
+                  { label: 'Digital Marketing', value: 17 },
+                  { label: 'Coming Soon', value: 21 },
                 ],
                 colors: [
                   theme.palette.primary.main,
