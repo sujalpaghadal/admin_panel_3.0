@@ -1,42 +1,39 @@
-import * as Yup from 'yup';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-import { useEffect, useState } from 'react';
-
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
-
-import { paths } from 'src/routes/paths';
-
-import { useRouter } from 'src/routes/hooks';
-import { useResponsive } from 'src/hooks/use-responsive';
-import { Autocomplete, TextField } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
 import { useSnackbar } from 'src/components/snackbar';
+import { useAuthContext } from 'src/auth/hooks';
+import {
+  Autocomplete,
+  TextField,
+  Box,
+  Card,
+  CardHeader,
+  Typography,
+  Stack,
+  Grid,
+} from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useResponsive } from 'src/hooks/use-responsive';
+import { EMPLOYEE_GENDER, ROLE } from 'src/_mock/_employee';
 import FormProvider, {
+  RHFUploadAvatar,
   RHFTextField,
   RHFAutocomplete,
-  RHFUploadAvatar,
 } from 'src/components/hook-form';
-import { ROLE, EMPLOYEE_GENDER } from 'src/_mock/_employee';
-import axios from 'axios';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useAuthContext } from 'src/auth/hooks';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 import countrystatecity from '../../_mock/map/csc.json';
-
-// ----------------------------------------------------------------------
 
 export default function EmployeeNewEditForm({ employeeId }) {
   const { user } = useAuthContext();
+  const router = useRouter();
   const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
-  const router = useRouter();
   const mdUp = useResponsive('up', 'md');
 
   const NewEmployeeSchema = Yup.object().shape({
@@ -45,18 +42,14 @@ export default function EmployeeNewEditForm({ employeeId }) {
     contact: Yup.string().required('Phone number is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     gender: Yup.string().required('Gender is required'),
-    // dob: Yup.date().required('Date of birth is required'),
-    // experience: Yup.string().required('Experience is required'),
-    // role: Yup.string().required('Role is required'),
-    // technology: Yup.string().required('Technology is required'),
-    // joining_date: Yup.date().required('Joining date is required'),
-    // qualification: Yup.string().required('Qualification is required'),
-    // address_1: Yup.string().required('Address is required'),
-    // address_2: Yup.string().optional(),
-    // country: Yup.string().required('Country is required'),
-    // state: Yup.string().required('State is required'),
-    // city: Yup.string().required('City is required'),
-    // zipcode: Yup.string().required('Zip code is required'),
+    dob: Yup.date().required('Date of birth is required'),
+    experience: Yup.number()
+      .required('Experience is required')
+      .min(0, 'Experience must be a positive number'),
+    role: Yup.string().required('Role is required'),
+    technology: Yup.string().required('Technology is required'),
+    joining_date: Yup.date().required('Joining date is required'),
+    qualification: Yup.string().required('Qualification is required'),
   });
 
   const methods = useForm({
@@ -71,9 +64,14 @@ export default function EmployeeNewEditForm({ employeeId }) {
       role: '',
       qualification: '',
       technology: '',
-      experience: '',
+      experience: 0,
       joining_date: null,
-      address: { address_1: '', address_2: '', country: '', state: '', city: '', zipcode: '' },
+      address_1: '',
+      address_2: '',
+      country: '',
+      state: '',
+      city: '',
+      zipcode: '',
       avatar_url: null,
     },
   });
@@ -83,6 +81,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
     control,
     watch,
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -93,8 +92,6 @@ export default function EmployeeNewEditForm({ employeeId }) {
           const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
           const response = await axios.get(URL);
           const { data } = response.data;
-          console.log('get', data);
-
           reset({
             firstName: data.firstName,
             lastName: data.lastName,
@@ -107,13 +104,13 @@ export default function EmployeeNewEditForm({ employeeId }) {
             technology: data.technology,
             experience: data.experience,
             joining_date: data.joining_date ? new Date(data.joining_date) : null,
-            address_1: data.address?.address_1 || '',
-            address_2: data.address?.address_2 || '', 
-            country: data.address?.country || '', 
-            state: data.address?.state || '', 
-            city: data.address?.city || '', 
-            zipcode: data.address?.zipcode || '', 
-            avatar_url: data.avatar_url || '', 
+            address_1: data.address_detail?.address_1 || '',
+            address_2: data.address_detail?.address_2 || '',
+            country: data.address_detail?.country || '',
+            state: data.address_detail?.state || '',
+            city: data.address_detail?.city || '',
+            zipcode: data.address_detail?.zipcode || '',
+            avatar_url: data.avatar_url || '',
           });
           setProfilePic(data.avatar_url);
         }
@@ -125,25 +122,40 @@ export default function EmployeeNewEditForm({ employeeId }) {
     fetchEmployeeById();
   }, [employeeId, reset]);
 
-  const createEmployee = async (newEmployee) => {
-    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`;
-    const response = await axios.post(URL, newEmployee);
-    return response.data;
+  const createEmployee = async (formData) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('Creation failed. Please try again.');
+    }
   };
 
-  async function updateEmployee(id, data) {
+  const updateEmployee = async (id, formData) => {
     try {
       const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
-      const response = await axios.put(URL, data);
+      const response = await axios.put(URL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     } catch (error) {
       console.error('Error updating employee:', error.message);
       throw error;
     }
-  }
+  };
 
   const onSubmit = async (data) => {
-    const addEmployee = {
+    const addemployee = {
       firstName: data.firstName,
       lastName: data.lastName,
       contact: data.contact,
@@ -153,65 +165,66 @@ export default function EmployeeNewEditForm({ employeeId }) {
       role: data.role,
       qualification: data.qualification,
       technology: data.technology,
-      experience: data.experience,
+      experience: Number(data.experience),
       joining_date: data.joining_date,
-      address: {
-        address_1: data.address.address_1,
-        address_2: data.address.address_2,
-        country: data.address.country,
-        state: data.address.state,
-        city: data.address.city,
-        zipcode: data.address.zipcode,
-      },
-      // avatar_url: data.avatar_url,
+      address_1: data.address_1,
+      address_2: data.address_2,
+      country: data.country,
+      state: data.state,
+      city: data.city,
+      zipcode: data.zipcode,
     };
-    console.log("ssss",addEmployee);
+
+    const formData = new FormData();
+    Object.keys(addemployee).forEach((key) => {
+      formData.append(key, addemployee[key]);
+    });
+
+    if (profilePic) {
+      formData.append('profile-pic', profilePic);
+    }
+
+    let formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+
     try {
       let response;
       if (employeeId) {
-        response = await updateEmployee(employeeId, addEmployee);
-        console.log('update', response);
+        response = await updateEmployee(employeeId, formData);
+        router.push(paths.dashboard.employee.list);
       } else {
-        response = await createEmployee(addEmployee);
-        console.log('add', response);
+        response = await createEmployee(formData);
+        router.push(paths.dashboard.employee.list);
+
       }
-      reset();
-      router.push(paths.dashboard.employee.list);
-      enqueueSnackbar(employeeId ? response.message : response.message, {
+      enqueueSnackbar(response.message, {
         variant: 'success',
       });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar(error.response.data.message, { variant: 'error' });
+      enqueueSnackbar(error.response?.data?.message || 'Error occurred', {
+        variant: 'error',
+      });
     }
   };
 
-  const handleDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-
-    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${employeeId}/employee/profile-pic`;
-    const formData = new FormData();
-    formData.append('profile-pic', file);
-
-    axios
-      .put(URL, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((response) => {
-        const uploadedImageUrl = response.data.avatar_url;
-        setProfilePic(uploadedImageUrl);
-      })
-      .catch((error) => {
-        console.error('Upload error:', error);
-      });
-  };
+  const handleDrop = useCallback(
+    (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        setProfilePic(file);
+        setValue('avatar_url', file);
+      }
+    },
+    [setValue]
+  );
 
   const renderProperties = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid item md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Personal Details
           </Typography>
@@ -221,36 +234,13 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
           <Card sx={{ pt: 5, px: 3, mt: 5 }}>
             <Box sx={{ mb: 5 }}>
-              <Controller
-                name="avatar_url"
-                control={control}
-                render={({ field }) => (
-                  <RHFUploadAvatar
-                    name="avatar_url"
-                    onDrop={handleDrop}
-                    helperText={
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          mt: 3,
-                          mx: 'auto',
-                          display: 'block',
-                          textAlign: 'center',
-                          color: 'text.disabled',
-                        }}
-                      >
-                        Allowed *.jpeg, *.jpg, *.png, *.gif
-                      </Typography>
-                    }
-                  />
-                )}
-              />
+              <RHFUploadAvatar name="profile-pic" onDrop={handleDrop} />
             </Box>
           </Card>
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Personal Details" />}
 
@@ -299,6 +289,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
                   )}
                 />
               </Stack>
+
               <RHFAutocomplete
                 name="role"
                 type="role"
@@ -319,6 +310,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
               <RHFTextField name="qualification" label="Qualification" />
               <RHFTextField name="technology" label="Technology" />
+
               <Stack spacing={1.5}>
                 <Controller
                   name="joining_date"
@@ -349,7 +341,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
   const renderAddress = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid item md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Address Details
           </Typography>
@@ -359,13 +351,13 @@ export default function EmployeeNewEditForm({ employeeId }) {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Address Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="address.address_1" label="Address line 1" />
-            <RHFTextField name="address.address_2" label="Address line 2" />
+            <RHFTextField name="address_1" label="Address line 1" />
+            <RHFTextField name="address_2" label="Address line 2" />
 
             <Box
               columnGap={2}
@@ -377,7 +369,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
               }}
             >
               <Controller
-                name="address.country"
+                name="country"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
@@ -391,15 +383,15 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 )}
               />
               <Controller
-                name="address.state"
+                name="state"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('address.country')
+                      watch('country')
                         ? countrystatecity
-                            .find((country) => country.name === watch('address.country'))
+                            .find((country) => country.name === watch('country'))
                             ?.states.map((state) => state.name) || []
                         : []
                     }
@@ -411,16 +403,16 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 )}
               />
               <Controller
-                name="address.city"
+                name="city"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('address.state')
+                      watch('state')
                         ? countrystatecity
-                            .find((country) => country.name === watch('address.country'))
-                            ?.states.find((state) => state.name === watch('address.state'))
+                            .find((country) => country.name === watch('country'))
+                            ?.states.find((state) => state.name === watch('state'))
                             ?.cities.map((city) => city.name) || []
                         : []
                     }
@@ -441,8 +433,8 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', justifyContent: 'end' }}>
+      {mdUp && <Grid item md={4} />}
+      <Grid item xs={12} md={8} sx={{ display: 'flex', justifyContent: 'end' }}>
         <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
           {!employeeId ? 'Add Employee' : 'Save Changes'}
         </LoadingButton>

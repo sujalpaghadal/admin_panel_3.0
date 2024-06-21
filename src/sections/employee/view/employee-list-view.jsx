@@ -23,6 +23,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useAuthContext } from 'src/auth/hooks';
 import {
   useTable,
   emptyRows,
@@ -60,12 +61,13 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function EmployeeListView() {
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  const { employees,mutate } = useGetEmployees();
+  const { employees, mutate } = useGetEmployees();
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
@@ -97,9 +99,8 @@ export default function EmployeeListView() {
   const handleDeleteRow = useCallback(
     async (_id) => {
       try {
-        const response = await axios.delete(
-          `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${_id}/deleteEmployee`
-        );
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/${_id}/deleteEmployee`;
+        const response = await axios.delete(URL);
         if (response.status === 200) {
           enqueueSnackbar(response.data.message, { variant: 'success' });
           confirm.onFalse();
@@ -118,15 +119,12 @@ export default function EmployeeListView() {
   // Multiple Delete
   const handleDeleteRows = useCallback(async () => {
     try {
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/delete/all-employee`;
+
       const sortedSelectedIds = [...table.selected].sort();
       await Promise.all(
         sortedSelectedIds.map(async (selectedId) => {
-          const response = await axios.delete(
-            `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/delete/all-employee`,
-            {
-              data: { ids: [selectedId] },
-            }
-          );
+          const response = await axios.delete(URL,{data: { ids: [selectedId] }});
           if (response.status === 200) {
             enqueueSnackbar(response.data.data.message, { variant: 'success' });
             mutate();
@@ -227,7 +225,7 @@ export default function EmployeeListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row,index) => (
+                    .map((row, index) => (
                       <EmployeeTableRow
                         key={row._id}
                         index={index}

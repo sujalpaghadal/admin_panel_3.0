@@ -28,10 +28,9 @@ export default function StudentTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
-  onGuardianRow,
 }) {
-  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =
-    row.personal_info;
+  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =row;
+
 
   const confirm = useBoolean();
 

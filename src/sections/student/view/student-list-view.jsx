@@ -42,6 +42,7 @@ import {
 import StudentTableRow from '../student-table-row';
 import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
+
 import { useGetStudents } from '../../../api/student';
 
 // ----------------------------------------------------------------------
@@ -147,7 +148,7 @@ export default function StudentListView() {
     },
     [router]
   );
-  
+
   const handleGuardianEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.student.guaridiandetails(id));
@@ -169,7 +170,7 @@ export default function StudentListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Student', href: paths.dashboard.student.root },
+            { name: 'Student', href: paths.dashboard.student.list },
             { name: 'List' },
           ]}
           action={
@@ -234,9 +235,7 @@ export default function StudentListView() {
             <StudentTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
-              //
               onResetFilters={handleResetFilters}
-              //
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -350,7 +349,7 @@ export default function StudentListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { name, status } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -364,16 +363,12 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase())
     );
   }
 
-  if (status !== 'all') {
+  if (status && status !== 'all') {
     inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
   }
 
   return inputData;

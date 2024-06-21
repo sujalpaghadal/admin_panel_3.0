@@ -22,22 +22,12 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import DemoEditPop from './demo-edit-pop';
 
 // ----------------------------------------------------------------------
 
-export default function DemoTableRow({
-  row,
-  selected,
-  onViewRow,
-  onSelectRow,
-  onDeleteRow,
-  srNumber,
-}) {
-  console.log(row, 'row');
-  const { demos, inquiry } = row;
-  const { firstName, lastName, email, contact } = inquiry;
-  const { date, status, technology, detail, faculty } = demos[0];
+export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -52,22 +42,27 @@ export default function DemoTableRow({
 
       <TableCell>
         <Box
-        // onClick={onViewRow}
-        // sx={{
-        //   cursor: 'pointer',
-        //   '&:hover': {
-        //     textDecoration: 'underline',
-        //   },
-        // }}
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
         >
-          {srNumber}
+          {/* {orderNumber} */}
+          {'23'}
         </Box>
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} /> */}
+
         <ListItemText
-          primary={firstName + ' ' + lastName}
-          secondary={email}
+          // primary={customer.name}
+          // secondary={customer.email}
+          primary={'ramu kaka'}
+          secondary={'ramu@gmail.com'}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -77,7 +72,34 @@ export default function DemoTableRow({
       </TableCell>
 
       <TableCell>
-        <Box>{contact}</Box>
+        <ListItemText
+          primary={fDate(createdAt)}
+          secondary={fTime(createdAt)}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
+
+      {/* <TableCell align="center"> {totalQuantity} </TableCell> */}
+
+      {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
+
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (status === 'completed' && 'success') ||
+            (status === 'pending' && 'warning') ||
+            (status === 'cancelled' && 'error') ||
+            'default'
+          }
+        >
+          {status}
+        </Label>
       </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
@@ -92,102 +114,113 @@ export default function DemoTableRow({
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
+
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );
 
   const renderSecondary = (
-    <>
-      <TableRow>
-        <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
-          <Collapse
-            in={collapse.value}
-            timeout="auto"
-            unmountOnExit
-            sx={{ bgcolor: 'background.neutral' }}
-          >
-            <Stack component={Paper} sx={{ m: 1.5 }}>
-              {demos.map((item) => (
-                <Stack
-                  key={item}
-                  direction="row"
-                  alignItems="center"
-                  sx={{
-                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                    '&:not(:last-of-type)': {
-                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                    },
+    <TableRow>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+        <Collapse
+          in={collapse.value}
+          timeout="auto"
+          unmountOnExit
+          sx={{ bgcolor: 'background.neutral' }}
+        >
+          <Stack component={Paper} sx={{ m: 1.5 }}>
+            {items.map((item) => (
+              <Stack
+                key={item.id}
+                direction="row"
+                alignItems="center"
+                sx={{
+                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                  '&:not(:last-of-type)': {
+                    borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                  },
+                }}
+              >
+                <Avatar
+                  src={
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxF2SCl6YA0josDEY9VZb8v9WNU5Oi8U_iaA&s'
+                  }
+                  variant="rounded"
+                  sx={{ width: 48, height: 48, mr: 2 }}
+                />
+
+                <ListItemText
+                  primary={"item.name"}
+                  secondary={"item.sku"}
+                  primaryTypographyProps={{
+                    typography: 'body2',
                   }}
-                >
-                  <Avatar
-                    src={faculty.avatar_url}
-                    variant="rounded"
-                    sx={{ width: 48, height: 48, mr: 2 }}
-                  />
-                  <ListItemText
-                    primary={faculty.firstName + ' ' + faculty.lastName}
-                    secondary={faculty.email}
-                    primaryTypographyProps={{
-                      typography: 'body2',
-                    }}
-                    secondaryTypographyProps={{
-                      component: 'span',
-                      color: 'text.disabled',
-                      mt: 0.5,
-                    }}
-                  />
-                  <TableCell sx={{ mx: 5 }}>
-                    <ListItemText
-                      primary={fDate(date)}
-                      primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-                      secondaryTypographyProps={{
-                        mt: 0.5,
-                        component: 'span',
-                        typography: 'caption',
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ mx: 5 }}>
-                    <Box>{technology}</Box>
-                  </TableCell>
-                  <TableCell sx={{ mx: 5 }}>
-                    <Box>{detail}</Box>
-                  </TableCell>
-                  <TableCell sx={{ mx: 5 }}>
-                    <Label
-                      variant="soft"
-                      color={
-                        (status === 'completed' && 'success') ||
-                        (status === 'pending' && 'warning') ||
-                        (status === 'cancelled' && 'error') ||
-                        'default'
-                      }
-                    >
-                      {status}
-                    </Label>
-                  </TableCell>
-                  <MenuItem
-                    onClick={() => {
-                      onEditRow();
-                      popover.onClose();
-                    }}
-                  >
-                    <Iconify icon="solar:eye-bold" />
-                  </MenuItem>
-                </Stack>
-              ))}
-            </Stack>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-      <DemoEditPop open={true} />
-    </>
+                  secondaryTypographyProps={{
+                    component: 'span',
+                    color: 'text.disabled',
+                    mt: 0.5,
+                  }}
+                />
+
+                <Box>x{item.quantity}</Box>
+
+                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
+              </Stack>
+            ))}
+          </Stack>
+        </Collapse>
+      </TableCell>
+    </TableRow>
   );
 
   return (
     <>
       {renderPrimary}
+
       {renderSecondary}
+
+      {/* <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="right-top"
+        sx={{ width: 140 }}
+      >
+        <MenuItem
+          onClick={() => {
+            confirm.onTrue();
+            popover.onClose();
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          <Iconify icon="solar:trash-bin-trash-bold" />
+          Delete
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onViewRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          View
+        </MenuItem>
+      </CustomPopover> */}
+
+      {/* <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="Delete"
+        content="Are you sure want to delete?"
+        action={
+          <Button variant="contained" color="error" onClick={onDeleteRow}>
+            Delete
+          </Button>
+        }
+      /> */}
     </>
   );
 }

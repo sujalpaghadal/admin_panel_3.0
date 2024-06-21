@@ -6,7 +6,7 @@ import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 
-import { _userAbout, _userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
+import {_userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
 
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
@@ -16,10 +16,12 @@ import StudentAccountGeneral from '../student-account-general';
 import StudentAccountBilling from '../student-account-billing';
 import StudentAccountChangePassword from '../student-account-change-password';
 import StudentAccountBillingHistory from '../student-account-billing-history';
+
 import StudentAttendanceListView from './student-attendance-list-view';
+
 import ExaminationListView from './examination-list-view';
+
 import StudentComplainCreateView from './student-complain-create-view';
-import StudentDetailsView from './student-details-view';
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +78,10 @@ export default function StudentAccountView() {
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         heading="Account"
-        links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Account' }]}
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Account' },
+        ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
@@ -108,7 +113,7 @@ export default function StudentAccountView() {
 
       {currentTab === 'Attendance' && <StudentAttendanceListView />}
 
-      {currentTab === 'Progress' && <StudentDetailsView />}
+      {currentTab === 'Progress' && <StudentAccountChangePassword />}
 
       {currentTab === 'Examination' && <ExaminationListView />}
 

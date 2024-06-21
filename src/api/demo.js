@@ -1,26 +1,26 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { fetcher } from '../utils/axios';
 import { useAuthContext } from 'src/auth/hooks';
 
-export function useGetAllDemos(page, limit) {
-  const { user } = useAuthContext();
-  const { company_id } = user;
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${company_id}/demo`;
+import { fetcher } from '../utils/axios';
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
-  const demo = data?.data || [];
+export function useGetAllDemos() {
+  const {user}=useAuthContext();
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/demo`;
+  const { data, isLoading, error, isValidating ,mutate} = useSWR(URL, fetcher);
+
   const memoizedValue = useMemo(
     () => ({
-      demo: demo,
+      demo:data?.data || [],
       demoLoading: isLoading,
       demoError: error,
       demoValidating: isValidating,
-      demoEmpty: !isLoading && !demo.length,
+      demoEmpty: !isLoading && !data.data.length,
+      mutate,
     }),
-    [demo, error, isLoading, isValidating]
-  );
+    [data.data, error, isLoading, isValidating,mutate]
+    );
 
   return memoizedValue;
 }

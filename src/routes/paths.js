@@ -102,6 +102,7 @@ export const paths = {
     kanban: `${ROOTS.DASHBOARD}/kanban`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,
     permission: `${ROOTS.DASHBOARD}/permission`,
+    setting: `${ROOTS.DASHBOARD}/setting`,
 
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
@@ -126,15 +127,12 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/student`,
       new: `${ROOTS.DASHBOARD}/student/new`,
       list: `${ROOTS.DASHBOARD}/student/list`,
+      cards: `${ROOTS.DASHBOARD}/student/cards`,
       profile: `${ROOTS.DASHBOARD}/student/profile`,
       account: `${ROOTS.DASHBOARD}/student/account`,
       edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
       view: (id) => `${ROOTS.DASHBOARD}/student/${id}`,
       guaridiandetails: (id) => `${ROOTS.DASHBOARD}/student/${id}/guaridiandetails`,
-      demo: {
-        edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
-        view: `${ROOTS.DASHBOARD}/student/${MOCK_ID}`,
-      },
     },
 
     employee: {
@@ -163,9 +161,8 @@ export const paths = {
 
     seminar: {
       root: `${ROOTS.DASHBOARD}/seminar`,
-      new: `${ROOTS.DASHBOARD}/seminar`,
+      new: `${ROOTS.DASHBOARD}/seminar/new`,
       list: `${ROOTS.DASHBOARD}/seminar/list`,
-      edit: `${ROOTS.DASHBOARD}/seminar/edit`,
     },
 
     invoice: {
@@ -223,14 +220,13 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/demo`,
     },
 
-    seminar: {
-      root: `${ROOTS.DASHBOARD}/seminar`,
-      list: `${ROOTS.DASHBOARD}/seminar/list`,
-    },
+    // seminar: {
+    //   root: `${ROOTS.DASHBOARD}/seminar`,
+    //   list: `${ROOTS.DASHBOARD}/seminar/list`,
+    // },
 
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
     },
-
   },
 };

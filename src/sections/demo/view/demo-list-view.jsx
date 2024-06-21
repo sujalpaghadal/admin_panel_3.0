@@ -39,22 +39,23 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { useGetAllDemos } from 'src/api/demo';
+
 import DemoTableRow from '../demo-table-row';
 import DemoTableToolbar from '../demo-table-toolbar';
 import DemoTableFiltersResult from '../demo-table-filters-result';
-import { useGetAllDemos } from 'src/api/demo';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Sr No', width: 116 },
-  { id: 'name', label: 'Inquiry Student' },
-  { id: 'totalAmount', label: 'Contact' },
-  // { id: 'createdAt', label: 'Date', width: 200 },
+  { id: 'orderNumber', label: 'Order', width: 116 },
+  { id: 'name', label: 'Customer' },
+  { id: 'createdAt', label: 'Date', width: 300 },
   // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
-  // { id: 'status', label: 'Status', width: 210 },
+  // { id: 'totalAmount', label: 'Price', width: 140 },
+  { id: 'status', label: 'Status', width: 210 },
   { id: '', width: 88 },
 ];
 
@@ -79,15 +80,16 @@ export default function DemoListView() {
   const confirm = useBoolean();
 
   const { demo } = useGetAllDemos();
+  console.log(demo);
 
-  const [tableData, setTableData] = useState(demo);
+  const [tableData, setTableData] = useState(_orders);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: demo,
+    inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -164,13 +166,17 @@ export default function DemoListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Demo List"
+          heading="List"
           links={[
             {
               name: 'Dashboard',
               href: paths.dashboard.root,
             },
-            { name: 'Demo List' },
+            {
+              name: 'Order',
+              href: paths.dashboard.order.root,
+            },
+            { name: 'List' },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
@@ -178,7 +184,7 @@ export default function DemoListView() {
         />
 
         <Card>
-          {/* <Tabs
+          <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -211,7 +217,7 @@ export default function DemoListView() {
                 }
               />
             ))}
-          </Tabs> */}
+          </Tabs>
 
           <DemoTableToolbar
             filters={filters}
@@ -275,11 +281,10 @@ export default function DemoListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row, index) => (
+                    .map((row) => (
                       <DemoTableRow
                         key={row.id}
                         row={row}
-                        srNumber={index + 1}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
@@ -332,9 +337,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.inquiry.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

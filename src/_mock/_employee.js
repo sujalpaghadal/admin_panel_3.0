@@ -9,7 +9,7 @@ export const ROLE = [
   
   
   export const EMPLOYEE_GENDER=[
-    'Male',
-    'Female',
-    'Other'
+    'male',
+    'female',
+    'other'
   ]

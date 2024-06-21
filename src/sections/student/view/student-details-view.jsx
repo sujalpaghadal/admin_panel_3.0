@@ -12,6 +12,7 @@ import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 
 import StudentProgressDetailsToolbar from '../student-progress-details-toolbar';
+
 import StudentProgressDetailsHistory from '../student-progrss-details-history';
 
 // ----------------------------------------------------------------------
@@ -19,21 +20,13 @@ import StudentProgressDetailsHistory from '../student-progrss-details-history';
 export default function StudentDetailsView({ id }) {
   const settings = useSettingsContext();
 
-  const currentOrder = _orders.find((order) => order.id === id);
+  const currentOrder = _orders.filter((order) => order.id === id)[0];
 
-  const [status, setStatus] = useState(currentOrder ? currentOrder.status : '');
+  const [status, setStatus] = useState(currentOrder.status);
 
   const handleChangeStatus = useCallback((newValue) => {
     setStatus(newValue);
   }, []);
-
-  if (!currentOrder) {
-    return (
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <div>Order with ID {id} not found.</div>
-      </Container>
-    );
-  }
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -46,7 +39,7 @@ export default function StudentDetailsView({ id }) {
         statusOptions={ORDER_STATUS_OPTIONS}
       />
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
             <StudentProgressDetailsHistory history={currentOrder.history} />
           </Stack>

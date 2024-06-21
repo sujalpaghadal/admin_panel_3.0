@@ -86,7 +86,7 @@ export default function SeminarListView() {
   );
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <CustomBreadcrumbs
         heading="List"
         links={[
@@ -95,8 +95,8 @@ export default function SeminarListView() {
             href: paths.dashboard.root,
           },
           {
-            name: 'Blog',
-            href: paths.dashboard.post.root,
+            name: 'Seminar list',
+            href: paths.dashboard.seminar.root,
           },
           {
             name: 'List',
@@ -105,7 +105,7 @@ export default function SeminarListView() {
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.post.new}
+            href={paths.dashboard.seminar.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
