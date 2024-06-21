@@ -2,25 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Typography, Button, TextField, Grid, Box, Container } from '@mui/material';
+import { Typography, Button, TextField, Grid, Box, Container, Autocomplete } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { Autocomplete } from '@mui/material';
+import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import { useAuthContext } from 'src/auth/hooks';
 import { useSettingsContext } from 'src/components/settings';
 import axiosInstance from 'src/api/axiosInstance';
 import { useSnackbar } from 'src/components/snackbar';
 import axios from 'axios';
-import SeminarOverView from './seminar-overview-';
+import { useRouter } from 'src/routes/hooks';
+import { paths } from 'src/routes/paths';
 
 export default function SeminarNewEditForm() {
   const { user } = useAuthContext();
+  console.log(user);
   const [users, setUsers] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
+  const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
+
   const NewUserSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
-    schedule_by: Yup.string().required('Schedule by is required'),
+    schedule_by: Yup.object().required('Schedule by is required'),
     date_time: Yup.date().required('Date and Time are required').nullable(),
     role: Yup.string().required('Role is required'),
     users: Yup.array().min(1, 'At least one user is required').required('Users are required'),
@@ -33,11 +37,18 @@ export default function SeminarNewEditForm() {
       schedule_by: '',
       date_time: null,
       role: '',
+      desc: '',
       users: [],
     },
   });
 
   const ROLE = ['Employee', 'Student'];
+  const Sheduled_by = [
+    {
+      _id: '66710d4da24c98a090efd338',
+      name: 'Kaushal sir',
+    },
+  ];
 
   const {
     handleSubmit,
@@ -50,16 +61,18 @@ export default function SeminarNewEditForm() {
   const onSubmit = async (data) => {
     const payload = {
       title: data.title,
+      desc: data.desc,
+      company_id: user.company_id,
       date_time: data.date_time,
-      schedule_by: data.schedule_by,
-      attended_role: data.role,
-      attended_by: data.users.map((user) => ({ attended_id: user._id })),
+      schedule_by: data.schedule_by._id,
+      attended_by: data.users.map((user) => user._id),
     };
+    console.log('payload', payload);
     try {
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/seminar`;
-      const response = await axiosInstance.post(URL, payload);
-      console.log(response.data);
-      enqueueSnackbar(response.data.data.message, { variant: 'success' });
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar`;
+      const response = await axios.post(URL, payload);
+      enqueueSnackbar(response.data.message, { variant: 'success' });
+      router.push(paths.dashboard.seminar.list);
     } catch (error) {
       console.error('Error submitting form:', error);
       enqueueSnackbar('Failed to fetch seminars', { variant: 'error' });
@@ -115,7 +128,16 @@ export default function SeminarNewEditForm() {
               <Controller
                 name="schedule_by"
                 control={control}
-                render={({ field }) => <TextField {...field} label="Schedule by" fullWidth />}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={Sheduled_by}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(_, value) => field.onChange(value)}
+                    renderInput={(params) => <TextField {...params} label="Schedule By" />}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
+                  />
+                )}
               />
               <Controller
                 name="date_time"
@@ -152,10 +174,13 @@ export default function SeminarNewEditForm() {
                     getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                     onChange={(_, value) => field.onChange(value)}
                     renderInput={(params) => <TextField {...params} label="Users" />}
-                    getOptionSelected={(option, value) => option.id === value.id}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
                   />
                 )}
               />
+
+              <RHFTextField name="desc" label="Description" multiline rows={4} />
+
               <Button variant="contained" color="primary" type="submit" disabled={isSubmitting}>
                 Submit
               </Button>
@@ -163,9 +188,7 @@ export default function SeminarNewEditForm() {
           </Box>
         </FormProvider>
       </Grid>
-      <Grid item xs={12} md={8}>
-        <SeminarOverView />
-      </Grid>
+      <Grid item xs={12} md={8}></Grid>
     </Grid>
   );
 }

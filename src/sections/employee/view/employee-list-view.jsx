@@ -113,7 +113,7 @@ export default function EmployeeListView() {
         enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
       }
     },
-    [enqueueSnackbar, mutate, confirm]
+    [enqueueSnackbar, mutate, confirm,user.company_id]
   );
 
   // Multiple Delete
@@ -138,7 +138,7 @@ export default function EmployeeListView() {
       console.error('Failed to delete Employee', error);
       enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
     }
-  }, [enqueueSnackbar, mutate, confirm, table.selected]);
+  }, [enqueueSnackbar, mutate, confirm, table.selected, user.company_id]);
 
   const handleEditRow = useCallback(
     (id) => {
