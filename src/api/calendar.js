@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
 import { fetcher, endpoints } from 'src/utils/axios';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -35,19 +36,21 @@ export function useGetEvents() {
 }
 
 export function useGetCalendar(page, limit) {
-   const calendarURL = 'https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/event';
-   const { data, isLoading, error, isValidating } = useSWR(calendarURL, fetcher);
-   const memoizedValue = useMemo(
-     () => ({
-       calendar: data || [],
-       calendarLoading: isLoading,
-       calendarError: error,
-       calendarValidating: isValidating,
-       calendarEmpty: !isLoading && !data?.length,
-     }),
-     [data, error, isLoading, isValidating]
-   );
-   return memoizedValue;
+  const { user } = useAuthContext();
+  const calendarURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/event`;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(calendarURL, fetcher);
+  const memoizedValue = useMemo(
+    () => ({
+      calendar: data || [],
+      calendarLoading: isLoading,
+      calendarError: error,
+      calendarValidating: isValidating,
+      calendarEmpty: !isLoading && !data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+  return memoizedValue;
 }
 
 

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import StudentAccountView from 'src/sections/student/view/student-account-view';
+import { StudentCreateView } from 'src/sections/student/view';
 
 // ----------------------------------------------------------------------
 
@@ -9,7 +9,7 @@ export default function AccountPage() {
       <Helmet>
         <title> Dashboard: Account Settings</title>
       </Helmet>
-      <StudentAccountView />
+    <StudentCreateView />
     </>
   );
 }

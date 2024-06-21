@@ -42,6 +42,7 @@ import {
 import StudentTableRow from '../student-table-row';
 import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
+
 import { useGetStudents } from '../../../api/student';
 
 // ----------------------------------------------------------------------
@@ -49,14 +50,13 @@ import { useGetStudents } from '../../../api/student';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No',  align: "center" },
-  { id: 'enrollment_no', label: 'Enroll No', align: "center" },
+  { id: 'enrollment_no', label: 'Enroll No', width: 180 },
   { id: 'name', label: 'Name' },
-  { id: 'contact', label: 'Phone Number' },
-  { id: 'course', label: 'Course' },
-  { id: 'joining_date', label: 'Joining date' },
-  { id: 'status', label: 'Status' },
-  { id: '' },
+  { id: 'contact', label: 'Phone Number', width: 180 },
+  { id: 'course', label: 'Course', width: 220 },
+  { id: 'joining_date', label: 'Joining date', width: 180 },
+  { id: 'status', label: 'Status', width: 100 },
+  { id: '', width: 88 },
 ];
 
 const defaultFilters = {
@@ -170,7 +170,7 @@ export default function StudentListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Student', href: paths.dashboard.student.root },
+            { name: 'Student', href: paths.dashboard.student.list },
             { name: 'List' },
           ]}
           action={
@@ -209,15 +209,15 @@ export default function StudentListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'running' && 'warning') ||
-                      (tab.value === 'leaved' && 'error') ||
+                      (tab.value === 'Completed' && 'success') ||
+                      (tab.value === 'Running' && 'warning') ||
+                      (tab.value === 'Leaved' && 'error') ||
                       'default'
                     }
                   >
-                    {['running', 'leaved', 'completed'].includes(tab.value)
-                      ? students.filter((user) => user.status === tab.value).length
-                      : students.length}
+                    {['Running', 'Leaved', 'Completed'].includes(tab.value)
+                      ? tableData.filter((user) => user.status === tab.value).length
+                      : tableData.length}
                   </Label>
                 }
               />
@@ -235,9 +235,7 @@ export default function StudentListView() {
             <StudentTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
-              //
               onResetFilters={handleResetFilters}
-              //
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -286,10 +284,10 @@ export default function StudentListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row, index) => (
+                    .map((row) => (
                       <StudentTableRow
                         key={row._id}
-                        row={{...row, index}}
+                        row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
                         onDeleteRow={() => handleDeleteRow(row._id)}
@@ -351,7 +349,7 @@ export default function StudentListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, status, role } = filters;
+  const { name, status } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -365,16 +363,13 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase()) ||
+     user.lastName && user.lastName.toLowerCase().includes(name.toLowerCase()) 
     );
   }
 
-  if (status !== 'all') {
+  if (status && status !== 'all') {
     inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
   }
 
   return inputData;

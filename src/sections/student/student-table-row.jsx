@@ -28,10 +28,10 @@ export default function StudentTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
-  onGuardianRow,
 }) {
-  const { firstName, lastName, profile_pic, course, joining_date, email, contact, index } =
-    row;
+  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =row;
+
+
   const confirm = useBoolean();
 
   const quickEdit = useBoolean();
@@ -45,9 +45,6 @@ export default function StudentTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
-          {index + 1}
-        </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
           {row.enrollment_no}
         </TableCell>
@@ -77,9 +74,9 @@ export default function StudentTableRow({
           <Label
             variant="soft"
             color={
-              (row.status === 'completed' && 'success') ||
-              (row.status === 'running' && 'warning') ||
-              (row.status === 'leaved' && 'error') ||
+              (row.status === 'Completed' && 'success') ||
+              (row.status === 'Running' && 'warning') ||
+              (row.status === 'Leaved' && 'error') ||
               'default'
             }
           >
