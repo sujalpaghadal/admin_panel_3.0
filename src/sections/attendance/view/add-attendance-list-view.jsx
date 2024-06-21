@@ -1,17 +1,23 @@
 import sumBy from 'lodash/sumBy';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
+import IconButton from '@mui/material/IconButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -36,24 +42,21 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import { useGetCompanyAttendance } from 'src/api/attendance';
 
-import AttendanceAnalytic from '../attendance-analytic';
-import AttendanceTableRow from '../attendance-table-row';
-import AttendanceTableToolbar from '../attendance-table-toolbar';
-import AttendanceTableFiltersResult from '../attendance-table-filters-result';
-import Button from '@mui/material/Button';
-import { RouterLink } from '../../../routes/components/index.js';
+import attendanceAddAnalytic from '../attendance-add-invoice-analytic';
+import AttendanceAddTableRow from '../attendance-add-table-row';
+import AttendanceAddTableToolbar from '../attendance-add-table-toolbar';
+import AttendanceAddTableFiltersResult from '../attendance-add-table-filters-result';
+import { Box } from '@mui/system';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useGetBatches } from 'src/api/batch';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: '#', align: 'center' },
-  { id: 'name', label: 'Name' },
-  { id: 'enroll_no', label: 'Enroll No' },
-  { id: 'email', label: 'Email' },
-  { id: 'course', label: 'Course' },
-  { id: 'status', label: 'Status' },
+  { id: 'invoiceNumber', label: 'Customer' },
+  { id: '', label: '' },
+  { id: 'status', label: 'options', width: 360 },
 ];
 
 const defaultFilters = {
@@ -62,17 +65,17 @@ const defaultFilters = {
   status: 'all',
   startDate: null,
   endDate: null,
-  date: new Date(),
 };
 
 // ----------------------------------------------------------------------
 
-export default function AttendanceListView() {
+export default function AddAttendanceListView() {
+  //options of batches
+  const { batch } = useGetBatches();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const theme = useTheme();
-
-  const { attendance } = useGetCompanyAttendance();
 
   const settings = useSettingsContext();
 
@@ -82,14 +85,16 @@ export default function AttendanceListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(attendance);
+  const [tableData, setTableData] = useState(_invoices);
 
   const [filters, setFilters] = useState(defaultFilters);
+
+  const methods = useForm();
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: attendance,
+    inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -110,7 +115,7 @@ export default function AttendanceListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const getInvoiceLength = (status) => attendance.filter((item) => item.status === status).length;
+  const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
 
   const getTotalAmount = (status) =>
     sumBy(
@@ -119,28 +124,6 @@ export default function AttendanceListView() {
     );
 
   const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
-
-  const TABS = [
-    { value: 'all', label: 'All', color: 'default', count: tableData.length },
-    {
-      value: 'present',
-      label: 'Present',
-      color: 'success',
-      count: getInvoiceLength('present'),
-    },
-    {
-      value: 'late',
-      label: 'Late',
-      color: 'warning',
-      count: getInvoiceLength('late'),
-    },
-    {
-      value: 'absent',
-      label: 'Absent',
-      color: 'error',
-      count: getInvoiceLength('absent'),
-    },
-  ];
 
   const handleFilters = useCallback(
     (name, value) => {
@@ -204,136 +187,123 @@ export default function AttendanceListView() {
     [handleFilters]
   );
 
+    
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Attendance logs"
+          heading="List"
+          sx={{ marginBottom: 4 }}
           links={[
             {
               name: 'Dashboard',
               href: paths.dashboard.root,
             },
             {
-              name: 'Attendance logs',
+              name: 'Invoice',
+              href: paths.dashboard.invoice.root,
+            },
+            {
+              name: 'List',
             },
           ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.invoice.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Add Attendance
-            </Button>
-          }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
         />
-        <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {TABS.map((tab) => (
-              <Tab
-                key={tab.value}
-                value={tab.value}
-                label={tab.label}
-                iconPosition="end"
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={tab.color}
-                  >
-                    {tab.count}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
 
-          <AttendanceTableToolbar
+        <Card>
+          <AttendanceAddTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            //
             dateError={dateError}
-            serviceOptions={INVOICE_SERVICE_OPTIONS.map((option) => option.name)}
+            serviceOptions={batch.map((option) => option)}
           />
 
-          {canReset && (
-            <AttendanceTableFiltersResult
+          {/* {canReset && (
+            <AttendanceAddTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
-              //
               onResetFilters={handleResetFilters}
-              //
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                />
-
-                <TableBody>
-                  {dataFiltered
-                    ?.slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row, index) => (
-                      <AttendanceTableRow
-                        key={row.id}
-                        row={{ ...row, index }}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+              <FormProvider {...methods}>
+                <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+                  <TableHeadCustom
+                    order={table.order}
+                    orderBy={table.orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={dataFiltered.length}
+                    numSelected={table.selected.length}
+                    onSort={table.onSort}
+                    onSelectAllRows={(checked) =>
+                      table.onSelectAllRows(
+                        checked,
+                        dataFiltered.map((row) => row.id)
+                      )
+                    }
                   />
-
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
+                  <TableBody>
+                    {dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row) => (
+                        <>
+                          <AttendanceAddTableRow
+                            key={row.id}
+                            row={row}
+                            selected={table.selected.includes(row.id)}
+                            onSelectRow={() => table.onSelectRow(row.id)}
+                            onViewRow={() => handleViewRow(row.id)}
+                            onEditRow={() => handleEditRow(row.id)}
+                            onDeleteRow={() => handleDeleteRow(row.id)}
+                          />
+                        </>
+                      ))}
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    />
+                    <TableNoData notFound={notFound} />
+                  </TableBody>
+                </Table>
+                <Box sx={{ m: '18px', display: 'flex', justifyContent: 'end' }}>
+                  <Button variant="contained" type="submit">
+                    submit
+                  </Button>
+                </Box>
+              </FormProvider>
             </Scrollbar>
           </TableContainer>
-
-          <TablePaginationCustom
-            count={dataFiltered.length}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
         </Card>
       </Container>
+
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="Delete"
+        content={
+          <>
+            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+          </>
+        }
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              handleDeleteRows();
+              confirm.onFalse();
+            }}
+          >
+            Delete
+          </Button>
+        }
+      />
     </>
   );
 }
@@ -353,10 +323,11 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-
   if (name) {
     inputData = inputData.filter(
-      (invoice) => invoice?.student_id?.firstName?.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (invoice) =>
+        invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        invoice.invoiceTo.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -372,7 +343,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((invoice) => isBetween(invoice.date, startDate, endDate));
+      inputData = inputData.filter((invoice) => isBetween(invoice.createDate, startDate, endDate));
     }
   }
 
