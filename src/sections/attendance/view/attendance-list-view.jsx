@@ -121,7 +121,7 @@ export default function AttendanceListView() {
   const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
 
   const TABS = [
-    { value: 'all', label: 'All', color: 'default', count: tableData.length },
+    { value: 'all', label: 'All', color: 'default', count: attendance.length },
     {
       value: 'present',
       label: 'Present',

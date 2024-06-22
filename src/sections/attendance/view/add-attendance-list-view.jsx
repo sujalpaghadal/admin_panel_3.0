@@ -185,14 +185,27 @@ export default function AddAttendanceListView() {
   const [responce1, setResponce1] = useState({ status: null });
 
   const handleAttendanceChange = ({ id, status }) => {
+    // Check if the record exists
+    const isExist = attendanceData.some((e) => e.student_id === id);
+
+    // Filter out the existing record if it exists
+    let filteredData = attendanceData;
+    if (isExist) {
+      filteredData = attendanceData.filter((e) => e.student_id !== id);
+    }
+
+    // Create the new student record
     const student = {
       student_id: id,
-      status: status,
+      status,
       date: todayDate,
       company_id: user.company_id,
     };
-    setAttendanceData((prevAttendanceData) => [...prevAttendanceData, student]);
+
+    // Add the new record to the filtered data
+    setAttendanceData([...filteredData, student]);
   };
+
 
   async function attendancePost(attendanceData) {
     try {

@@ -4,9 +4,13 @@ import { useMemo } from 'react';
 import { fetcher } from '../utils/axios';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
+import { useAuthContext } from '../auth/hooks/index.js';
 
 export function useGetCompanyAttendance() {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/attendance`;
+
+  const { user } = useAuthContext();
+
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/attendance`;
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(() => {

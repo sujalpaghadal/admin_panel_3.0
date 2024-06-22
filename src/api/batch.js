@@ -6,8 +6,7 @@ import { useAuthContext } from 'src/auth/hooks';
 
 export function useGetBatches() {
   const { user } = useAuthContext();
-  const { company_id } = user;
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${company_id}/batch`;
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/batch`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
