@@ -221,7 +221,7 @@ export default function AttendanceListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.invoice.new}
+              href={paths.dashboard.attendance.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

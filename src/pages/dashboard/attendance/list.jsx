@@ -9,8 +9,7 @@ export default function DemoListPage() {
       <Helmet>
         <title> Dashboard: Demo List</title>
       </Helmet>
-      {/* <AttendanceListView /> */}
-      <AddAttendanceListView />
+      <AttendanceListView />
     </>
   );
 }

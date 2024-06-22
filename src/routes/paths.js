@@ -230,7 +230,7 @@ export const paths = {
 
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
+      new: `${ROOTS.DASHBOARD}/attendance/new`,
     },
-
   },
 };

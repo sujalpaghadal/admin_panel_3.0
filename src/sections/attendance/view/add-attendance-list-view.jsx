@@ -221,8 +221,8 @@ export default function AddAttendanceListView() {
               href: paths.dashboard.root,
             },
             {
-              name: 'Invoice',
-              href: paths.dashboard.invoice.root,
+              name: 'Attendance',
+              href: paths.dashboard.attendance.root,
             },
             {
               name: 'List',
