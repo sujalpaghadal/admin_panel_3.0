@@ -1,5 +1,5 @@
 import sumBy from 'lodash/sumBy';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -49,14 +49,16 @@ import AttendanceAddTableToolbar from '../attendance-add-table-toolbar';
 import AttendanceAddTableFiltersResult from '../attendance-add-table-filters-result';
 import { Box } from '@mui/system';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useGetBatches } from 'src/api/batch';
+import { useGetBatches, useGetSingleBatches } from 'src/api/batch';
+import { useAuthContext } from 'src/auth/hooks';
+import { useGetAttendanceAdd } from 'src/api/attendance';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'invoiceNumber', label: 'Customer' },
-  { id: '', label: '' },
-  { id: 'status', label: 'options', width: 360 },
+  { id: 'Contact', label: 'Contact' },
+  { id: 'status', label: 'options', width: 280 },
 ];
 
 const defaultFilters = {
@@ -70,8 +72,10 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function AddAttendanceListView() {
-  //options of batches
+  // Options of batches
   const { batch } = useGetBatches();
+  const [SingleBatchID, setSingleBatchID] = useState();
+  const { Singlebatch } = useGetSingleBatches(SingleBatchID);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -85,7 +89,13 @@ export default function AddAttendanceListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_invoices);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    if (Singlebatch?.batch_members) {
+      setTableData(Singlebatch.batch_members);
+    }
+  }, [Singlebatch]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -117,14 +127,6 @@ export default function AddAttendanceListView() {
 
   const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
 
-  const getTotalAmount = (status) =>
-    sumBy(
-      tableData.filter((item) => item.status === status),
-      'totalAmount'
-    );
-
-  const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
-
   const handleFilters = useCallback(
     (name, value) => {
       table.onResetPage();
@@ -135,10 +137,6 @@ export default function AddAttendanceListView() {
     },
     [table]
   );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const handleDeleteRow = useCallback(
     (id) => {
@@ -180,14 +178,37 @@ export default function AddAttendanceListView() {
     [router]
   );
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      handleFilters('status', newValue);
-    },
-    [handleFilters]
-  );
+  // ====================================
+  const { user } = useAuthContext();
+  const [todayDate, setTodayDate] = useState();
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [responce1, setResponce1] = useState({ status: null });
 
-    
+  const handleAttendanceChange = ({ id, status }) => {
+    const student = {
+      student_id: id,
+      status: status,
+      date: todayDate,
+      company_id: user.company_id,
+    };
+    setAttendanceData((prevAttendanceData) => [...prevAttendanceData, student]);
+  };
+
+  async function attendancePost(attendanceData) {
+    try {
+      const responce = await useGetAttendanceAdd(attendanceData);
+      if (responce && responce.status === 200) {
+        setResponce1(responce);
+        enqueueSnackbar('Attendance submitted successfully!', { variant: 'success' });
+      } else {
+        throw new Error('Failed to submit attendance');
+      }
+    } catch (error) {
+      setResponce1(null);
+      enqueueSnackbar('Failed to submit attendance', { variant: 'error' });
+    }
+  }
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -211,22 +232,13 @@ export default function AddAttendanceListView() {
 
         <Card>
           <AttendanceAddTableToolbar
+            setSingleBatchID={setSingleBatchID}
             filters={filters}
             onFilters={handleFilters}
             dateError={dateError}
             serviceOptions={batch.map((option) => option)}
+            setTodayDate={setTodayDate}
           />
-
-          {/* {canReset && (
-            <AttendanceAddTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              onResetFilters={handleResetFilters}
-              results={dataFiltered.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )} */}
-
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>
               <FormProvider {...methods}>
@@ -247,22 +259,22 @@ export default function AddAttendanceListView() {
                   />
                   <TableBody>
                     {dataFiltered
-                      .slice(
+                      ?.slice(
                         table.page * table.rowsPerPage,
                         table.page * table.rowsPerPage + table.rowsPerPage
                       )
                       .map((row) => (
-                        <>
-                          <AttendanceAddTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
-                            onViewRow={() => handleViewRow(row.id)}
-                            onEditRow={() => handleEditRow(row.id)}
-                            onDeleteRow={() => handleDeleteRow(row.id)}
-                          />
-                        </>
+                        <AttendanceAddTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onViewRow={() => handleViewRow(row.id)}
+                          onEditRow={() => handleEditRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onAttendanceChange={handleAttendanceChange}
+                          responce1={responce1}
+                        />
                       ))}
                     <TableEmptyRows
                       height={denseHeight}
@@ -272,8 +284,12 @@ export default function AddAttendanceListView() {
                   </TableBody>
                 </Table>
                 <Box sx={{ m: '18px', display: 'flex', justifyContent: 'end' }}>
-                  <Button variant="contained" type="submit">
-                    submit
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={() => attendancePost(attendanceData)}
+                  >
+                    Submit
                   </Button>
                 </Box>
               </FormProvider>
@@ -311,7 +327,9 @@ export default function AddAttendanceListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { name, status, service, startDate, endDate } = filters;
+  const { name, status, service = [], startDate, endDate } = filters;
+
+  if (!inputData) return [];
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -335,11 +353,11 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     inputData = inputData.filter((invoice) => invoice.status === status);
   }
 
-  if (service.length) {
-    inputData = inputData.filter((invoice) =>
-      invoice.items.some((filterItem) => service.includes(filterItem.service))
-    );
-  }
+  // if (service.length) {
+  //   inputData = inputData.filter((invoice) =>
+  //     invoice.items.some((filterItem) => service.includes(filterItem.service))
+  //   );
+  // }
 
   if (!dateError) {
     if (startDate && endDate) {

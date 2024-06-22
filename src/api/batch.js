@@ -25,18 +25,18 @@ export function useGetBatches() {
 }
 
 export function useGetSingleBatches(SingleBatchID) {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/batch/${SingleBatchID}`;
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/batch/${SingleBatchID}`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
-      Singlebatch: data?.data || [],
+      Singlebatch: data?.data?.batch || [],
       SinglebatchLoading: isLoading,
       SinglebatchError: error,
       SinglebatchValidating: isValidating,
       SinglebatchEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
-    [data?.data, error, isLoading, isValidating, mutate]
+    [data?.data?.batch, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
