@@ -54,8 +54,8 @@ export default function TaskTableRow({
           <Label
             variant="soft"
             color={
-              (row.status === 'completed' && 'success') ||
-              (row.status === 'pending' && 'warning') ||
+              (row.status === 'Completed' && 'success') ||
+              (row.status === 'Pending' && 'warning') ||
               'default'
             }
           >

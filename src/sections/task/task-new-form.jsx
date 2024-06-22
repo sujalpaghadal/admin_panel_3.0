@@ -71,7 +71,7 @@ const TaskNewForm = () => {
     try {
       const formattedData = {
         ...data,
-        status:"pending",
+        status:"Pending",
         assigned_by: user?._id,
         assigned_to: assignObject?._id,
         company_id: `${user?.company_id}`,

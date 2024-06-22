@@ -23,15 +23,7 @@ import { useGetTasks } from 'src/api/task';
 
 // ----------------------------------------------------------------------
 
-const types = [
-  'Rent',
-  'Electricity Bill',
-  'Salary',
-  'Stationary',
-  'Maintenance',
-  'New Asset Purchase',
-  'Office Expense',
-];
+const status = ['Pending', 'Completed'];
 
 export default function TaskNewEditForm({ expensesId }) {
   const router = useRouter();
@@ -41,7 +33,7 @@ export default function TaskNewEditForm({ expensesId }) {
   const { enqueueSnackbar } = useSnackbar();
   const preview = useBoolean();
   const { tasks } = useGetTasks();
-  const [taskData,setTaskData] = useState([])
+  const [taskData, setTaskData] = useState([]);
 
   const getUsers = () => {
     axios
@@ -49,11 +41,11 @@ export default function TaskNewEditForm({ expensesId }) {
       .then((res) => setUsers(res?.data))
       .catch((err) => console.log(err));
   };
-const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
+  const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
   useEffect(() => {
     getUsers();
     if (tasks[0]?._id) {
-      setTaskData(tasks)
+      setTaskData(tasks);
     }
   }, [tasks]);
   const NewBlogSchema = Yup.object().shape({
@@ -61,6 +53,7 @@ const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
     assigned_to: Yup.string().required('Assingned to is required'),
     assigned_by: Yup.string().required('Assigned bY is required'),
     desc: Yup.string().required('Description is required'),
+    status: Yup.string().required('Status is required'),
   });
 
   const methods = useForm({
@@ -70,6 +63,7 @@ const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
       desc: '',
       assigned_to: '',
       assigned_by: '',
+      status: '',
     },
   });
   const {
@@ -80,11 +74,13 @@ const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
     formState: { isSubmitting },
   } = methods;
   const data = taskData ? taskData?.find((item) => item?._id == expensesId) : [];
+  console.log(data, 'aaafa');
   const fetchExpenseById = async () => {
     try {
       if (expensesId) {
         reset({
           title: data.title,
+          status: data?.status,
           desc: data.desc,
           assigned_to: `${data?.assigned_to?.firstName} ${data?.assigned_to?.lastName}`,
           assigned_by: `${user?.firstName} ${user?.lastName}`,
@@ -96,23 +92,23 @@ const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
   };
   useEffect(() => {
     fetchExpenseById();
-  }, [expensesId, reset,taskData]);
+  }, [expensesId, reset, taskData]);
 
   const onSubmit = handleSubmit(async (data) => {
-     const assignObject = users.find((item) =>
-       data.assigned_to.includes(item?.firstName) && data.assigned_to.includes(item?.lastName)
-         ? item._id
-         : null
-     );
+    const assignObject = users.find((item) =>
+      data.assigned_to.includes(item?.firstName) && data.assigned_to.includes(item?.lastName)
+        ? item._id
+        : null
+    );
     try {
       const formattedData = {
         ...data,
-        status: 'pending',
         assigned_by: user?._id,
         assigned_to: assignObject?._id,
         company_id: `${user?.company_id}`,
+        status: data?.status,
       };
-      console.log(formattedData,"data");
+      console.log(formattedData, 'data');
       if (data) {
         const URL = `${import.meta.env.VITE_AUTH_API}/api/company/task/${expensesId}`;
         await axios
@@ -148,13 +144,20 @@ const filter = users.map((data) => ` ${data?.firstName} ${data?.lastName}`);
             <RHFTextField name="title" label="Title" />
             <RHFTextField name="desc" label="Description" multiline rows={3} />
             <RHFTextField disabled name="assigned_by" label="Assigned By" />
-            {/* <RHFTextField name="assigned_to" label="Assigned To" /> */}
             <RHFAutocomplete
               name="assigned_to"
               label="Assigned To"
               placeholder="Choose a assigned to"
               fullWidth
               options={filter}
+              getOptionLabel={(option) => option}
+            />
+            <RHFAutocomplete
+              name="status"
+              label="Choose a status"
+              placeholder="Choose a status"
+              fullWidth
+              options={status}
               getOptionLabel={(option) => option}
             />
           </Stack>
