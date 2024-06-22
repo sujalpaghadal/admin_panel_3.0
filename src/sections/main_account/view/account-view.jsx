@@ -11,14 +11,14 @@ import {
 
 import { useSettingsContext } from 'src/components/settings';
 
-import BookingWidgetSummary from '../booking-widget-summary';
-import BookingCheckInWidgets from '../booking-check-in-widgets';
+import AccountWidgetSummary from '../account-widget-summary';
+import AccountCheckInWidgets from '../account-check-in-widgets';
 
 // ----------------------------------------------------------------------
 
 const SPACING = 3;
 
-export default function OverviewBookingView() {
+export default function AccountView() {
   const theme = useTheme();
 
   const settings = useSettingsContext();
@@ -27,7 +27,7 @@ export default function OverviewBookingView() {
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={SPACING} disableEqualOverflow>
         <Grid xs={8}>
-          <BookingCheckInWidgets
+          <AccountCheckInWidgets
             chart={{
               series: [
                 { label: 'Sold', percent: 72, total: 38566 },
@@ -37,17 +37,17 @@ export default function OverviewBookingView() {
           />
         </Grid>
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary
+          <AccountWidgetSummary
             title="Total Booking"
             total={714000}
             icon={<BookingIllustration />}
           />
         </Grid>
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary title="Sold" total={311000} icon={<CheckInIllustration />} />
+          <AccountWidgetSummary title="Sold" total={311000} icon={<CheckInIllustration />} />
         </Grid>
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary title="Canceled" total={124000} icon={<CheckoutIllustration />} />
+          <AccountWidgetSummary title="Canceled" total={124000} icon={<CheckoutIllustration />} />
         </Grid>
       </Grid>
     </Container>
