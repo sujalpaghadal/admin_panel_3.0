@@ -6,6 +6,10 @@ import { authRoutes } from './auth';
 import { HomePage, mainRoutes } from './main';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
+import LoginPage from 'src/pages/auth/jwt/login';
+import { Grid } from '@mui/material';
+import login from '../../assets/login-back/loginBack.webp';
+import AuthClassicLayout from 'src/layouts/auth/classic';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +19,25 @@ export default function Router() {
       path: '/',
       element: (
         <MainLayout>
-          <HomePage />
+          {/* <HomePage /> */}
+          <AuthClassicLayout>
+            <LoginPage />
+          </AuthClassicLayout>
+          {/* <Grid
+            container
+            sx={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              backgroundImage: `url(${login})`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+            }}
+          >
+            <Grid item md={3} sx={{backgroundColor:'white',padding:5,borderRadius:"15px"}}>
+              <LoginPage />
+            </Grid>
+          </Grid> */}
         </MainLayout>
       ),
     },

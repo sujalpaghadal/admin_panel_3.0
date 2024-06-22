@@ -35,7 +35,7 @@ const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
 const InvoiceDetailsView = lazy(() => import('src/sections/overview/fees/invoice-page'));
 
 // OVERVIEW
-const IndexPage = lazy(() => import('src/pages/dashboard/app'));
+const IndexPage = lazy(() => import('src/pages/dashboard/dashboard'));
 const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
