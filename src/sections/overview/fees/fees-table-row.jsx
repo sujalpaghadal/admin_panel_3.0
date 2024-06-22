@@ -47,7 +47,6 @@ export default function FeesTableRow({
     lastName,
   } = row;
 
-  const { installments } = fee_detail;
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -164,7 +163,7 @@ export default function FeesTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {installments.map((item, index) => (
+            { fee_detail?.installments.map((item, index) => (
               <Stack
                 key={index}
                 direction="row"

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -51,7 +51,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 const TABLE_HEAD = [
   { id: 'orderNumber', label: 'Sr No', width: 116 },
   { id: 'name', label: 'Inquiry Student' },
-  { id: 'totalAmount', label: 'Contact' },
+  { id: 'totalAmount', label: 'Contact', width: 160 },
   // { id: 'createdAt', label: 'Date', width: 200 },
   // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
   // { id: 'status', label: 'Status', width: 210 },
@@ -78,9 +78,14 @@ export default function DemoListView() {
 
   const confirm = useBoolean();
 
-  const { demo } = useGetAllDemos();
+  const { demo, mutate } = useGetAllDemos();
+  const [tableData, setTableData] = useState();
 
-  const [tableData, setTableData] = useState(demo);
+  useEffect(() => {
+    if (demo) {
+      setTableData(demo);
+    }
+  }, [demo]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -284,6 +289,7 @@ export default function DemoListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        mutate={mutate}
                       />
                     ))}
 

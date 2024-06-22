@@ -24,6 +24,7 @@ export function useGetStudents(page, limit) {
 
   return memoizedValue;
 }
+
 export function useGetStudentsList(id) {
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${id}/student-list`;
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
