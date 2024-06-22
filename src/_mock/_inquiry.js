@@ -8,8 +8,9 @@ export const INQUIRY_REFERENCE_BY = [
 ];
 
 export const INQUIRY_SUGGESTED_IN = [
-  { value: 'Self Instrested', label: 'Self Instrested' },
-  { value: 'Suggested by someone', label: 'Suggested by someone' },
+  { value: 'present', label: 'Present' },
+  { value: 'late', label: 'Late' },
+  { value: 'absent', label: 'Absent' },
 ];
 
 export const INQUIRY_INTERESTED_IN = [

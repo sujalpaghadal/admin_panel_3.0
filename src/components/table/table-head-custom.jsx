@@ -36,7 +36,7 @@ export default function TableHeadCustom({
   return (
     <TableHead sx={sx}>
       <TableRow>
-        {onSelectAllRows && (
+        {/* {onSelectAllRows && (
           <TableCell padding="checkbox">
             <Checkbox
               indeterminate={!!numSelected && numSelected < rowCount}
@@ -44,7 +44,7 @@ export default function TableHeadCustom({
               onChange={(event) => onSelectAllRows(event.target.checked)}
             />
           </TableCell>
-        )}
+        )} */}
 
         {headLabel.map((headCell) => (
           <TableCell
@@ -59,6 +59,7 @@ export default function TableHeadCustom({
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={() => onSort(headCell.id)}
+                sx={{ mx: '10px' }}
               >
                 {headCell.label}
 
