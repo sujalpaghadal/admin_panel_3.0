@@ -40,4 +40,3 @@ export function useGetStudentsList(id) {
   );
   return memoizedValue;
 }
-
