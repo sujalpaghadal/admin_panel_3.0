@@ -15,28 +15,38 @@ import DashboardUpcomingDemo from '../dashboard-upcoming-demo';
 import DashboardCourseChart from '../dashboard-course-chart';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardView() {
   const theme = useTheme();
-  const [demo,setDemo] = useState([])
+  const { user } = useAuthContext();
+  const [demo, setDemo] = useState([]);
+  const [dashboardData, setDashboardData] = useState([]);
   const getDemos = () => {
     axios
-      .get('https://admin-panel-dmawv.ondigitalocean.app/api/v2/664ec61d671bf9a7f53664b5/demo')
-      .then((res) =>  setDemo(res?.data?.data[0]?.demos))
+      .get(
+        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/upcoming-demo`
+      )
+      .then((res) => setDemo(res?.data?.data))
+      .catch((err) => console.log(err));
+  };
+  const dashboard = () => {
+    axios
+      .get(`https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/dashboard`)
+      .then((res) => setDashboardData(res?.data?.data))
       .catch((err) => console.log(err));
   };
   useEffect(() => {
-    getDemos()
-    
-  }, [])
-  const dd = [76, 42, 29, 41, 27, 138, 117, 86, 63];
-  const filter = demo.filter((data) => new Date(data?.date) < new Date());
+    getDemos();
+    dashboard();
+  }, []);
+
   // console.log(filter,"fffffff");
 
   const settings = useSettingsContext();
-  // https://admin-panel-dmawv.ondigitalocean.app/api/v2/664ec61d671bf9a7f53664b5/demo
+  // https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/deshboard
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography
@@ -45,20 +55,20 @@ export default function DashboardView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Hi, Welcome back 🍌 🍌 🐗 🐫 😖 💻 🔫 🦓 🐒 
+        Hi, Welcome back 🍌 🍌 🐗 🐫 😖 💻 🔫 🦓 🐒 🧠 💡 🦋 🥂 🦁 ⚓
       </Typography>
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <DashboardCount
-            title="Weekly Sales"
-            total={714000}
+            title="Students"
+            total={dashboardData?.students}
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
         </Grid>
         <Grid xs={12} sm={6} md={3}>
           <DashboardCount
-            title="New Users"
-            total={1352831}
+            title="Developers"
+            total={dashboardData?.developers}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
@@ -66,8 +76,8 @@ export default function DashboardView() {
 
         <Grid xs={12} sm={6} md={3}>
           <DashboardCount
-            title="Item Orders"
-            total={1723315}
+            title="Faculties"
+            total={dashboardData?.faculties}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -75,8 +85,8 @@ export default function DashboardView() {
 
         <Grid xs={12} sm={6} md={3}>
           <DashboardCount
-            title="Bug Reports"
-            total={234}
+            title="Labs"
+            total={20}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
@@ -84,7 +94,7 @@ export default function DashboardView() {
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardDemoInquiryChart
-              title="Demo - Inquiry"
+              title="Visits - Inquiry"
               subheader="(+43% Income | +12% Expense) than last year"
               chart={{
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
@@ -97,7 +107,7 @@ export default function DashboardView() {
                         data: [10, 41, 35, 151, 49, 62, 69, 91, 48],
                       },
                       {
-                        name: 'Demo',
+                        name: 'Visits',
                         data: [10, 34, 13, 56, 77, 88, 99, 77, 45],
                       },
                     ],
@@ -110,7 +120,7 @@ export default function DashboardView() {
                         data: [148, 91, 69, 62, 49, 51, 35, 41, 10],
                       },
                       {
-                        name: 'Demo',
+                        name: 'Visits',
                         data: [45, 77, 99, 88, 77, 56, 13, 34, 10],
                       },
                     ],
@@ -120,10 +130,10 @@ export default function DashboardView() {
                     data: [
                       {
                         name: 'Inquiry',
-                        data: dd,
+                        data: [76, 42, 29, 41, 27, 138, 117, 86, 63],
                       },
                       {
-                        name: 'Demo',
+                        name: 'Visits',
                         data: [80, 55, 34, 114, 80, 130, 15, 28, 55],
                       },
                     ],
@@ -152,9 +162,9 @@ export default function DashboardView() {
         <Grid xs={12} md={4}>
           <Stack spacing={3}>
             <DashboardUpcomingDemo
-              title="Contacts"
-              subheader="You have 122 contacts"
-              list={_bankingContacts.slice(-5)}
+              title="Demos"
+              subheader={`You have ${demo.length} demos`}
+              list={demo.slice(-5)}
             />
           </Stack>
         </Grid>
