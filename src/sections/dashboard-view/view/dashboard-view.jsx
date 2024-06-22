@@ -23,6 +23,8 @@ export default function DashboardView() {
   const theme = useTheme();
   const { user } = useAuthContext();
   const [demo, setDemo] = useState([]);
+  const [attendence, setAttendence] = useState({});
+  const [course, setCourse] = useState({});
   const [dashboardData, setDashboardData] = useState([]);
   const getDemos = () => {
     axios
@@ -38,12 +40,34 @@ export default function DashboardView() {
       .then((res) => setDashboardData(res?.data?.data))
       .catch((err) => console.log(err));
   };
+  const getCourse = () => {
+    axios
+      .get(
+        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/student/course`
+      )
+      .then((res) => setCourse(res?.data?.data))
+      .catch((err) => console.log(err));
+  };
+  const getAttendence = () => {
+    axios
+      .get(
+        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/attendance/logs`
+      )
+      .then((res) => setAttendence(res?.data?.data))
+      .catch((err) => console.log(err));
+  };
   useEffect(() => {
     getDemos();
     dashboard();
+    getCourse();
+    getAttendence();
   }, []);
 
-  // console.log(filter,"fffffff");
+  const output = [];
+
+  for (const [key, value] of Object.entries(course)) {
+    output.push({ label: key, value: value });
+  }
 
   const settings = useSettingsContext();
   // https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/deshboard
@@ -55,7 +79,7 @@ export default function DashboardView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Hi, Welcome back 🍌 🍌 🐗 🐫 😖 💻 🔫 🦓 🐒 🧠 💡 🦋 🥂 🦁 ⚓
+        Hi, Welcome back
       </Typography>
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
@@ -147,12 +171,20 @@ export default function DashboardView() {
           <Stack spacing={3}>
             <DashboardAttendenceChart
               title="Student Attendance"
-              total={2324}
+              total={parseInt(dashboardData?.students)}
               chart={{
+                // series: [
+                //   { label: 'Present', value: 22 },
+                //   { label: 'Late', value: 22 },
+                //   { label: 'Absent', value: 22 },
+                // ],
                 series: [
-                  { label: 'Present', value: 44 },
-                  { label: 'Late', value: 75 },
-                  { label: 'Absent', value: 75 },
+                  {
+                    label: 'Present',
+                    value: attendence?.present == 0 ? 0 : attendence?.present || 0,
+                  },
+                  { label: 'Late', value: attendence?.late == 0 ? 0 : attendence?.late || 0 },
+                  { label: 'Absent', value: attendence?.absent == 0 ? 0 : attendence?.absent || 0 },
                 ],
               }}
             />
@@ -168,23 +200,12 @@ export default function DashboardView() {
             />
           </Stack>
         </Grid>
-
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardCourseChart
               title="All Courses"
               chart={{
-                series: [
-                  { label: 'Full-Stack', value: 14 },
-                  { label: 'Flutter', value: 23 },
-                  { label: 'Ui/Ux Designer', value: 21 },
-                  { label: 'C Programing', value: 17 },
-                  { label: 'C++ Programing', value: 15 },
-                  { label: 'CCC Language', value: 10 },
-                  { label: 'Web Designer', value: 12 },
-                  { label: 'Digital Marketing', value: 17 },
-                  { label: 'Coming Soon', value: 21 },
-                ],
+                series: output,
                 colors: [
                   theme.palette.primary.main,
                   theme.palette.warning.dark,

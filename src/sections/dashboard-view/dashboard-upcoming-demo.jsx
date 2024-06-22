@@ -17,7 +17,6 @@ import { Box } from '@mui/system';
 // ----------------------------------------------------------------------
 
 export default function DashboardUpcomingDemo({ title, subheader, list, ...other }) {
-  console.log(list,"listing");
   const router = useRouter()
   return (
     <Card {...other}>
@@ -39,19 +38,17 @@ export default function DashboardUpcomingDemo({ title, subheader, list, ...other
       <Stack spacing={3} sx={{ p: 3 }}>
         {list.map((contact) => (
           <Stack direction="row" alignItems="center" key={contact.id}>
-            <Avatar src={contact.avatarUrl} sx={{ width: 48, height: 48, mr: 2 }}>
-              {contact?.firstName?.charAt(0).toUpperCase()}
+            <Avatar src={contact?.inquiry_id?.firstName} sx={{ width: 48, height: 48, mr: 2 }}>
+              {contact?.inquiry_id?.firstName?.charAt(0).toUpperCase()}
             </Avatar>
 
-            {/* <ListItemText primary={contact.name} secondary={contact.email} /> */}
-            <ListItemText primary={'Heet Timbadiya'} secondary={'Full-Stack'} />
+            <ListItemText
+              primary={`${contact?.inquiry_id?.firstName} ${contact?.inquiry_id?.lastName}`}
+              secondary={`${contact.technology}`}
+            />
 
-            <Box sx={{ fontSize: '15px' }}>8140724110</Box>
-            {/* <Tooltip title="Quick Transfer">
-              <IconButton>
-                <Iconify icon="eva:diagonal-arrow-right-up-fill" />
-              </IconButton>
-            </Tooltip> */}
+            <Box sx={{ fontSize: '15px' }}>{contact?.inquiry_id?.contact}</Box>
+          
           </Stack>
         ))}
       </Stack>

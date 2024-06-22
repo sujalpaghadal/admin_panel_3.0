@@ -30,7 +30,6 @@ const StyledChart = styled(Chart)(({ theme }) => ({
 
 export default function DashboardAttendenceChart({ title, subheader, total, chart, ...other }) {
   const theme = useTheme();
-
   const {
     colors = [
       [theme.palette.primary.light, theme.palette.primary.main],
