@@ -1,21 +1,18 @@
 import * as Yup from 'yup';
-// import { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 
 import Link from '@mui/material/Link';
-// import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-// import TextField from '@mui/material/TextField';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-// import { useRouter } from 'src/routes/hooks';
 
 import { PATH_AFTER_LOGIN } from 'src/config-global';
 import { useSnackbar } from 'src/components/snackbar';
@@ -24,8 +21,6 @@ import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useRouter, useSearchParams } from 'src/routes/hooks';
 
-
-// Validation schema using Yup
 const RegisterSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
@@ -54,6 +49,7 @@ export default function JwtRegisterView() {
     defaultValues,
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
 
@@ -63,13 +59,10 @@ export default function JwtRegisterView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (data, e) => {
-    e.preventDefault();
-    console.log(data);
+  const onSubmit = async (data) => {
     try {
       const URL = `${import.meta.env.VITE_AUTH_API}/api/register`;
       const response = await axios.post(URL, data);
-      console.log('res', response);
       if (response.status === 200) {
         enqueueSnackbar(response.data.data.message, { variant: 'success' });
         const result = response.data.data.tokens;
@@ -81,6 +74,10 @@ export default function JwtRegisterView() {
     } catch (error) {
       console.error('Registration failed:', error);
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -105,12 +102,12 @@ export default function JwtRegisterView() {
           <RHFTextField
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton edge="end">
-                    <Iconify icon="solar:eye-closed-bold" />
+                  <IconButton onClick={handleClickShowPassword} edge="end">
+                    <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
                   </IconButton>
                 </InputAdornment>
               ),

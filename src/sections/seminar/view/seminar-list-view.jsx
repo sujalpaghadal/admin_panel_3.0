@@ -32,7 +32,6 @@ import {
 } from 'src/components/table';
 
 import { useGetSeminar } from 'src/api/seminar';
-import { useAuthContext } from 'src/auth/hooks';
 import SeminarTableToolbar from '../inquiry-table-toolbar';
 import SeminarTableRow from '../seminar-table-row';
 
@@ -44,9 +43,8 @@ const TABLE_HEAD = [
   { id: 'Discription', label: 'Discription' },
   { id: 'Date', label: 'Date', align: 'center' },
   { id: 'Schedule by', label: 'Schedule by', align: 'center' },
-  { id: 'Attended by', label: 'Attended by',align: 'center'  },
+  { id: 'Attended by', label: 'Attended by', align: 'center' },
   { id: '', width: 88 },
-
 ];
 
 const defaultFilters = {
@@ -58,7 +56,6 @@ const defaultFilters = {
 
 export default function InquiryListView() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuthContext();
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -72,7 +69,7 @@ export default function InquiryListView() {
 
   useEffect(() => {
     if (SeminarError) {
-      enqueueSnackbar('Failed to fetch inquiries', { variant: 'error' });
+      enqueueSnackbar('Failed to fetch Seminar', { variant: 'error' });
     }
   }, [SeminarError, enqueueSnackbar]);
 
@@ -123,7 +120,7 @@ export default function InquiryListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.inquiry.edit(id));
+      router.push(paths.dashboard.seminar.edit(id));
     },
     [router]
   );
@@ -132,7 +129,7 @@ export default function InquiryListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Inquiry List"
+          heading="Seminar List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Seminar', href: paths.dashboard.seminar.list },

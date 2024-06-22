@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
+import { useRouter } from 'src/routes/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Typography, Button, TextField, Grid, Box, Container, Autocomplete } from '@mui/material';
+import { Typography, Button, TextField, Grid, Box, Autocomplete } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
+import { useResponsive } from 'src/hooks/use-responsive';
 import { useAuthContext } from 'src/auth/hooks';
-import { useSettingsContext } from 'src/components/settings';
-import axiosInstance from 'src/api/axiosInstance';
-import { useSnackbar } from 'src/components/snackbar';
 import axios from 'axios';
-import { useRouter } from 'src/routes/hooks';
+import { useSnackbar } from 'src/components/snackbar';
 import { paths } from 'src/routes/paths';
 
-export default function SeminarNewEditForm() {
+export default function SeminarNewEditForm({ SeminarId }) {
   const { user } = useAuthContext();
-  console.log(user);
   const [users, setUsers] = useState([]);
+  const mdUp = useResponsive('up', 'md');
   const [selectedRole, setSelectedRole] = useState('');
   const router = useRouter();
+  const [allUser, setAllUser] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
-    schedule_by: Yup.object().required('Schedule by is required'),
+    schedule_by: Yup.string().required('Schedule by is required'),
     date_time: Yup.date().required('Date and Time are required').nullable(),
-    role: Yup.string().required('Role is required'),
-    users: Yup.array().min(1, 'At least one user is required').required('Users are required'),
   });
 
   const methods = useForm({
@@ -42,40 +41,109 @@ export default function SeminarNewEditForm() {
     },
   });
 
+  console.log(user);
+
   const ROLE = ['Employee', 'Student'];
-  const Sheduled_by = [
-    {
-      _id: '66710d4da24c98a090efd338',
-      name: 'Kaushal sir',
-    },
-  ];
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_AUTH_API}/api/company/${user?.company_id}/user/list`
+        );
+        setAllUser(response.data);
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+      }
+    };
+    getUsers();
+  }, [user?.company_id]);
+
+  const filter = allUser.map((data) => `${data?.firstName} ${data?.lastName}`);
 
   const {
     handleSubmit,
     control,
     formState: { isSubmitting },
     setValue,
+    reset,
     watch,
   } = methods;
 
+  useEffect(() => {
+    const fetchSeminarById = async () => {
+      try {
+        if (SeminarId) {
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar/${SeminarId}`;
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          reset({
+            title: data.title,
+            desc: data.desc,
+            date_time: data?.date_time ? new Date(data.date_time) : null,
+            schedule_by: data.schedule_by.firstName + data.schedule_by.lastName,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch seminar:', error);
+      }
+    };
+
+    fetchSeminarById();
+  }, [SeminarId, reset]);
+
+  const postSeminar = async (payload) => {
+    try {
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar`;
+      const response = await axios.post(URL, payload);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating seminar:', error.message);
+      throw error;
+    }
+  };
+
+  const updateSeminar = async (payload) => {
+    try {
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar/${SeminarId}`;
+      const response = await axios.put(URL, payload);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating seminar:', error.message);
+      throw error;
+    }
+  };
+
   const onSubmit = async (data) => {
+    const assignObject = allUser.find(
+      (item) => `${item.firstName} ${item.lastName}` === data.schedule_by
+    );
+
     const payload = {
       title: data.title,
       desc: data.desc,
       company_id: user.company_id,
       date_time: data.date_time,
-      schedule_by: data.schedule_by._id,
-      attended_by: data.users.map((user) => user._id),
+      schedule_by: assignObject?._id,
+      attended_by: data.users.map((attended_by) => attended_by._id),
     };
-    console.log('payload', payload);
+    console.log(payload);
     try {
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar`;
-      const response = await axios.post(URL, payload);
-      enqueueSnackbar(response.data.message, { variant: 'success' });
-      router.push(paths.dashboard.seminar.list);
+      let response;
+
+      if (SeminarId) {
+        response = await updateSeminar(payload);
+        console.log(response);
+        router.push(paths.dashboard.seminar.list);
+        enqueueSnackbar(response.message, { variant: 'success' });
+      } else {
+        response = await postSeminar(payload);
+        enqueueSnackbar(response.message, { variant: 'success' });
+        router.push(paths.dashboard.seminar.list);
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
-      enqueueSnackbar('Failed to fetch seminars', { variant: 'error' });
+      enqueueSnackbar(error.response.message, { variant: 'error' });
     }
   };
 
@@ -85,7 +153,7 @@ export default function SeminarNewEditForm() {
       const response = await axios.get(URL);
       setUsers(response.data.data);
     } catch (error) {
-      console.log(error);
+      console.error('Failed to fetch users:', error);
     }
   };
 
@@ -107,49 +175,53 @@ export default function SeminarNewEditForm() {
 
   return (
     <Grid container spacing={4}>
-      <Grid item md={4}>
+      {mdUp && (
+        <Grid item md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Seminar Details
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Seminar , role, Schedule by...
+          </Typography>
+        </Grid>
+      )}
+      <Grid item xs={12} md={6}>
         <FormProvider {...methods}>
           <Box sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Seminar Form
-            </Typography>
             <Box
               component="form"
+              onSubmit={handleSubmit(onSubmit)}
               display="grid"
               gridTemplateColumns="repeat(1, 1fr)"
               gap={3}
-              onSubmit={handleSubmit(onSubmit)}
             >
               <Controller
                 name="title"
                 control={control}
                 render={({ field }) => <TextField {...field} label="Title" fullWidth />}
               />
-              <Controller
+
+              <RHFAutocomplete
                 name="schedule_by"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    options={Sheduled_by}
-                    getOptionLabel={(option) => option.name}
-                    onChange={(_, value) => field.onChange(value)}
-                    renderInput={(params) => <TextField {...params} label="Schedule By" />}
-                    isOptionEqualToValue={(option, value) => option._id === value._id}
-                  />
-                )}
+                label="Schedule By"
+                placeholder="Choose a contact person"
+                fullWidth
+                options={filter}
+                getOptionLabel={(option) => option}
               />
+
               <Controller
                 name="date_time"
                 control={control}
                 render={({ field }) => (
                   <DateTimePicker
-                    label="Date and Time"
                     {...field}
+                    label="Date and Time"
                     renderInput={(params) => <TextField {...params} fullWidth />}
                   />
                 )}
               />
+
               <Controller
                 name="role"
                 control={control}
@@ -163,6 +235,7 @@ export default function SeminarNewEditForm() {
                   />
                 )}
               />
+
               <Controller
                 name="users"
                 control={control}
@@ -188,7 +261,10 @@ export default function SeminarNewEditForm() {
           </Box>
         </FormProvider>
       </Grid>
-      <Grid item xs={12} md={8}></Grid>
     </Grid>
   );
 }
+
+SeminarNewEditForm.propTypes = {
+  SeminarId: PropTypes.string,
+};

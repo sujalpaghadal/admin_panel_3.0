@@ -100,7 +100,7 @@ export default function SeminarTableRow({
                   </Box>
 
                   <Box sx={{ width: '200px' }}>{item.role}</Box>
-                  <Box sx={{ width: '380px' }}>{item.firstName + ' ' + item.firstName}</Box>
+                  <Box sx={{ width: '380px' }}>{item.firstName + ' ' + item.lastName}</Box>
                   <Box sx={{ width: '300px' }}>{item.contact}</Box>
                   <Box sx={{ width: '280px' }}>{item.email}</Box>
                 </Stack>

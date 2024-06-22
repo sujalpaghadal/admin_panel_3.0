@@ -22,6 +22,7 @@ import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 import { SettingsPage } from 'src/sections/settings/view';
+import SeminarEditPage from 'src/pages/dashboard/seminar/edit';
 
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
@@ -192,6 +193,7 @@ export const dashboardRoutes = [
           { element: <SeminarListPage />, index: true },
           { path: 'new', element: <SeminarCreatePage /> },
           { path: 'list', element: <SeminarListPage /> },
+          { path: ':id/edit', element: <SeminarEditPage /> },
         ],
       },
       {

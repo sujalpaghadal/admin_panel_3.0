@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 import { useSnackbar } from 'src/components/snackbar';
 import { useAuthContext } from 'src/auth/hooks';
@@ -19,6 +19,7 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useResponsive } from 'src/hooks/use-responsive';
+import { useGetConfigs } from 'src/api/config';
 import { EMPLOYEE_GENDER, ROLE } from 'src/_mock/_employee';
 import FormProvider, {
   RHFUploadAvatar,
@@ -29,12 +30,16 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import countrystatecity from '../../_mock/map/csc.json';
 
+
 export default function EmployeeNewEditForm({ employeeId }) {
   const { user } = useAuthContext();
   const router = useRouter();
+  const { configs, mutate } = useGetConfigs();
+  console.log(configs);
   const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const mdUp = useResponsive('up', 'md');
+
 
   const NewEmployeeSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
@@ -296,7 +301,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 label="Role"
                 placeholder="Choose a role"
                 fullWidth
-                options={ROLE.map((option) => option)}
+                options={configs.emp_type.map((option) => option)}
                 getOptionLabel={(option) => option}
               />
 
@@ -309,7 +314,15 @@ export default function EmployeeNewEditForm({ employeeId }) {
               />
 
               <RHFTextField name="qualification" label="Qualification" />
-              <RHFTextField name="technology" label="Technology" />
+              <RHFAutocomplete
+                name="Technology"
+                type="technology"
+                label="Technology"
+                placeholder="Choose a Technology"
+                fullWidth
+                options={configs.developer_type.map((option) => option)}
+                getOptionLabel={(option) => option}
+              />
 
               <Stack spacing={1.5}>
                 <Controller

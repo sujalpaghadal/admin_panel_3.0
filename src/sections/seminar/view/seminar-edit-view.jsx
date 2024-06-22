@@ -11,7 +11,7 @@ import SeminarNewEditForm from '../seminar-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function EmployeeEditView() {
+export default function SeminarEditView({id}) {
   const settings = useSettingsContext();
 
   return (
@@ -34,11 +34,11 @@ export default function EmployeeEditView() {
         }}
       />
 
-      <SeminarNewEditForm />
+      <SeminarNewEditForm SeminarId={id}/>
     </Container>
   );
 }
 
-// EmployeeEditView.propTypes = {
-//   id: PropTypes.string,
-// };
+SeminarEditView.propTypes = {
+  id: PropTypes.string,
+};

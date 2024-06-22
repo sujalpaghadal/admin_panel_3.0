@@ -163,6 +163,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/seminar`,
       new: `${ROOTS.DASHBOARD}/seminar/new`,
       list: `${ROOTS.DASHBOARD}/seminar/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/seminar/${id}/edit`,
     },
 
     invoice: {

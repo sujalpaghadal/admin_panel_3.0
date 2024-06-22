@@ -13,6 +13,7 @@ import EmployeeCreatePage from './employee-role-crete-view';
 import Labcreatepage from './lab-create-view';
 import Userrolecreatepage from './user-role-create-view';
 import ExpensesCreatePage from './expenses-create-view';
+import Developercreatepage from './developer-role-create-view';
 
 const TABS = [
   {
@@ -95,6 +96,7 @@ export default function SettingsPage() {
         {currentTab === 'Courses' && <CourseCreatePage />}
         {currentTab === 'Lab' && <Labcreatepage />}
         {currentTab === 'Employee Role' && <EmployeeCreatePage />}
+        {currentTab === 'Developer Option' && <Developercreatepage />}
         {currentTab === 'Application Banner' && <AppbanerCreate />}
       </Container>
     </>
