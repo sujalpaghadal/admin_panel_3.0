@@ -34,7 +34,6 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { useGetAllAttendance } from 'src/api/attendance';
 // ----------------------------------------------------------------------
 import StudentAttendanceTableRow from './student-attendance-table-row';
 import StudentAttendanceTableToolbar from './student-attendance-table-toolbar';
