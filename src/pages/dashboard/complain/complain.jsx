@@ -1,11 +1,8 @@
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/routes/paths';
-
 import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import ComplainListing from 'src/sections/overview/complain/complain-listing';
 
-import ComplainNewForm from '../complain-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +11,7 @@ export default function StudentComplainCreateView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <ComplainNewForm />
+      <ComplainListing />
     </Container>
   );
 }

@@ -1,29 +1,26 @@
 import PropTypes from 'prop-types';
-import { useCallback } from 'react';
-
+import { useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
-import Pagination, { paginationClasses } from '@mui/material/Pagination';
-
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-
 import ExaminationItem from './examination-item';
+import { useGetExam } from 'src/api/examination';
 
-// ----------------------------------------------------------------------
-
-export default function ExaminationList({ jobs }) {
+export default function ExaminationList({ currentStudentExams }) {
   const router = useRouter();
+
+
 
   const handleView = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.details(id));
+      router.push(paths.dashboard.student.details(id));
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.edit(id));
+      router.push(paths.dashboard.student.edit(id));
     },
     [router]
   );
@@ -31,6 +28,7 @@ export default function ExaminationList({ jobs }) {
   const handleDelete = useCallback((id) => {
     console.info('DELETE', id);
   }, []);
+
 
   return (
     <>
@@ -43,20 +41,21 @@ export default function ExaminationList({ jobs }) {
           md: 'repeat(3, 1fr)',
         }}
       >
-        {jobs.map((job) => (
+        {currentStudentExams.map((studentExam) => (
           <ExaminationItem
-            key={job.id}
-            job={job}
-            onView={() => handleView(job.id)}
-            onEdit={() => handleEdit(job.id)}
-            onDelete={() => handleDelete(job.id)}
+            key={studentExam._id}
+            exam={studentExam}
+            onView={() => handleView(studentExam.examId)}
+            onEdit={() => handleEdit(studentExam.examId)}
+            onDelete={() => handleDelete(studentExam.examId)}
           />
         ))}
       </Box>
 
-      {jobs.length > 8 && (
+      {/* Uncomment and modify this block if pagination is needed */}
+      {/* {currentStudentExams.length > 8 && (
         <Pagination
-          count={8}
+          count={Math.ceil(currentStudentExams.length / 8)}
           sx={{
             mt: 8,
             [`& .${paginationClasses.ul}`]: {
@@ -64,11 +63,14 @@ export default function ExaminationList({ jobs }) {
             },
           }}
         />
-      )}
+      )} */}
     </>
   );
 }
 
 ExaminationList.propTypes = {
-  jobs: PropTypes.array,
+  currentStudent: PropTypes.shape({
+    company_id: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
+  }).isRequired,
 };

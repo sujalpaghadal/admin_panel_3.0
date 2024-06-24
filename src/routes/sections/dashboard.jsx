@@ -20,6 +20,7 @@ import BatchEditPage from 'src/pages/dashboard/batches/edit';
 import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
+import ComplainListView from 'src/sections/overview/complain/view/complain-list-view';
 import ExaminationListPage from 'src/pages/dashboard/examination/list';
 import ExaminationCreatePage from 'src/pages/dashboard/examination/create';
 import ExaminationEditPage from 'src/pages/dashboard/examination/edit';
@@ -40,6 +41,9 @@ const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce')
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
+
+//COMPLAIN
+// const StudentComplainCreateView = lazy(() => import('src/sections/student/view/student-complain-create-view'));
 
 // Inquiry
 const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
@@ -119,6 +123,7 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'fees', element: <FeesPage /> },
+      { path: 'complain', element: <ComplainListView /> },
       {
         path: 'fees/fee-invoice',
         element: <InvoiceDetailsView id="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2" />,

@@ -53,7 +53,7 @@ export function useGetEvents() {
   return memoizedValue;
 }
 
-.0
+
 // ----------------------------------------------------------------------
 
 export async function createEvent(eventData) {

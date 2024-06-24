@@ -22,35 +22,44 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
+export default function ExaminationItem({ exam, onView, onEdit, onDelete }) {
   const popover = usePopover();
 
-  const { id, title, company, createdAt, candidates, experience, employmentTypes, salary, role } =
-    job;
-
+  const { examTitle, examDate, totalMarks, obtained_marks } = exam;
+  
   return (
     <>
       <Card>
-        <IconButton onClick={popover.onOpen} sx={{ position: 'absolute', top: 8, right: 8 }}>
+        {/* <IconButton onClick={popover.onOpen} sx={{ position: 'absolute', top: 8, right: 8 }}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
+        <Box sx={{ position: 'absolute', top: 20, right: 20 }}>
+          <Box sx={{ display: 'flex' , justifyContent: "space-between",alignItems: "center"}}>
+            <Typography sx={{ fontSize: '13px', color: 'text.disabled' }}>
+              Total Marks :{' '}
+            </Typography>
+            <Typography sx={{ fontSize: '13px', ml: '5px' }}>{totalMarks}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: "space-between",alignItems: "center" }}>
+            <Typography sx={{ fontSize: '13px', color: 'text.disabled' }}>
+              Obtain Marks :{' '}
+            </Typography>
+            <Typography sx={{ fontSize: '13px', ml: '5px' }}>{obtained_marks}</Typography>
+          </Box>
+        </Box>
 
         <Stack sx={{ p: 3, pb: 2 }}>
           <Avatar
-            alt={'https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png'}
-            src={'https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png'}
+            src="https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png"
+            alt="image"
             variant="rounded"
             sx={{ width: 48, height: 48, mb: 2 }}
           />
 
           <ListItemText
             sx={{ mb: 1 }}
-            primary={
-              <Link component={RouterLink} href={paths.dashboard.student.edit(id)} color="inherit">
-                {title}
-              </Link>
-            }
-            secondary={`Posted date: ${fDate(createdAt)}`}
+            primary={<Link color="inherit">{examTitle}</Link>}
+            secondary={`Posted date: ${fDate(examDate)}`}
             primaryTypographyProps={{
               typography: 'subtitle1',
             }}
@@ -62,35 +71,34 @@ export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
             }}
           />
 
-          <Stack
+          {/* <Stack
             spacing={0.5}
             direction="row"
             alignItems="center"
             sx={{ color: 'primary.main', typography: 'caption' }}
           >
-            <Iconify width={16} icon="solar:users-group-rounded-bold" />
-            {candidates.length} Candidates
-          </Stack>
+            <Iconify width={16} icon="solar:users-group-rounded-bold" />3 Candidates
+          </Stack> */}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
+        {/* <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
           {[
             {
-              label: experience,
+              label: "experience",
               icon: <Iconify width={16} icon="carbon:skill-level-basic" sx={{ flexShrink: 0 }} />,
             },
             {
-              label: employmentTypes.join(', '),
+              label: "employmentTypes",
               icon: <Iconify width={16} icon="solar:clock-circle-bold" sx={{ flexShrink: 0 }} />,
             },
             {
-              label: salary.negotiable ? 'Negotiable' : fCurrency(salary.price),
+              label: "salary",
               icon: <Iconify width={16} icon="solar:wad-of-money-bold" sx={{ flexShrink: 0 }} />,
             },
             {
-              label: role,
+              label: "role",
               icon: <Iconify width={16} icon="solar:user-rounded-bold" sx={{ flexShrink: 0 }} />,
             },
           ].map((item) => (
@@ -108,10 +116,10 @@ export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
               </Typography>
             </Stack>
           ))}
-        </Box>
+        </Box> */}
       </Card>
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -147,7 +155,7 @@ export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }
