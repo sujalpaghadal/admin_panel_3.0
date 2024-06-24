@@ -230,15 +230,15 @@ export default function StudentListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'Completed' && 'success') ||
-                      (tab.value === 'Running' && 'warning') ||
-                      (tab.value === 'Leaved' && 'error') ||
+                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'running' && 'warning') ||
+                      (tab.value === 'leaved' && 'error') ||
                       'default'
                     }
                   >
-                    {['Running', 'Leaved', 'Completed'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
+                    {['running', 'leaved', 'completed'].includes(tab.value)
+                      ? students.filter((user) => user.status === tab.value).length
+                      : students.length}
                   </Label>
                 }
               />
