@@ -16,7 +16,7 @@ export default function MainLayout({ children }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 1 }}>
-      <Header />
+      {/* <Header /> */}
 
       <Box
         component="main"
@@ -30,7 +30,7 @@ export default function MainLayout({ children }) {
         {children}
       </Box>
 
-      <Footer />
+      {/* <Footer /> */}
     </Box>
   );
 }

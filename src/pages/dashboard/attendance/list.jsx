@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { AttendanceListView } from 'src/sections/attendance/view';
+import { AddAttendanceListView, AttendanceListView } from 'src/sections/attendance/view';
 
 // ----------------------------------------------------------------------
 

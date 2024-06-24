@@ -110,7 +110,9 @@ export const paths = {
       analytics: `${ROOTS.DASHBOARD}/analytics`,
       banking: `${ROOTS.DASHBOARD}/banking`,
       booking: `${ROOTS.DASHBOARD}/booking`,
+
       fees: `${ROOTS.DASHBOARD}/fees`,
+      feesInvoice: `${ROOTS.DASHBOARD}/fees/fee-invoice`,
     },
 
     inquiry: {
@@ -203,6 +205,24 @@ export const paths = {
       edit: (id) => `${ROOTS.DASHBOARD}/expenses/${id}/edit`,
       new: `${ROOTS.DASHBOARD}/expenses/new`,
     },
+    visit: {
+      root: `${ROOTS.DASHBOARD}/visit`,
+      list: `${ROOTS.DASHBOARD}/visit/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/visit/${id}/edit`,
+      new: `${ROOTS.DASHBOARD}/visit/new`,
+    },
+    examination: {
+      root: `${ROOTS.DASHBOARD}/examination`,
+      list: `${ROOTS.DASHBOARD}/examination/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/examination/${id}/edit`,
+      new: `${ROOTS.DASHBOARD}/examination/new`,
+    },
+    task: {
+      root: `${ROOTS.DASHBOARD}/task`,
+      list: `${ROOTS.DASHBOARD}/task/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/task/${id}/edit`,
+      new: `${ROOTS.DASHBOARD}/task/new`,
+    },
 
     batches: {
       root: `${ROOTS.DASHBOARD}/batches`,
@@ -220,6 +240,7 @@ export const paths = {
 
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
+      new: `${ROOTS.DASHBOARD}/attendance/new`,
     },
   },
 };

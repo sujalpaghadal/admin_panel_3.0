@@ -1,11 +1,11 @@
-import React ,{ useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { paths } from 'src/routes/paths';
 
 import { useTranslate } from 'src/locales';
 
 // import Label from 'src/components/label';
-// import Iconify from 'src/components/iconify';
+import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -40,6 +40,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  batches: <Iconify icon="solar:users-group-rounded-bold-duotone" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
@@ -54,30 +55,30 @@ export function useNavData() {
         subheader: t('overview'),
         items: [
           {
-            title: t('app'),
+            title: t('dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
           },
-          {
-            title: t('ecommerce'),
-            path: paths.dashboard.general.ecommerce,
-            icon: ICONS.ecommerce,
-          },
-          {
-            title: t('analytics'),
-            path: paths.dashboard.general.analytics,
-            icon: ICONS.analytics,
-          },
-          {
-            title: t('banking'),
-            path: paths.dashboard.general.banking,
-            icon: ICONS.banking,
-          },
-          {
-            title: t('booking'),
-            path: paths.dashboard.general.booking,
-            icon: ICONS.booking,
-          },
+          // {
+          //   title: t('ecommerce'),
+          //   path: paths.dashboard.general.ecommerce,
+          //   icon: ICONS.ecommerce,
+          // },
+          // {
+          //   title: t('analytics'),
+          //   path: paths.dashboard.general.analytics,
+          //   icon: ICONS.analytics,
+          // },
+          // {
+          //   title: t('banking'),
+          //   path: paths.dashboard.general.banking,
+          //   icon: ICONS.banking,
+          // },
+          // {
+          //   title: t('booking'),
+          //   path: paths.dashboard.general.booking,
+          //   icon: ICONS.booking,
+          // },
         ],
       },
 
@@ -89,9 +90,8 @@ export function useNavData() {
           // STUDENT
           {
             title: t('student'),
-            path: paths.dashboard.student.root,
+            path: paths.dashboard.student.list,
             icon: ICONS.user,
-            children: [{ title: t('list'), path: paths.dashboard.student.list }],
           },
 
           // FEES
@@ -111,42 +111,41 @@ export function useNavData() {
           // INQUIRY
           {
             title: t('inquiry'),
-          path: paths.dashboard.inquiry.list,
+            path: paths.dashboard.inquiry.list,
             icon: ICONS.inquiry,
           },
           // PRODUCT
-          {
-            title: t('product'),
-            path: paths.dashboard.product.root,
-            icon: ICONS.product,
-            children: [
-              { title: t('list'), path: paths.dashboard.product.root },
-              {
-                title: t('details'),
-                path: paths.dashboard.product.demo.details,
-              },
-              { title: t('create'), path: paths.dashboard.product.new },
-              { title: t('edit'), path: paths.dashboard.product.demo.edit },
-            ],
-          },
+          // {
+          //   title: t('product'),
+          //   path: paths.dashboard.product.root,
+          //   icon: ICONS.product,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.product.root },
+          //     {
+          //       title: t('details'),
+          //       path: paths.dashboard.product.demo.details,
+          //     },
+          //     { title: t('create'), path: paths.dashboard.product.new },
+          //     { title: t('edit'), path: paths.dashboard.product.demo.edit },
+          //   ],
+          // },
 
           // ORDER
-          {
-            title: t('order'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.order.root },
-              { title: t('details'), path: paths.dashboard.order.demo.details },
-            ],
-          },
+          // {
+          //   title: t('order'),
+          //   path: paths.dashboard.order.root,
+          //   icon: ICONS.order,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.order.root },
+          //     { title: t('details'), path: paths.dashboard.order.demo.details },
+          //   ],
+          // },
 
           // DEMO
           {
             title: t('Demo'),
             path: paths.dashboard.demo.root,
             icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.demo.root }],
           },
 
           // SEMINAR
@@ -160,8 +159,7 @@ export function useNavData() {
           {
             title: t('attendance'),
             path: paths.dashboard.attendance.root,
-            icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.attendance.root }],
+            icon: ICONS.external,
           },
 
           // EXPENSES
@@ -169,35 +167,55 @@ export function useNavData() {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
             icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+          // TASK
+          {
+            title: t('task'),
+            path: paths.dashboard.task.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+          {
+            title: t('visit'),
+            path: paths.dashboard.visit.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+
+          {
+            title: t('exam'),
+            path: paths.dashboard.examination.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           // BATCH
           {
             title: t('batches'),
             path: paths.dashboard.batches.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.batches.root },
-              { title: t('details'), path: paths.dashboard.batches.demo.details },
-            ],
+            icon: ICONS.batches,
+            // children: [
+            // { title: t('list'), path: paths.dashboard.batches.root },
+            // { title: t('details'), path: paths.dashboard.batches.demo.details },
+            // ],
           },
 
           // INVOICE
-          {
-            title: t('invoice'),
-            path: paths.dashboard.invoice.root,
-            icon: ICONS.invoice,
-            children: [
-              { title: t('list'), path: paths.dashboard.invoice.root },
-              {
-                title: t('details'),
-                path: paths.dashboard.invoice.demo.details,
-              },
-              { title: t('create'), path: paths.dashboard.invoice.new },
-              { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
-            ],
-          },
+          // {
+          //   title: t('invoice'),
+          //   path: paths.dashboard.invoice.root,
+          //   icon: ICONS.invoice,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.invoice.root },
+          //     {
+          //       title: t('details'),
+          //       path: paths.dashboard.invoice.demo.details,
+          //     },
+          //     { title: t('create'), path: paths.dashboard.invoice.new },
+          //     { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
+          //   ],
+          // },
 
           // CALENDAR
           {
@@ -206,12 +224,12 @@ export function useNavData() {
             icon: ICONS.calendar,
           },
 
-          // KANBAN
-          {
-            title: t('kanban'),
-            path: paths.dashboard.kanban,
-            icon: ICONS.kanban,
-          },
+          // // KANBAN
+          // {
+          //   title: t('kanban'),
+          //   path: paths.dashboard.kanban,
+          //   icon: ICONS.kanban,
+          // },
         ],
       },
     ],

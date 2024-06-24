@@ -58,7 +58,6 @@ const defaultFilters = {
 
 export default function InquiryListView() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuthContext();
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -156,13 +155,13 @@ export default function InquiryListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Inquiry List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Inquiry', href: paths.dashboard.inquiry.list },
-            { name: 'Inquiry List' },
+            { name: 'Inquiry' },
           ]}
           action={
             <Button
@@ -211,12 +210,12 @@ export default function InquiryListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

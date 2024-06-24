@@ -10,27 +10,42 @@ import { LoadingScreen } from 'src/components/loading-screen';
 
 // SETTING PROFILE
 import UserProfile from 'src/pages/dashboard/profile/profile';
+import { SettingsPage } from 'src/sections/settings/view';
 
 // BATCH
-import BatchListPage from 'src/pages/dashboard/batches/list';
-import BatchCreatePage from 'src/pages/dashboard/batches/create';
-import BatchEditPage from 'src/pages/dashboard/batches/edit';
-import StudentCardsPage from 'src/pages/dashboard/student/cards';
-
+const BatchListPage = lazy(() => import('src/pages/dashboard/batches/list'));
+const BatchCreatePage = lazy(() => import('src/pages/dashboard/batches/create'));
+const BatchEditPage = lazy(() => import('src/pages/dashboard/batches/edit'));
 // EXPENSE
-import ExpenseListPage from 'src/pages/dashboard/expenses/list';
-import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
-import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
-import { SettingsPage } from 'src/sections/settings/view';
-import SeminarEditPage from 'src/pages/dashboard/seminar/edit';
+const ExpenseListPage = lazy(() => import('src/pages/dashboard/expenses/list'));
+const ExpensesCreatePage = lazy(() => import('src/pages/dashboard/expenses/create'));
+const ExpensesEditPage = lazy(() => import('src/pages/dashboard/expenses/edit'));
+
+// Examination
+const ExaminationListPage = lazy(() => import('src/pages/dashboard/examination/list'));
+const ExaminationCreatePage = lazy(() => import('src/pages/dashboard/examination/create'));
+const ExaminationEditPage = lazy(() => import('src/pages/dashboard/examination/edit'));
+
+// Task
+const TaskListPage = lazy(() => import('src/pages/dashboard/task/list'));
+const TaskCreatePage = lazy(() => import('src/pages/dashboard/task/create'));
+const TaskEditPage = lazy(() => import('src/pages/dashboard/task/edit'));
+
+// Visit
+const VisitListPage = lazy(() => import('src/pages/dashboard/visit/list'));
+const VisitCreatePage = lazy(() => import('src/pages/dashboard/visit/create'));
+const VisitEditPage = lazy(() => import('src/pages/dashboard/visit/edit'));
+
+// FEES
+const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
+const InvoiceDetailsView = lazy(() => import('src/sections/overview/fees/invoice-page'));
 
 // OVERVIEW
-const IndexPage = lazy(() => import('src/pages/dashboard/app'));
+const IndexPage = lazy(() => import('src/pages/dashboard/dashboard'));
 const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
-const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
 
 // Inquiry
 const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
@@ -53,9 +68,11 @@ const DemoListPage = lazy(() => import('src/pages/dashboard/demo/list'));
 // SEMINAR
 const SeminarListPage = lazy(() => import('src/pages/dashboard/seminar/list'));
 const SeminarCreatePage = lazy(() => import('src/pages/dashboard/seminar/new'));
+const SeminarEditPage = lazy(() => import('src/pages/dashboard/seminar/edit'));
 
 // ATTENDANCE
 const AttendanceListPage = lazy(() => import('src/pages/dashboard/attendance/list'));
+const AttendanceCreatePage = lazy(() => import('src/pages/dashboard/attendance/new-list'));
 
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
@@ -69,6 +86,7 @@ const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
 const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
 const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
 const GuardianDetailsPage = lazy(() => import('src/pages/dashboard/student/guardian'));
+const StudentCardsPage = lazy(() => import('src/pages/dashboard/student/cards'));
 
 // EMPLOYEE
 const EmployeeProfilePage = lazy(() => import('src/pages/dashboard/employee/profile'));
@@ -106,6 +124,10 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'fees', element: <FeesPage /> },
+      {
+        path: 'fees/fee-invoice',
+        element: <InvoiceDetailsView id="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2" />,
+      },
       {
         path: 'inquiry',
         children: [
@@ -178,6 +200,33 @@ export const dashboardRoutes = [
         ],
       },
       {
+        path: 'task',
+        children: [
+          { element: <TaskListPage />, index: true },
+          { path: 'list', element: <TaskListPage /> },
+          { path: 'new', element: <TaskCreatePage /> },
+          { path: ':id/edit', element: <TaskEditPage /> },
+        ],
+      },
+      {
+        path: 'visit',
+        children: [
+          { element: <VisitListPage />, index: true },
+          { path: 'list', element: <VisitListPage /> },
+          { path: 'new', element: <VisitCreatePage /> },
+          { path: ':id/edit', element: <VisitEditPage /> },
+        ],
+      },
+      {
+        path: 'examination',
+        children: [
+          { element: <ExaminationListPage />, index: true },
+          { path: 'list', element: <ExaminationListPage /> },
+          { path: 'new', element: <ExaminationCreatePage /> },
+          { path: ':id/edit', element: <ExaminationEditPage /> },
+        ],
+      },
+      {
         path: 'batches',
         children: [
           { element: <BatchListPage />, index: true },
@@ -201,6 +250,7 @@ export const dashboardRoutes = [
         children: [
           { element: <AttendanceListPage />, index: true },
           { path: 'list', element: <AttendanceListPage /> },
+          { path: 'new', element: <AttendanceCreatePage /> },
         ],
       },
       {

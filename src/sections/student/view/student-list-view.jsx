@@ -50,13 +50,14 @@ import { useGetStudents } from '../../../api/student';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'enrollment_no', label: 'Enroll No', width: 180 },
+  { id: 'srNo', label: 'Sr No',  align: "center" },
+  { id: 'enrollment_no', label: 'Enroll No', align: "center" },
   { id: 'name', label: 'Name' },
-  { id: 'contact', label: 'Phone Number', width: 180 },
-  { id: 'course', label: 'Course', width: 220 },
-  { id: 'joining_date', label: 'Joining date', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 88 },
+  { id: 'contact', label: 'Phone Number' },
+  { id: 'course', label: 'Course' },
+  { id: 'joining_date', label: 'Joining date' },
+  { id: 'status', label: 'Status' },
+  { id: '' },
 ];
 
 const defaultFilters = {
@@ -209,15 +210,15 @@ export default function StudentListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'Completed' && 'success') ||
-                      (tab.value === 'Running' && 'warning') ||
-                      (tab.value === 'Leaved' && 'error') ||
+                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'running' && 'warning') ||
+                      (tab.value === 'leaved' && 'error') ||
                       'default'
                     }
                   >
-                    {['Running', 'Leaved', 'Completed'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
+                    {['running', 'leaved', 'completed'].includes(tab.value)
+                      ? students.filter((user) => user.status === tab.value).length
+                      : students.length}
                   </Label>
                 }
               />
@@ -284,10 +285,10 @@ export default function StudentListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row, index) => (
                       <StudentTableRow
                         key={row._id}
-                        row={row}
+                        row={{...row, index}}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
                         onDeleteRow={() => handleDeleteRow(row._id)}

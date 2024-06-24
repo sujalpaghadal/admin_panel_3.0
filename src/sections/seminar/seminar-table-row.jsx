@@ -9,6 +9,7 @@ import {
   IconButton,
   Tooltip,
   Avatar,
+  Table,
 } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -19,6 +20,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { Stack } from '@mui/system';
+import { TableHeadCustom } from 'src/components/table';
 
 export default function SeminarTableRow({
   row,
@@ -34,15 +36,21 @@ export default function SeminarTableRow({
   const popover = usePopover();
   const collapse = useBoolean();
 
+  const TABLE_HEAD = [
+    { id: 'srNo', label: 'Sr No', width: '240px',align:'center' },
+    { id: 'Image', label: 'image', width: '250px' ,align:'center'},
+    { id: 'Role', label: 'Role', width: '250px' ,align:'center'},
+    { id: ' Name', label: ' Name', width: '250px',align:'center' },
+    { id: 'Contact', label: 'Contact', width: '250px' ,align:'center'},
+    { id: 'email', label: 'Email', width: '250px' ,align:'center'},
+  ];
+
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell>
-          <Box>{index + 1}</Box>
-        </TableCell>
+        <TableCell>{index + 1}</TableCell>
 
         <TableCell>{title}</TableCell>
-        
 
         <TableCell> {desc} </TableCell>
         <TableCell align="center">{fDate(date_time)}</TableCell>
@@ -78,34 +86,40 @@ export default function SeminarTableRow({
             unmountOnExit
             sx={{ bgcolor: 'background.neutral' }}
           >
-            <Stack component={Paper} sx={{ m: 1.5 }}>
-              {attended_by.map((item) => (
-                <Stack
-                  key={item.id}
-                  direction="row"
-                  alignItems="center"
-                  sx={{
-                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                    '&:not(:last-of-type)': {
-                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                    },
-                  }}
-                >
-                  <Box sx={{ width: '150px' }}>
-                    <Avatar
-                      src={item.avatar_url}
-                      variant="rounded"
-                      sx={{ width: 48, height: 48, mr: 2 }}
-                    />
-                  </Box>
+            <Table sx={{ width: '100%', display: 'unset' }}>
+              <TableHeadCustom headLabel={TABLE_HEAD} />
+              <Stack component={Paper} sx={{ m: 1.5 }}>
+                {attended_by.map((item, index) => (
+                  <Stack
+                    key={item.id}
+                    direction="row"
+                    alignItems="center"
+                    sx={{
+                      p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                      '&:not(:last-of-type)': {
+                        borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                      },
+                    }}
+                  >
+                    <TableCell sx={{ width: '240px' }} align="center">{index + 1}</TableCell>
+                    <TableCell sx={{ width: '240px' }} align="center">
+                      <Avatar
+                        src={item.avatar_url}
+                        variant="rounded"
+                        sx={{ width: 50, height: 50, m: 'auto'}}
+                      />
+                    </TableCell>
 
-                  <Box sx={{ width: '200px' }}>{item.role}</Box>
-                  <Box sx={{ width: '380px' }}>{item.firstName + ' ' + item.lastName}</Box>
-                  <Box sx={{ width: '300px' }}>{item.contact}</Box>
-                  <Box sx={{ width: '280px' }}>{item.email}</Box>
-                </Stack>
-              ))}
-            </Stack>
+                    <TableCell sx={{ width: '240px' }} align="center">{item.role}</TableCell>
+                    <TableCell sx={{ width: '240px' }} align="center">
+                      {item.firstName + ' ' + item.lastName}
+                    </TableCell>
+                    <TableCell sx={{ width: '240px' }} align="center">{item.contact}</TableCell>
+                    <TableCell sx={{ width: '240px' }} align="center">{item.email}</TableCell>
+                  </Stack>
+                ))}
+              </Stack>
+            </Table>
           </Collapse>
         </TableCell>
       </TableRow>

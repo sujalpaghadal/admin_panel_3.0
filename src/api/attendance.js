@@ -1,25 +1,40 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
+import axios from 'axios';
 import { fetcher } from '../utils/axios';
+import { useAuthContext } from '../auth/hooks';
 
 export function useGetAllAttendance() {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/attendance/logs?date=Tue%20May%2028%202024%2011:24:13%20GMT+0530%20(India%20Standard%20Time)&type=Present`;
+  const { user } = useAuthContext();
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/attendance`;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
-  const memoizedValue = useMemo(
-    () => {
-      const attendance = data?.data?.attendance || [];
-      return {
-        attendance,
-        attendanceLoading: isLoading,
-        attendanceError: error,
-        attendanceValidating: isValidating,
-        attendanceEmpty: !isLoading && attendance.length === 0,
-      };
-    },
-    [data, isLoading, error, isValidating]
-  );
+
+  const memoizedValue = useMemo(() => {
+    
+    const attendance = data?.attendance || [];
+
+    return {
+      attendance,
+      attendanceLoading: isLoading,
+      attendanceError: error,
+      attendanceValidating: isValidating,
+      attendanceEmpty: !isLoading && attendance.length === 0,
+      mutate,
+    };
+  }, [data, isLoading, error, isValidating, mutate]);
 
   return memoizedValue;
+}
+
+export async function useGetAttendanceAdd(postData) {
+  try {
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/attendance`;
+    const response = await axios.post(URL, postData);
+    return response;
+  } catch (error) {
+    console.error('Error adding attendance:', error);
+    throw error;
+  }
 }

@@ -149,13 +149,13 @@ export default function EmployeeListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Employee', href: paths.dashboard.employee.list },
-            { name: 'Employee List' },
+            { name: 'Employee' },
           ]}
           action={
             <Button
@@ -211,13 +211,13 @@ export default function EmployeeListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row._id)
-                    )
-                  }
+                  // onSort={table.onSort}
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row._id)
+                  //   )
+                  // }
                 />
                 <TableBody>
                   {dataFiltered
@@ -303,7 +303,9 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) =>
+        user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
