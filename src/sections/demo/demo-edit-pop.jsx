@@ -79,7 +79,6 @@ export default function DemoEditPop({ open, onClose, currentId }) {
         ],
         inquiry_id: currentId?._id,
       };
-      console.log('Payload:', payload);
       const response = await createDemo(payload);
       enqueueSnackbar(response.message, {
         variant: 'success',

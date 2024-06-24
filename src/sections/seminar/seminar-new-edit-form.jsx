@@ -4,11 +4,23 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useRouter } from 'src/routes/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Typography, Button, TextField, Grid, Box, Autocomplete } from '@mui/material';
+import {
+  Typography,
+  Button,
+  TextField,
+  Grid,
+  Box,
+  Autocomplete,
+  Stack,
+  Card,
+  Checkbox,
+  Chip,
+} from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useAuthContext } from 'src/auth/hooks';
+import LoadingButton from '@mui/lab/LoadingButton';
 import axios from 'axios';
 import { useSnackbar } from 'src/components/snackbar';
 import { paths } from 'src/routes/paths';
@@ -20,6 +32,7 @@ export default function SeminarNewEditForm({ SeminarId }) {
   const [selectedRole, setSelectedRole] = useState('');
   const router = useRouter();
   const [allUser, setAllUser] = useState([]);
+  const [dateTime, setDateTime] = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -40,8 +53,6 @@ export default function SeminarNewEditForm({ SeminarId }) {
       users: [],
     },
   });
-
-  console.log(user);
 
   const ROLE = ['Employee', 'Student'];
 
@@ -76,13 +87,23 @@ export default function SeminarNewEditForm({ SeminarId }) {
         if (SeminarId) {
           const URL = `${import.meta.env.VITE_AUTH_API}/api/company/seminar/${SeminarId}`;
           const response = await axios.get(URL);
-          const { data } = response.data;
+          const data = response.data.data;
+          console.log(data);
           reset({
             title: data.title,
             desc: data.desc,
             date_time: data?.date_time ? new Date(data.date_time) : null,
-            schedule_by: data.schedule_by.firstName + data.schedule_by.lastName,
+            schedule_by: `${data.schedule_by.firstName} ${data.schedule_by.lastName}`,
+            role: [...new Set(data.attended_by.map((e) => e.role))],
+            users: data.attended_by.map((e) => ({
+              _id: e._id,
+              firstName: e.firstName,
+              lastName: e.lastName,
+              selectedTime: e.selectedTime || null,
+            })),
           });
+          setSelectedRole(data?.attended_by[0]?.role);
+          setDateTime(data?.date_time ? new Date(data.date_time) : null);
         }
       } catch (error) {
         console.error('Failed to fetch seminar:', error);
@@ -123,17 +144,18 @@ export default function SeminarNewEditForm({ SeminarId }) {
       title: data.title,
       desc: data.desc,
       company_id: user.company_id,
-      date_time: data.date_time,
+      date_time: dateTime,
       schedule_by: assignObject?._id,
-      attended_by: data.users.map((attended_by) => attended_by._id),
+      attended_by: data.users.map((attended_by) => ({
+        _id: attended_by._id,
+        selectedTime: attended_by.selectedTime,
+      })),
     };
-    console.log(payload);
     try {
       let response;
 
       if (SeminarId) {
         response = await updateSeminar(payload);
-        console.log(response);
         router.push(paths.dashboard.seminar.list);
         enqueueSnackbar(response.message, { variant: 'success' });
       } else {
@@ -143,7 +165,9 @@ export default function SeminarNewEditForm({ SeminarId }) {
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      enqueueSnackbar(error.response.message, { variant: 'error' });
+      enqueueSnackbar(error.response?.data?.message || 'Error submitting form', {
+        variant: 'error',
+      });
     }
   };
 
@@ -173,34 +197,31 @@ export default function SeminarNewEditForm({ SeminarId }) {
     return () => subscription.unsubscribe();
   }, [watch, setValue]);
 
-  return (
-    <Grid container spacing={4}>
+  const seminarDetails = (
+    <>
       {mdUp && (
         <Grid item md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Seminar Details
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Seminar , role, Schedule by...
+            Seminar, role, Schedule by...
           </Typography>
         </Grid>
       )}
       <Grid item xs={12} md={6}>
-        <FormProvider {...methods}>
-          <Box sx={{ p: 3 }}>
+        <Card>
+          <Stack spacing={3} sx={{ p: 3 }}>
             <Box
-              component="form"
-              onSubmit={handleSubmit(onSubmit)}
+              columnGap={2}
+              rowGap={3}
               display="grid"
-              gridTemplateColumns="repeat(1, 1fr)"
-              gap={3}
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                md: 'repeat(1, 1fr)',
+              }}
             >
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => <TextField {...field} label="Title" fullWidth />}
-              />
-
+              <RHFTextField name="title" label="Title" />
               <RHFAutocomplete
                 name="schedule_by"
                 label="Schedule By"
@@ -210,32 +231,21 @@ export default function SeminarNewEditForm({ SeminarId }) {
                 getOptionLabel={(option) => option}
               />
 
-              <Controller
-                name="date_time"
-                control={control}
-                render={({ field }) => (
-                  <DateTimePicker
-                    {...field}
-                    label="Date and Time"
-                    renderInput={(params) => <TextField {...params} fullWidth />}
-                  />
-                )}
+              <DateTimePicker
+                label="Date and Time"
+                value={dateTime}
+                onChange={setDateTime}
+                renderInput={(params) => <TextField {...params} fullWidth />}
               />
 
-              <Controller
+              <RHFAutocomplete
                 name="role"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    options={ROLE}
-                    getOptionLabel={(option) => option}
-                    onChange={(_, value) => field.onChange(value)}
-                    renderInput={(params) => <TextField {...params} label="Role" />}
-                  />
-                )}
+                label="Role"
+                placeholder="Choose a role"
+                fullWidth
+                options={ROLE}
+                getOptionLabel={(option) => option}
               />
-
               <Controller
                 name="users"
                 control={control}
@@ -244,24 +254,60 @@ export default function SeminarNewEditForm({ SeminarId }) {
                     {...field}
                     multiple
                     options={users}
+                    value={field.value || []}
                     getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
-                    onChange={(_, value) => field.onChange(value)}
-                    renderInput={(params) => <TextField {...params} label="Users" />}
+                    onChange={(event, newValue) => field.onChange(newValue)}
                     isOptionEqualToValue={(option, value) => option._id === value._id}
+                    renderOption={(props, option, { selected }) => (
+                      <li {...props}>
+                        <Checkbox style={{ marginRight: 8 }} checked={selected} />
+                        {option.firstName} {option.lastName}
+                      </li>
+                    )}
+                    renderTags={(selected, getTagProps) =>
+                      selected.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          key={option?._id}
+                          label={`${option?.firstName} ${option?.lastName}`}
+                          size="small"
+                          variant="soft"
+                        />
+                      ))
+                    }
+                    renderInput={(params) => <TextField {...params} label="Users" />}
                   />
                 )}
               />
 
               <RHFTextField name="desc" label="Description" multiline rows={4} />
-
-              <Button variant="contained" color="primary" type="submit" disabled={isSubmitting}>
-                Submit
-              </Button>
             </Box>
-          </Box>
-        </FormProvider>
+          </Stack>
+        </Card>
       </Grid>
-    </Grid>
+    </>
+  );
+
+  const renderOption = (
+    <>
+      {mdUp && <Grid item md={8} />}
+      <Grid item xs={12} md={10} sx={{ display: 'flex', justifyContent: 'end' }}>
+        <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
+          {!SeminarId ? 'Add Seminar' : 'Save Changes'}
+        </LoadingButton>
+      </Grid>
+    </>
+  );
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
+          {seminarDetails}
+          {renderOption}
+        </Grid>
+      </form>
+    </FormProvider>
   );
 }
 

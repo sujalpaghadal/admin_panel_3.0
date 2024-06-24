@@ -8,7 +8,6 @@ export function useGetSeminar() {
   const { user } = useAuthContext();
   const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/seminar`;
   const { data, error, isValidating, mutate } = useSWR(URL, fetcher);
-  console.log(data);
 
   if (error) {
     console.error('Error fetching data:', error);

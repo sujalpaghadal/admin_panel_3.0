@@ -11,7 +11,8 @@ import SvgColor from 'src/components/svg-color';
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
-  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />);
+  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
+);
 
 const ICONS = {
   job: icon('ic_job'),
@@ -114,7 +115,7 @@ export function useNavData() {
           // INQUIRY
           {
             title: t('inquiry'),
-            path: paths.dashboard.inquiry.root,
+            path: paths.dashboard.inquiry.list,
             icon: ICONS.inquiry,
           },
 
@@ -156,7 +157,7 @@ export function useNavData() {
           // SEMINAR
           {
             title: t('seminar'),
-            path: paths.dashboard.seminar.root,
+            path: paths.dashboard.seminar.list,
             icon: ICONS.order,
           },
 

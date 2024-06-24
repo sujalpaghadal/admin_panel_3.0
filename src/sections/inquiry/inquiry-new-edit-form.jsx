@@ -110,7 +110,6 @@ export default function InquiryNewEditForm({ inquiryId }) {
 
   const postInquiry = async (newInquiry) => {
     const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
-    console.log(URL);
     const response = await axios.post(URL, newInquiry);
     return response.data;
   };

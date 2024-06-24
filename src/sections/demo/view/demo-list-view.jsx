@@ -80,7 +80,6 @@ export default function DemoListView() {
   const confirm = useBoolean();
 
   const { demo } = useGetAllDemos();
-  console.log(demo);
 
   const [tableData, setTableData] = useState(_orders);
 

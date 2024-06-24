@@ -133,7 +133,6 @@ export default function InquiryListView() {
           data: { ids: selectedIds },
         });
         if (response.status === 200) {
-          console.log('delete response:', response);
           enqueueSnackbar(response.data.message, { variant: 'success' });
           mutate();
           confirm.onFalse();

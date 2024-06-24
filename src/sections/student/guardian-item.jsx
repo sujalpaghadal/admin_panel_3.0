@@ -13,7 +13,6 @@ export default function GuardianItem({ address, action, sx, ...other }) {
   const { name, fullAddress, addressType, phoneNumber, primary } = address;
 
   let currentUrl = window.location.href;
-  console.log('Current URL:', currentUrl);
 
   return (
     <>

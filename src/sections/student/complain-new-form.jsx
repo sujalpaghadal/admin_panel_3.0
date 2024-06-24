@@ -62,8 +62,6 @@ export default function ComplainNewForm({ currentJob }) {
   }, [currentJob, defaultValues, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
-
     enqueueSnackbar('Form submitted successfully', { variant: 'success' });
     reset(defaultValues);
   });

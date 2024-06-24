@@ -63,7 +63,6 @@ export default function GuardianAddForm({ open, onClose, onCreate }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
       onClose();
       reset();
     } catch (error) {

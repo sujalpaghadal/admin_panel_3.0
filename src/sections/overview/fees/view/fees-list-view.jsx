@@ -171,7 +171,6 @@ export default function FeesListView() {
     },
     [handleFilters]
   );
-    console.log("tabel : ",table);
   return (
     <>
         <CustomBreadcrumbs
@@ -364,10 +363,8 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       ({personal_info}) =>
-        // console.log("or : ",personal_info),
         personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         personal_info.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 
-        // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

@@ -118,9 +118,6 @@ export const paths = {
       new: `${ROOTS.DASHBOARD}/inquiry/new`,
       list: `${ROOTS.DASHBOARD}/inquiry/list`,
       edit: (id) => `${ROOTS.DASHBOARD}/inquiry/${id}/edit`,
-      demo: {
-        edit: `${ROOTS.DASHBOARD}/inquiry/${MOCK_ID}/edit`,
-      },
     },
 
     student: {
@@ -220,11 +217,6 @@ export const paths = {
     demo: {
       root: `${ROOTS.DASHBOARD}/demo`,
     },
-
-    // seminar: {
-    //   root: `${ROOTS.DASHBOARD}/seminar`,
-    //   list: `${ROOTS.DASHBOARD}/seminar/list`,
-    // },
 
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
