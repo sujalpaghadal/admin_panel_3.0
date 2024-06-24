@@ -15,10 +15,10 @@ export function useGetAllDemos() {
       demoLoading: isLoading,
       demoError: error,
       demoValidating: isValidating,
-      demoEmpty: !isLoading && !data.data.length,
+      demoEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
-    [data.data, error, isLoading, isValidating, mutate]
+    [data?.data, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;

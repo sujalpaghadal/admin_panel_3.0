@@ -74,9 +74,9 @@ export default function StudentTableRow({
           <Label
             variant="soft"
             color={
-              (row.status === 'Completed' && 'success') ||
-              (row.status === 'Running' && 'warning') ||
-              (row.status === 'Leaved' && 'error') ||
+              (row.status === 'completed' && 'success') ||
+              (row.status === 'running' && 'warning') ||
+              (row.status === 'leaved' && 'error') ||
               'default'
             }
           >

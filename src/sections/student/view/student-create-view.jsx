@@ -23,7 +23,6 @@ import StudentAttendanceListView from '../attendance/student-attendance-list-vie
 import ExaminationListView from '../examination/examination-list-view';
 
 import StudentNewEditForm from '../student-new-edit-form';
-import { useGetSingleStudent, useGetStudents } from 'src/api/student';
 import RemarkView from './remarks/remark-view';
 import GuardianView from '../guardian/student-guardian-view';
 import FeesView from '../feesDetails/fee-installment-view';
@@ -86,6 +85,8 @@ export default function StudentCreateView({ currentStudent, mutate }) {
     setCurrentTab(newValue);
   }, []);
 
+
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       {!currentStudent && (
@@ -102,7 +103,7 @@ export default function StudentCreateView({ currentStudent, mutate }) {
         />
       )}
 
-      <Tabs
+      { currentStudent && <Tabs
         value={currentTab}
         onChange={handleChangeTab}
         sx={{
@@ -112,7 +113,7 @@ export default function StudentCreateView({ currentStudent, mutate }) {
         {TABS.map((tab) => (
           <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
         ))}
-      </Tabs>
+      </Tabs>}
 
       {currentTab === 'Personal Details' && (
         <StudentNewEditForm currentStudent={currentStudent} mutate={mutate} />

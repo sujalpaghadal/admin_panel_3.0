@@ -95,7 +95,7 @@ export default function DemoListView() {
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: demo,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,

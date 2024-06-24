@@ -15,7 +15,7 @@ export function useGetEmployees() {
       employeesLoading: isLoading,
       employeesError: error,
       employeesValidating: isValidating,
-      employeesEmpty: !isLoading && !data.data,
+      employeesEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
     [data?.data, error, isLoading, isValidating, mutate]

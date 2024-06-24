@@ -212,7 +212,7 @@ export default function StudentAccountGeneral({ id }) {
     } catch (error) {
       console.error(error);
     }
-  });
+  }
 
   const handleDrop = useCallback(
     (acceptedFiles) => {

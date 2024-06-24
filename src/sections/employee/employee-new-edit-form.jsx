@@ -35,7 +35,6 @@ export default function EmployeeNewEditForm({ employeeId }) {
   const { user } = useAuthContext();
   const router = useRouter();
   const { configs, mutate } = useGetConfigs();
-  console.log(configs);
   const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const mdUp = useResponsive('up', 'md');
@@ -130,7 +129,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
   const createEmployee = async (formData) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`,
+        `${import.meta.env.VITE_AUTH_API}/api/company/${user?.company_id}/employee`,
         formData,
         {
           headers: {

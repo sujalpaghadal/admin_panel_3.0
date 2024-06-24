@@ -11,6 +11,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 // SETTING PROFILE
 import UserProfile from 'src/pages/dashboard/profile/profile';
 import { SettingsPage } from 'src/sections/settings/view';
+import { ComplainListView } from '../../sections/overview/complain/view/index.js';
 
 // BATCH
 const BatchListPage = lazy(() => import('src/pages/dashboard/batches/list'));

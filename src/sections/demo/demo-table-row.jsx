@@ -11,39 +11,33 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 import { fDate } from 'src/utils/format-time';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+import DemoFormDialog from './demo-form-dialog';
 import { useState } from 'react';
 import { usePopover } from 'src/components/custom-popover';
 import { useDeleteDemo } from 'src/api/demo';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-
-import DemoFormDialog from './demo-form-dialog';
 // ----------------------------------------------------------------------
-
 export default function DemoTableRow({
-  row,
-  selected,
-  onViewRow,
-  onSelectRow,
-  onDeleteRow,
-  srNumber,
-  mutate,
-}) {
+                                       row,
+                                       selected,
+                                       onViewRow,
+                                       onSelectRow,
+                                       onDeleteRow,
+                                       srNumber,
+                                       mutate,
+                                     }) {
   const [open, setOpen] = useState(false);
   const [demosID, setDemosID] = useState(null);
   const [demoID, setDemoID] = useState(null);
-
   const { demos, inquiry_id } = row;
-  const { firstName, lastName, email } = inquiry_id || {};
-
+  const { firstName, lastName, email, contact } = inquiry_id || {};
   const confirm = useBoolean();
   const collapse = useBoolean();
   const popover = usePopover();
-
   const handleDelete = async (demoId) => {
     try {
       await useDeleteDemo(demoId);
@@ -54,34 +48,16 @@ export default function DemoTableRow({
       console.error('Failed to delete demo:', error);
     }
   };
-
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      {/* <TableCell padding="checkbox">
+      <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell> */}
+      </TableCell>
       <TableCell>
-        <Box
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {/* {orderNumber} */}
-          {'23'}
-        </Box>
         <Box>{srNumber}</Box>
       </TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} /> */}
-
         <ListItemText
-          primary={'ramu kaka'}
-          secondary={'ramu@gmail.com'}
-          primaryTypographyProps={{ typography: 'body2' }}
           primary={`${firstName} ${lastName}`}
           secondary={email}
           primaryTypographyProps={{ variant: 'body2' }}
@@ -92,34 +68,7 @@ export default function DemoTableRow({
         />
       </TableCell>
       <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
-
-      {/* <TableCell align="center"> {totalQuantity} </TableCell> */}
-
-      {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
-
-      <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
-            'default'
-          }
-        >
-          {status}
-        </Label>
+        <Box>{contact}</Box>
       </TableCell>
       <TableCell align="right" sx={{ px: 3, whiteSpace: 'nowrap' }}>
         <IconButton
@@ -133,14 +82,9 @@ export default function DemoTableRow({
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
-
-        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton> */}
       </TableCell>
     </TableRow>
   );
-
   const renderSecondary = (
     <TableRow>
       <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
@@ -237,11 +181,9 @@ export default function DemoTableRow({
       </TableCell>
     </TableRow>
   );
-
   return (
     <>
       {renderPrimary}
-
       {renderSecondary}
       <ConfirmDialog
         open={confirm.value}
@@ -264,7 +206,6 @@ export default function DemoTableRow({
     </>
   );
 }
-
 DemoTableRow.propTypes = {
   row: PropTypes.object.isRequired,
   selected: PropTypes.bool,
