@@ -18,14 +18,17 @@ import StudentAccountChangePassword from '../student-account-change-password';
 
 import StudentAccountBillingHistory from '../student-account-billing-history';
 
-import StudentAttendanceListView from './student-attendance-list-view';
+import StudentAttendanceListView from '../attendance/student-attendance-list-view';
 
-import ExaminationListView from './examination-list-view';
+import ExaminationListView from '../examination/examination-list-view';
 
 import StudentNewEditForm from '../student-new-edit-form';
 import { useGetSingleStudent, useGetStudents } from 'src/api/student';
 import RemarkView from './remarks/remark-view';
 import GuardianView from '../guardian/student-guardian-view';
+import FeesView from '../feesDetails/fee-installment-view';
+import StudentAttendanceView from '../attendance/student-attendance-view';
+import StudentDetailsView from '../progress/student-details-view';
 
 // ----------------------------------------------------------------------
 
@@ -50,11 +53,11 @@ const TABS = [
     label: 'Attendance',
     icon: <Iconify icon="solar:share-bold" width={24} />,
   },
-  {
-    value: 'Progress',
-    label: 'Progress',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
-  },
+  // {
+  //   value: 'Progress',
+  //   label: 'Progress',
+  //   icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+  // },
   {
     value: 'Examination',
     label: 'Examination',
@@ -113,16 +116,16 @@ export default function StudentCreateView({ currentStudent, mutate }) {
 
       {currentTab === 'Personal Details' && <StudentNewEditForm currentStudent={currentStudent} />}
 
-      {currentTab === 'Guardian Info' && <GuardianView currentStudent={currentStudent} mutate={mutate} />}
-      {currentTab === 'fees details' && <StudentAccountBillingHistory invoices={_userInvoices} />}
-
-      {currentTab === 'Attendance' && <StudentAttendanceListView />}
-
-      {currentTab === 'Progress' && (
-        <StudentAccountChangePassword currentStudent={currentStudent} />
+      {currentTab === 'Guardian Info' && (
+        <GuardianView currentStudent={currentStudent} mutate={mutate} />
       )}
+      {currentTab === 'fees details' && <FeesView currentStudent={currentStudent} />}
 
-      {currentTab === 'Examination' && <ExaminationListView />}
+      {currentTab === 'Attendance' && <StudentAttendanceView currentStudent={currentStudent} />}
+
+      {currentTab === 'Progress' && <StudentDetailsView currentStudent={currentStudent} />}
+
+      {currentTab === 'Examination' && <ExaminationListView currentStudent={currentStudent} />}
 
       {currentTab === 'Remarks' && <RemarkView currentStudent={currentStudent} mutate={mutate} />}
     </Container>

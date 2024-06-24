@@ -31,9 +31,9 @@ export default function StudentAttendanceTableRow({
   onViewRow,
   onEditRow,
   onDeleteRow,
+  index
 }) {
-  const { firstName, lastName, status, date, contact } = row;
-
+  const { date , status } = row;
   const confirm = useBoolean();
 
   const popover = usePopover();
@@ -41,44 +41,15 @@ export default function StudentAttendanceTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        {/* <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell> */}
 
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* <Avatar alt={invoiceTo.name} sx={{ mr: 2 }}>
-            {invoiceTo.name.charAt(0).toUpperCase()}
-          </Avatar> */}
-          <Avatar alt={firstName} sx={{ mr: 2 }}>
-            {firstName.charAt(0).toUpperCase()}
-          </Avatar>
-
-          <ListItemText
-            disableTypography
-            primary={
-              <Typography variant="body2" noWrap>
-                {firstName + lastName}
-              </Typography>
-            }
-            secondary={
-              <Link
-                noWrap
-                variant="body2"
-                onClick={onViewRow}
-                sx={{ color: 'text.disabled', cursor: 'pointer' }}
-              >
-                {firstName + lastName}
-              </Link>
-            }
-          />
+        <TableCell>
+          {index + 1}
         </TableCell>
 
         <TableCell>
           <ListItemText
             primary={fDate(date)}
             secondary={fTime(date)}
-            // primary={'15 may'}
-            // secondary={'5:89'}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,
@@ -87,43 +58,20 @@ export default function StudentAttendanceTableRow({
             }}
           />
         </TableCell>
-
-        <TableCell>
-          <ListItemText
-            primary={contact}
-            // secondary={fTime(dueDate)}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
-        </TableCell>
-
-        {/* <TableCell>{fCurrency(totalAmount)}</TableCell> */}
-
-        {/* <TableCell align="center">{sent}</TableCell> */}
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (status === 'Present' && 'success') ||
-              (status === 'Absent' && 'warning') ||
-              (status === 'Late' && 'error') ||
+              (status === 'present' && 'success') ||
+              (status === 'late' && 'warning') ||
+              (status === 'absent' && 'error') ||
               'default'
             }
           >
             {status}
           </Label>
         </TableCell>
-
-        {/* <TableCell align="right" sx={{ px: 1 }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell> */}
       </TableRow>
 
       {/* <CustomPopover

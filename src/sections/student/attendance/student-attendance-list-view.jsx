@@ -36,17 +36,15 @@ import {
 
 import { useGetAllAttendance } from 'src/api/attendance';
 // ----------------------------------------------------------------------
-import StudentAttendanceTableRow from '../student-attendance-table-row';
-import StudentAttendanceTableToolbar from '../student-attendance-table-toolbar';
+import StudentAttendanceTableRow from './student-attendance-table-row';
+import StudentAttendanceTableToolbar from './student-attendance-table-toolbar';
 
-import StudentAttendanceTableFiltersResult from '../student-attendance-table-filters-result';
+import StudentAttendanceTableFiltersResult from './student-attendance-table-filters-result';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
+  { id: '', label: 'Sr no.' },
   { id: 'Date', label: 'Date' },
-  { id: 'contact', label: 'Contact' },
   { id: 'status', label: 'Status' },
-  { id: '' },
 ];
 
 const defaultFilters = {
@@ -59,12 +57,12 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function StudentAttendanceListView() {
+export default function StudentAttendanceListView({ attendance }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const theme = useTheme();
 
-  const { attendance } = useGetAllAttendance();
+  // const { attendance } = useGetAllAttendance();
 
   const settings = useSettingsContext();
 
@@ -115,22 +113,22 @@ export default function StudentAttendanceListView() {
   const TABS = [
     { value: 'all', label: 'All', color: 'default', count: tableData.length },
     {
-      value: 'Present',
+      value: 'present',
       label: 'Present',
       color: 'success',
-      count: getInvoiceLength('Present'),
+      count: getInvoiceLength('present'),
     },
     {
-      value: 'Late',
+      value: 'late',
       label: 'Late',
       color: 'warning',
-      count: getInvoiceLength('Late'),
+      count: getInvoiceLength('late'),
     },
     {
-      value: 'Absent',
+      value: 'absent',
       label: 'Absent',
       color: 'error',
-      count: getInvoiceLength('Absent'),
+      count: getInvoiceLength('absent'),
     },
   ];
 
@@ -331,15 +329,16 @@ export default function StudentAttendanceListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row, index) => (
                       <StudentAttendanceTableRow
-                        key={row.id}
+                        key={row._id}
+                        index={index}
                         row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        selected={table.selected.includes(row._id)}
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                        onViewRow={() => handleViewRow(row._id)}
+                        onEditRow={() => handleEditRow(row._id)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
                       />
                     ))}
 
@@ -366,29 +365,6 @@ export default function StudentAttendanceListView() {
           />
         </Card>
       </Container>
-
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
     </>
   );
 }
@@ -396,41 +372,18 @@ export default function StudentAttendanceListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { name, status, service, startDate, endDate } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter(
-      (invoice) =>
-        // invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        invoice.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
-    );
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((invoice) => invoice.status === status);
-  }
-
-  if (service.length) {
-    inputData = inputData.filter((invoice) =>
-      invoice.items.some((filterItem) => service.includes(filterItem.service))
-    );
-  }
+  console.log(filters," fil");
+  const { startDate, endDate , status } = filters;
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((invoice) => isBetween(invoice.createDate, startDate, endDate));
+      inputData = inputData.filter((invoice) => isBetween(invoice.date, startDate, endDate));
+      console.log("res ",inputData);
     }
   }
+ if (status !== 'all') {
+   inputData = inputData.filter((item) => item.status === status);
+ }
 
   return inputData;
 }

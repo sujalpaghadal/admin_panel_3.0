@@ -125,7 +125,6 @@ export default function StudentNewEditForm({ currentStudent }) {
       throw error;
     }
   }
-  console.log("profile_pic : ",profilePic);
   
   //update student api
   async function updateStudent(studentPayload) {

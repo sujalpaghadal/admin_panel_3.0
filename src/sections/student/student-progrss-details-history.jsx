@@ -17,7 +17,7 @@ import { fDateTime } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
-export default function StudentProgressDetailsHistory({ history }) {
+export default function StudentProgressDetailsHistory() {
   const renderSummary = (
     <Stack
       spacing={2}
@@ -34,19 +34,23 @@ export default function StudentProgressDetailsHistory({ history }) {
     >
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Order time</Box>
-        {fDateTime(history.orderTime)}
+        {/* {fDateTime('22:00')} */}
+        22:00
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Payment time</Box>
-        {fDateTime(history.orderTime)}
+        {/* {fDateTime('22:00')} */}
+        22:00
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Delivery time for the carrier</Box>
-        {fDateTime(history.orderTime)}
+        {/* {fDateTime('22:00')} */}
+        22:00
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Completion time</Box>
-        {fDateTime(history.orderTime)}
+        {/* {fDateTime('22:00')} */}
+        22:00
       </Stack>
     </Stack>
   );
@@ -62,23 +66,24 @@ export default function StudentProgressDetailsHistory({ history }) {
         },
       }}
     >
-      {history.timeline.map((item, index) => {
+      {['','',''].map((item, index) => {
         const firstTimeline = index === 0;
 
-        const lastTimeline = index === history.timeline.length - 1;
+        const lastTimeline = index === 3 - 1;
 
         return (
-          <TimelineItem key={item.title}>
+          <TimelineItem>
             <TimelineSeparator>
               <TimelineDot color={(firstTimeline && 'primary') || 'grey'} />
               {lastTimeline ? null : <TimelineConnector />}
             </TimelineSeparator>
 
             <TimelineContent>
-              <Typography variant="subtitle2">{item.title}</Typography>
+              <Typography variant="subtitle2">java script</Typography>
 
               <Box sx={{ color: 'text.disabled', typography: 'caption', mt: 0.5 }}>
-                {fDateTime(item.time)}
+                {/* {fDateTime("22:00")} */}
+                22:00
               </Box>
             </TimelineContent>
           </TimelineItem>
