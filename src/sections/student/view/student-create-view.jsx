@@ -111,9 +111,13 @@ export default function StudentCreateView({ currentStudent, mutate }) {
         ))}
       </Tabs>
 
-      {currentTab === 'Personal Details' && <StudentNewEditForm currentStudent={currentStudent} />}
+      {currentTab === 'Personal Details' && (
+        <StudentNewEditForm currentStudent={currentStudent} mutate={mutate} />
+      )}
 
-      {currentTab === 'Guardian Info' && <GuardianView currentStudent={currentStudent} mutate={mutate} />}
+      {currentTab === 'Guardian Info' && (
+        <GuardianView currentStudent={currentStudent} mutate={mutate} />
+      )}
       {currentTab === 'fees details' && <StudentAccountBillingHistory invoices={_userInvoices} />}
 
       {currentTab === 'Attendance' && <StudentAttendanceListView />}

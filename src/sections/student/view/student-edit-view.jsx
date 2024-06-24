@@ -40,7 +40,8 @@ export default function StudentEditView({ id }) {
         }}
       />
 
-      {data?.student && <StudentCreateView currentStudent={data?.student} mutate={mutate} />}
+
+      {data && <StudentCreateView currentStudent={data} mutate={mutate} />}
     </Container>
   );
 }
