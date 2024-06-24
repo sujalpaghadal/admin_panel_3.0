@@ -14,8 +14,8 @@ import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // import { AddressNewForm } from '../address';
-import GuardianAddForm from './guardian-add-form';
-import GuardianItem from './guardian-item';
+import GuardianAddForm from './guardian/guardian-add-form';
+import GuardianItem from './guardian/guardian-item';
 
 // ----------------------------------------------------------------------
 

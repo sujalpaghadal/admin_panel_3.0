@@ -110,6 +110,7 @@ export const paths = {
       banking: `${ROOTS.DASHBOARD}/banking`,
       booking: `${ROOTS.DASHBOARD}/booking`,
       fees: `${ROOTS.DASHBOARD}/fees`,
+      complain: `${ROOTS.DASHBOARD}/complain`,
     },
 
     inquiry: {
@@ -231,6 +232,5 @@ export const paths = {
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
     },
-
   },
 };

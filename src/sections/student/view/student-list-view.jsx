@@ -44,6 +44,7 @@ import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
 
 import { useGetStudents } from '../../../api/student';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -78,7 +79,7 @@ export default function StudentListView() {
 
   const confirm = useBoolean();
 
-  const { students } = useGetStudents();
+  const { students , mutate } = useGetStudents();
 
   const [tableData, setTableData] = useState(students);
 
@@ -117,30 +118,61 @@ export default function StudentListView() {
   }, []);
 
   const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student`,
+          {
+            data: { ids: ['66754ae906739d63f6b692ff'] },
+          }
+        );
+        if (response.status === 200) {
+          enqueueSnackbar(response.data.message, { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+        } else {
+          enqueueSnackbar(response.data.message, { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete Employee', error);
+        enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+      }
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
 
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+  const handleDeleteRows = useCallback(
+    async (id) => {
+      // const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    enqueueSnackbar('Delete success!');
+      // enqueueSnackbar('Delete success!');
 
-    setTableData(deleteRows);
+      // setTableData(deleteRows);
 
-    table.onUpdatePageDeleteRows({
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+      // table.onUpdatePageDeleteRows({
+      //   totalRowsInPage: dataInPage.length,
+      //   totalRowsFiltered: dataFiltered.length,
+      // });
+      console.log("id" , id);
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student`,
+          {
+            data: { ids: id },
+          }
+        );
+          enqueueSnackbar(response?.message || "", { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+      } catch (error) {
+        console.error('Failed to delete Employee', error);
+        enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+      }
+    },
+    [dataFiltered.length, enqueueSnackbar, table, tableData]
+  );
 
   const handleEditRow = useCallback(
     (id) => {
@@ -290,7 +322,7 @@ export default function StudentListView() {
                         row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onDeleteRow={() => handleDeleteRows(row._id)}
                         onEditRow={() => handleEditRow(row._id)}
                         onGuardianRow={() => handleGuardianEditRow(row._id)}
                       />
@@ -334,7 +366,7 @@ export default function StudentListView() {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows();
+              handleDeleteRows(table.selected);
               confirm.onFalse();
             }}
           >
@@ -363,8 +395,9 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase()) ||
-     user.lastName && user.lastName.toLowerCase().includes(name.toLowerCase()) 
+      (user) =>
+        (user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase())) ||
+        (user.lastName && user.lastName.toLowerCase().includes(name.toLowerCase()))
     );
   }
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -13,7 +13,6 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import StudentAccountGeneral from '../student-account-general';
-import StudentAccountBilling from '../student-account-billing';
 
 import StudentAccountChangePassword from '../student-account-change-password';
 
@@ -23,8 +22,10 @@ import StudentAttendanceListView from './student-attendance-list-view';
 
 import ExaminationListView from './examination-list-view';
 
-import StudentComplainCreateView from './student-complain-create-view';
 import StudentNewEditForm from '../student-new-edit-form';
+import { useGetSingleStudent, useGetStudents } from 'src/api/student';
+import RemarkView from './remarks/remark-view';
+import GuardianView from '../guardian/student-guardian-view';
 
 // ----------------------------------------------------------------------
 
@@ -59,16 +60,21 @@ const TABS = [
     label: 'Examination',
     icon: <Iconify icon="ic:round-vpn-key" width={24} />,
   },
+  // {
+  //   value: 'Complains',
+  //   label: 'Complains',
+  //   icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+  // },
   {
-    value: 'Complains & remarks',
-    label: 'Complains & remarks',
+    value: 'Remarks',
+    label: 'Remarks',
     icon: <Iconify icon="ic:round-vpn-key" width={24} />,
   },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function StudentCreateView({id}) {
+export default function StudentCreateView({ currentStudent, mutate }) {
   const settings = useSettingsContext();
 
   const [currentTab, setCurrentTab] = useState('Personal Details');
@@ -79,18 +85,19 @@ export default function StudentCreateView({id}) {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-
-    { !id && <CustomBreadcrumbs
-        heading="Student"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Student', href: paths.dashboard.student.list },
-          { name: 'New Student' },
-        ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      />}
+      {!currentStudent && (
+        <CustomBreadcrumbs
+          heading="Student"
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Student', href: paths.dashboard.student.list },
+            { name: 'New Student' },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
+      )}
 
       <Tabs
         value={currentTab}
@@ -104,25 +111,20 @@ export default function StudentCreateView({id}) {
         ))}
       </Tabs>
 
-      {currentTab === 'Personal Details' && <StudentNewEditForm currentUser={id} />}
+      {currentTab === 'Personal Details' && <StudentNewEditForm currentStudent={currentStudent} />}
 
-      {currentTab === 'Guardian Info' && (
-        <StudentAccountBilling
-          plans={_userPlans}
-          cards={_userPayment}
-          invoices={_userInvoices}
-          addressBook={_userAddressBook}
-        />
-      )}
+      {currentTab === 'Guardian Info' && <GuardianView currentStudent={currentStudent} mutate={mutate} />}
       {currentTab === 'fees details' && <StudentAccountBillingHistory invoices={_userInvoices} />}
 
       {currentTab === 'Attendance' && <StudentAttendanceListView />}
 
-      {currentTab === 'Progress' && <StudentAccountChangePassword />}
+      {currentTab === 'Progress' && (
+        <StudentAccountChangePassword currentStudent={currentStudent} />
+      )}
 
       {currentTab === 'Examination' && <ExaminationListView />}
 
-      {currentTab === 'Complains & remarks' && <StudentComplainCreateView />}
+      {currentTab === 'Remarks' && <RemarkView currentStudent={currentStudent} mutate={mutate} />}
     </Container>
   );
 }

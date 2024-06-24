@@ -20,6 +20,7 @@ import BatchEditPage from 'src/pages/dashboard/batches/edit';
 import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
+import ComplainListView from 'src/sections/overview/complain/view/complain-list-view';
 
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
@@ -28,6 +29,9 @@ const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics')
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
+
+//COMPLAIN
+// const StudentComplainCreateView = lazy(() => import('src/sections/student/view/student-complain-create-view'));
 
 // Inquiry
 const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
@@ -103,6 +107,7 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'fees', element: <FeesPage /> },
+      { path: 'complain', element: <ComplainListView /> },
       {
         path: 'inquiry',
         children: [

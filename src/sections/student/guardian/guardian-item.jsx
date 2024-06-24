@@ -9,11 +9,10 @@ import Label from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
-export default function GuardianItem({ address, action, sx, ...other }) {
-  const { name, fullAddress, addressType, phoneNumber, primary } = address;
-
+export default function GuardianItem({ guardian, action, sx, ...other }) {
+  const { firstName, lastName, contact, relation_type } = guardian;
+  
   let currentUrl = window.location.href;
-  console.log('Current URL:', currentUrl);
 
   return (
     <>
@@ -32,22 +31,18 @@ export default function GuardianItem({ address, action, sx, ...other }) {
           <Stack flexGrow={1} spacing={1}>
             <Stack direction="row" alignItems="center">
               <Typography variant="subtitle2">
-                {'ramu kaka'}
+                {firstName} {lastName}
                 <Box
                   component="span"
                   sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}
                 >
-                  ({'papa na friend'})
+                  {relation_type}
                 </Box>
               </Typography>
             </Stack>
 
-            {/* <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {fullAddress}
-            </Typography> */}
-
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {'7845120369'}
+              {contact}
             </Typography>
           </Stack>
         </Stack>
@@ -66,22 +61,18 @@ export default function GuardianItem({ address, action, sx, ...other }) {
           <Stack flexGrow={1} spacing={1}>
             <Stack direction="row" alignItems="center">
               <Typography variant="subtitle2">
-                {'ramu kaka'}
+                {firstName} {lastName}
                 <Box
                   component="span"
                   sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}
                 >
-                  ({'papa na friend'})
+                  {relation_type}
                 </Box>
               </Typography>
             </Stack>
 
-            {/* <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {fullAddress}
-            </Typography> */}
-
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {'7845120369'}
+              {contact}
             </Typography>
           </Stack>
           {action && action}

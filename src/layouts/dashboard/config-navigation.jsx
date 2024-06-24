@@ -112,6 +112,13 @@ export function useNavData() {
             icon: ICONS.invoice,
           },
 
+          // COMPLAIN
+          {
+            title: t('Complaints'),
+            path: paths.dashboard.general.complain,
+            icon: ICONS.file,
+          },
+
           // EMPLOYEE
           {
             title: t('employee'),

@@ -6,7 +6,7 @@ import StudentAccountBillingAddress from './student-account-billing-address';
 
 // ----------------------------------------------------------------------
 
-export default function StudentAccountBilling({ addressBook }) {
+export default function StudentAccountBillingAddress({ addressBook }) {
   return (
     <Container maxWidth="xl">
       <StudentAccountBillingAddress addressBook={addressBook} />

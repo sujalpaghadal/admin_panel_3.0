@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Stack from '@mui/material/Stack';
@@ -17,6 +17,9 @@ import DialogContent from '@mui/material/DialogContent';
 import { Box } from '@mui/material';
 
 import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import { DatePicker } from '@mui/x-date-pickers';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 const guardianTypes = [
   'Mother',
@@ -35,35 +38,41 @@ const guardianTypes = [
 
 // ----------------------------------------------------------------------
 
-export default function GuardianAddForm({ open, onClose, onCreate }) {
+export default function AddRemarkForm({ open, onClose, currentStudent }) {
+  const [allRemark, setAllRemark] = useState();
   const NewAddressSchema = Yup.object().shape({
-    firstName: Yup.string().required('Fullname is required'),
-    lastName: Yup.string().required('Last Name is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    guardianType: Yup.string().required('Guardian type is required'),
+    title: Yup.string().required('title is required'),
+    date: Yup.string().required('date require'),
   });
 
   const defaultValues = {
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    guardianType: '',
+    title: '',
+    date: '',
   };
-
   const methods = useForm({
-    resolver: yupResolver(NewAddressSchema),
+    // resolver: yupResolver(NewAddressSchema),
     defaultValues,
   });
+
+  useEffect(() => {
+    setAllRemark(currentStudent?.remarks);
+  }, [currentStudent]);
 
   const {
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting },
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    allRemark.push(data);
+    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
     try {
-      console.log(data);
+      axios
+        .put(URL, { ...currentStudent, remarks: allRemark })
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
       onClose();
       reset();
     } catch (error) {
@@ -79,17 +88,28 @@ export default function GuardianAddForm({ open, onClose, onCreate }) {
         <DialogContent dividers>
           <Stack spacing={3}>
             <Box mt={2}>
-              <RHFTextField name="firstName" label="First Name" />
+              <RHFTextField name="title" label="Title" />
             </Box>
-            <RHFTextField name="lastName" label="Last Name" />
-            <RHFTextField name="phoneNumber" label="Phone Number" />
-            <RHFAutocomplete
-              name="guardianType"
-              type="guardianType"
-              label="Guardian Type"
-              placeholder="Choose a guardian type"
-              options={guardianTypes}
-            />
+            <Stack spacing={1.5}>
+              <Controller
+                name="date"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <DatePicker
+                    {...field}
+                    label="Choose Date"
+                    format="dd/MM/yyyy"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!error,
+                        helperText: error?.message,
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Stack>
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -105,7 +125,7 @@ export default function GuardianAddForm({ open, onClose, onCreate }) {
   );
 }
 
-GuardianAddForm.propTypes = {
+AddRemarkForm.propTypes = {
   onClose: PropTypes.func,
   onCreate: PropTypes.func,
   open: PropTypes.bool,
