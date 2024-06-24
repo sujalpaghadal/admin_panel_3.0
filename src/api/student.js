@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 
 import { fetcher } from '../utils/axios';
 import { useAuthContext } from '../auth/hooks/index.js';
-import axios from 'axios';
 // get all student
 
 export function useGetStudents() {
@@ -20,8 +19,9 @@ export function useGetStudents() {
       studentsError: error,
       studentsValidating: isValidating,
       studentsEmpty: !isLoading && !data?.students.length,
+      mutate
     }),
-    [data?.students, error, isLoading, isValidating]
+    [data?.students, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
@@ -29,7 +29,7 @@ export function useGetStudents() {
 
 export function useGetStudentsList(id) {
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${id}/student-list`;
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
       students: data?.students || [],
@@ -40,7 +40,6 @@ export function useGetStudentsList(id) {
       mutate
     }),
     [data?.students, error, isLoading, isValidating,mutate]
-    [data?.students, error, isLoading, isValidating]
   );
   return memoizedValue;
 }
@@ -54,7 +53,7 @@ export function useGetSingleStudent(studentId) {
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user.company_id}/student`;
 
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-  const singleStudent = data?.students.find((data) => data?._id == studentId);
+  const singleStudent = data?.students.find((data) => data?._id === studentId);
   // const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
 //  const memoizedValue = useMemo(

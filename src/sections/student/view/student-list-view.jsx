@@ -145,17 +145,6 @@ export default function StudentListView() {
 
   const handleDeleteRows = useCallback(
     async (id) => {
-      // const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-      // enqueueSnackbar('Delete success!');
-
-      // setTableData(deleteRows);
-
-      // table.onUpdatePageDeleteRows({
-      //   totalRowsInPage: dataInPage.length,
-      //   totalRowsFiltered: dataFiltered.length,
-      // });
-      console.log("id" , id);
       try {
         const response = await axios.delete(
           `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student`,
@@ -163,7 +152,7 @@ export default function StudentListView() {
             data: { ids: id },
           }
         );
-          enqueueSnackbar(response?.message || "", { variant: 'success' });
+          enqueueSnackbar(response?.data?.message || "Delete Success", { variant: 'success' });
           confirm.onFalse();
           mutate();
       } catch (error) {
