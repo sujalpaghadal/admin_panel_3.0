@@ -63,7 +63,7 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     status: Yup.string(),
     isVerified: Yup.boolean(),
   });
-
+console.log(currentStudent,"cur Stu");
   const defaultValues = useMemo(
     () => ({
       profile_pic: currentStudent?.profile_pic || '',
@@ -88,6 +88,10 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
       total_amount: currentStudent?.fee_detail?.total_amount || '',
       discount: currentStudent?.fee_detail?.discount || '',
       amount_paid: currentStudent?.fee_detail?.amount_paid || '',
+      no_of_installments: currentStudent?.fee_detail?.no_of_installments || '',
+      upcoming_installment_date: currentStudent?.fee_detail?.upcoming_installment_date
+        ? new Date(currentStudent?.fee_detail?.upcoming_installment_date)
+        : '',
     }),
 
     [currentStudent]
@@ -97,7 +101,6 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     // resolver: yupResolver(NewUserSchema),
     defaultValues,
   });
-  console.log(profilePic, 'ppppppp');
 
   const {
     reset,
@@ -122,14 +125,13 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     }
     try {
       const response = await axios.post(URL, formData);
-      mutate();
+      // mutate();
       enqueueSnackbar(response?.message || 'Student Created Successfully', { variant: 'success' });
     } catch (error) {
       console.error('Failed to create event:', error);
       throw error;
     }
   }
-  console.log('profile_pic : ', profilePic);
 
   //update student api
   async function updateStudent(studentPayload) {
@@ -176,6 +178,8 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
       total_amount: Number(data.total_amount),
       amount_paid: Number(data.amount_paid),
       discount: Number(data.discount),
+      upcoming_installment_date: data.upcoming_installment_date,
+      no_of_installments: data.no_of_installments,
     };
     try {
       if (currentStudent?.firstName) {
@@ -183,8 +187,8 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
       } else {
         await createStudent(studentPayload);
       }
-      reset();
       router.push(paths.dashboard.student.list);
+      reset();
     } catch (err) {
       console.log('ERROR : ', err);
     }
@@ -385,6 +389,28 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
               <RHFTextField name="total_amount" label="Total Amount" />
               <RHFTextField name="amount_paid" label="Amount Paid" />
               <RHFTextField name="discount" label="Discount" />
+
+              <Stack spacing={1.5}>
+                <Controller
+                  name="upcoming_installment_date"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <DatePicker
+                      {...field}
+                      label="Upcoming Installment Date"
+                      format="dd/MM/yyyy"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: !!error,
+                          helperText: error?.message,
+                        },
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
+              <RHFTextField name="no_of_installments" label="Number of Installment" />
             </Box>
           </Stack>
         </Card>
