@@ -7,8 +7,7 @@ import { useAuthContext } from 'src/auth/hooks';
 // Hook to get all demos
 export function useGetAllDemos(page, limit) {
   const { user } = useAuthContext();
-  const { company_id } = user;
-  const DemoURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${company_id}/demo`;
+  const DemoURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/demo`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(DemoURL, fetcher);
   const demo = data?.data || [];
   const memoizedValue = useMemo(
