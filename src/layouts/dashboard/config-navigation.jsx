@@ -106,6 +106,13 @@ export function useNavData() {
             ],
           },
 
+          // ACCOUNT
+          {
+            title: t('account'),
+            path: paths.dashboard.account.root,
+            icon: ICONS.user,
+          },
+
           // FEES
           {
             title: t('fees'),

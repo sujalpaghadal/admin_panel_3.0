@@ -139,6 +139,10 @@ export const paths = {
       },
     },
 
+    account: {
+      root: `${ROOTS.DASHBOARD}/account`,
+    },
+
     employee: {
       root: `${ROOTS.DASHBOARD}/employee`,
       new: `${ROOTS.DASHBOARD}/employee/new`,

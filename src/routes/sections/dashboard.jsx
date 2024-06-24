@@ -92,6 +92,9 @@ const EmployeeEditPage = lazy(() => import('src/pages/dashboard/employee/edit'))
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 
+// ACCOUNT
+const AccountListPage = lazy(() => import('src/pages/dashboard/account/account'));
+
 // TEST RENDER PAGE BY ROLE
 const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission'));
 
@@ -139,6 +142,13 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <StudentEditPage /> },
           { path: ':id/guaridiandetails', element: <GuardianDetailsPage /> },
           { path: 'account', element: <StudentAccountPage /> },
+        ],
+      },
+      {
+        path: 'account',
+        children: [
+          { element: <AccountListPage />, index: true },
+          { path: 'list', element: <AccountListPage /> },
         ],
       },
       {
