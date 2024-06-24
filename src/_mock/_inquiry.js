@@ -8,9 +8,8 @@ export const INQUIRY_REFERENCE_BY = [
 ];
 
 export const INQUIRY_SUGGESTED_IN = [
-  { value: 'present', label: 'Present' },
-  { value: 'late', label: 'Late' },
-  { value: 'absent', label: 'Absent' },
+  { value: 'Self Instrested', label: 'Self Instrested' },
+  { value: 'Suggested by someone', label: 'Suggested by someone' },
 ];
 
 export const INQUIRY_INTERESTED_IN = [
@@ -27,3 +26,4 @@ export const INQUIRY_INTERESTED_IN = [
 ];
 
 export const DEMO_FACULTY = ['Kaushal Sir', 'Dixita Mam', 'Nisha Mam', 'Rutvik Sir'];
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

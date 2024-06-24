@@ -3,8 +3,6 @@ import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 
-import { _bankingContacts, _bankingCreditCard, _bankingRecentTransitions } from 'src/_mock';
-
 import { useSettingsContext } from 'src/components/settings';
 
 import DashboardAttendenceChart from '../dashboard-attendence-chart';
@@ -26,41 +24,46 @@ export default function DashboardView() {
   const [attendence, setAttendence] = useState({});
   const [course, setCourse] = useState({});
   const [dashboardData, setDashboardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const getDemos = () => {
-    axios
+    return axios
       .get(
         `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/upcoming-demo`
       )
       .then((res) => setDemo(res?.data?.data))
       .catch((err) => console.log(err));
   };
+
   const dashboard = () => {
-    axios
+    return axios
       .get(`https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/dashboard`)
       .then((res) => setDashboardData(res?.data?.data))
       .catch((err) => console.log(err));
   };
+
   const getCourse = () => {
-    axios
+    return axios
       .get(
         `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/student/course`
       )
       .then((res) => setCourse(res?.data?.data))
       .catch((err) => console.log(err));
   };
+
   const getAttendence = () => {
-    axios
+    return axios
       .get(
         `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/attendance/logs`
       )
       .then((res) => setAttendence(res?.data?.data))
       .catch((err) => console.log(err));
   };
+
   useEffect(() => {
-    getDemos();
-    dashboard();
-    getCourse();
-    getAttendence();
+    Promise.all([getDemos(), dashboard(), getCourse(), getAttendence()]).then(() =>
+      setLoading(false)
+    );
   }, []);
 
   const output = [];
@@ -70,7 +73,11 @@ export default function DashboardView() {
   }
 
   const settings = useSettingsContext();
-  // https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/deshboard
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography
@@ -173,11 +180,6 @@ export default function DashboardView() {
               title="Student Attendance"
               total={parseInt(dashboardData?.students)}
               chart={{
-                // series: [
-                //   { label: 'Present', value: 22 },
-                //   { label: 'Late', value: 22 },
-                //   { label: 'Absent', value: 22 },
-                // ],
                 series: [
                   {
                     label: 'Present',

@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { RHFAutocomplete } from 'src/components/hook-form';
+import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import { TimePicker, LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Box, Stack } from '@mui/system';
@@ -33,6 +33,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       .nullable()
       .required('Faculty name is required'),
     details: Yup.string().required('Details are required'),
+    technology: Yup.string().required('Technology are required'),
     date: Yup.date().nullable().required('Date is required'),
     time: Yup.date().nullable().required('Time is required'),
   });
@@ -42,6 +43,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
     defaultValues: {
       faculty_name: null,
       details: '',
+      technology: '',
       date: null,
       time: null,
     },
@@ -59,12 +61,13 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/demo/${demoID}`;
       const response = await axios.get(URL);
       if (response) {
-        const { faculty, detail, date, time } = response.data.data;
+        const { faculty, detail, date, time, technology } = response.data.data;
         const faculty_name = { label: `${faculty.firstName} ${faculty.lastName}`, id: faculty._id };
         setValue('faculty_name', faculty_name);
         setValue('details', detail);
         setValue('date', dayjs(date));
         setValue('time', dayjs(time));
+        setValue('technology', technology);
         setFacultyID(faculty._id);
       } else {
         enqueueSnackbar('Demo not found', {
@@ -114,6 +117,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       const payload = {
         faculty_id: data.faculty_name.id,
         detail: data.details,
+        technology: data.technology,
         date: dayjs(data.date).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
         time: dayjs(data.time).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
         status: 'pending',
@@ -211,6 +215,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
                       )}
                     />
                   </LocalizationProvider>
+                  <RHFTextField name="technology" label="Technology" />
                   <Controller
                     name="details"
                     control={control}

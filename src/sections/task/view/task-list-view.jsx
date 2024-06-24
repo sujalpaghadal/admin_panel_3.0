@@ -48,7 +48,6 @@ import { useGetTasks } from 'src/api/task';
 
 // ----------------------------------------------------------------------
 
-
 const TABLE_HEAD = [
   { id: 'srNo', label: 'Sr No' },
   { id: 'title', label: 'Title' },
@@ -67,13 +66,13 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function TaskListView() {
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  const {tasks,mutate} = useGetTasks()
+  const { tasks, mutate } = useGetTasks();
   const [tableData, setTableData] = useState([]);
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -83,28 +82,28 @@ export default function TaskListView() {
     }
   }, [tasks]);
 
-
-  const handleDeleteRow = useCallback(async (id) => {
-    try {
-     const response = await axios.delete(
-       `https://admin-panel-dmawv.ondigitalocean.app/api/company/task`,
-       { data: { ids: id } }
-     );
+  const handleDeleteRow = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/company/task`,
+          { data: { ids: id } }
+        );
         if (response.status === 200) {
           enqueueSnackbar('deleted successfully', { variant: 'success' });
 
           confirm.onFalse();
           mutate();
         } else {
-        enqueueSnackbar('Failed to delete items', { variant: 'error' });
+          enqueueSnackbar('Failed to delete items', { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete inquiry', error);
+        enqueueSnackbar('Failed to delete task', { variant: 'error' });
       }
-    } catch(error) {
-       console.error('Failed to delete inquiry', error);
-       enqueueSnackbar('Failed to delete task', { variant: 'error' });
-    }
     },
-    [enqueueSnackbar,mutate, table, tableData]
-    );
+    [enqueueSnackbar, mutate, table, tableData]
+  );
 
   const handleDeleteRows = useCallback(async () => {
     try {
@@ -127,7 +126,6 @@ export default function TaskListView() {
       enqueueSnackbar('Failed to delete Tasks', { variant: 'error' });
     }
   }, [enqueueSnackbar, mutate, table, confirm]);
-
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -208,7 +206,6 @@ export default function TaskListView() {
         />
 
         <Card>
-
           <TaskTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_expenses} />
 
           {canReset && (

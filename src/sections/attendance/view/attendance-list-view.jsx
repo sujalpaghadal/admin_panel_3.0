@@ -353,10 +353,12 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-
   if (name) {
     inputData = inputData.filter(
-      (invoice) => invoice?.student_id?.firstName?.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (invoice) =>
+        invoice.student_id.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        invoice.student_id.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        invoice.student_id.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

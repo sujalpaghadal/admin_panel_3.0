@@ -65,7 +65,7 @@ export default function EmployeeListView() {
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  const { employees,mutate } = useGetEmployees();
+  const { employees, mutate } = useGetEmployees();
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
@@ -227,7 +227,7 @@ export default function EmployeeListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row,index) => (
+                    .map((row, index) => (
                       <EmployeeTableRow
                         key={row._id}
                         index={index}
@@ -305,7 +305,9 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) =>
+        user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

@@ -51,7 +51,7 @@ import { useGetExam } from 'src/api/examination';
 
 const TABLE_HEAD = [
   { id: 'srNo', label: '#' },
-  {id:'faculty',label:"Faculty"},
+  { id: 'faculty', label: 'Faculty' },
   { id: 'exam', label: 'Exam' },
   { id: 'description', label: 'Detail' },
   { id: 'total marks', label: 'Marks' },
@@ -77,7 +77,7 @@ export default function ExpenseListView() {
   const confirm = useBoolean();
   const [tableData, setTableData] = useState([]);
   const [filters, setFilters] = useState(defaultFilters);
-  const { exam,mutate } = useGetExam(user?.company_id);
+  const { exam, mutate } = useGetExam(user?.company_id);
 
   useEffect(() => {
     if (exam) {
@@ -349,6 +349,7 @@ function applyFilter({ inputData, comparator, filters }) {
       (user) =>
         user.title.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.conducted_by.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.conducted_by.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.desc.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }

@@ -43,7 +43,6 @@ import { useGetVisits } from 'src/api/visit';
 
 // ----------------------------------------------------------------------
 
-
 const TABLE_HEAD = [
   { id: 'srNo', label: 'Sr No', width: 150 },
   { id: 'name', label: 'Name' },
@@ -63,7 +62,7 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function VisitListView() {
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
@@ -79,13 +78,12 @@ export default function VisitListView() {
     }
   }, [visit]);
 
-
-  const handleDeleteRow = useCallback(async (id) => {
-    try {
-
-     const response = await axios.delete(
-        `https://admin-panel-dmawv.ondigitalocean.app/api/v2/visit`,
-        { data: { ids: id } }
+  const handleDeleteRow = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/v2/visit`,
+          { data: { ids: id } }
         );
         if (response.status === 200) {
           enqueueSnackbar('deleted successfully', { variant: 'success' });
@@ -93,15 +91,15 @@ export default function VisitListView() {
           confirm.onFalse();
           mutate();
         } else {
-        enqueueSnackbar('Failed to delete items', { variant: 'error' });
+          enqueueSnackbar('Failed to delete items', { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete inquiry', error);
+        enqueueSnackbar('Failed to delete visit', { variant: 'error' });
       }
-    } catch(error) {
-       console.error('Failed to delete inquiry', error);
-       enqueueSnackbar('Failed to delete visit', { variant: 'error' });
-    }
     },
-    [enqueueSnackbar,mutate, table, tableData]
-    );
+    [enqueueSnackbar, mutate, table, tableData]
+  );
 
   const handleDeleteRows = useCallback(async () => {
     try {
@@ -124,7 +122,6 @@ export default function VisitListView() {
       enqueueSnackbar('Failed to delete Visit', { variant: 'error' });
     }
   }, [enqueueSnackbar, mutate, table, confirm]);
-
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -205,7 +202,6 @@ export default function VisitListView() {
         />
 
         <Card>
-
           <VisitTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_expenses} />
 
           {canReset && (
@@ -342,6 +338,7 @@ function applyFilter({ inputData, comparator, filters }) {
     inputData = inputData.filter(
       (user) =>
         user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.reference.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }

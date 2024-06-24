@@ -183,41 +183,6 @@ export default function DemoListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <DemoTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -338,9 +303,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.inquiry.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.inquiry_id.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

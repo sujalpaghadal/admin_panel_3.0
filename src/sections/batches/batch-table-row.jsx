@@ -48,9 +48,9 @@ export default function BatchTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox" sx={{ width: '100px' }}>
+      {/* <TableCell padding="checkbox" sx={{ width: '100px' }}>
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <Box
