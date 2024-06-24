@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React ,{ useMemo } from 'react';
 
 import { paths } from 'src/routes/paths';
 
@@ -46,7 +46,6 @@ const ICONS = {
 
 export function useNavData() {
   const { t } = useTranslate();
-
   const data = useMemo(
     () => [
       // OVERVIEW
@@ -92,10 +91,7 @@ export function useNavData() {
             title: t('student'),
             path: paths.dashboard.student.root,
             icon: ICONS.user,
-            children: [
-              { title: t('list'), path: paths.dashboard.student.list },
-              { title: t('card'), path: paths.dashboard.student.cards },
-            ],
+            children: [{ title: t('list'), path: paths.dashboard.student.list }],
           },
 
           // FEES
@@ -115,10 +111,9 @@ export function useNavData() {
           // INQUIRY
           {
             title: t('inquiry'),
-            path: paths.dashboard.inquiry.list,
+          path: paths.dashboard.inquiry.list,
             icon: ICONS.inquiry,
           },
-
           // PRODUCT
           {
             title: t('product'),
