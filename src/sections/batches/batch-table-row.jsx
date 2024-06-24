@@ -15,15 +15,12 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { fCurrency } from 'src/utils/format-number';
-import { fDate, fTime } from 'src/utils/format-time';
+import { fTime } from 'src/utils/format-time';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { TableHeadCustom } from 'src/components/table';
-import { useAuthContext } from 'src/auth/hooks';
 import { Table } from '@mui/material';
 
 // ----------------------------------------------------------------------
@@ -31,13 +28,11 @@ import { Table } from '@mui/material';
 export default function BatchTableRow({
   row,
   selected,
-  onEditRow,
   onViewRow,
   onSelectRow,
   onDeleteRow,
   index,
 }) {
-  const { user } = useAuthContext();
   const { technology, batch_name, batch_time, batch_members, faculty } = row;
 
   const confirm = useBoolean();
@@ -48,26 +43,9 @@ export default function BatchTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      {/* <TableCell padding="checkbox" sx={{ width: '100px' }}>
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell> */}
-
-      <TableCell>
-        <Box
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {index + 1}
-        </Box>
-      </TableCell>
+      <TableCell align="center">{index + 1}</TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar alt={faculty?.avatar_url} src={faculty?.avatar_url} sx={{ mr: 2 }} />
-
         <ListItemText
           primary={`${faculty?.firstName} ${faculty?.lastName}`}
           secondary={faculty?.email}
@@ -82,20 +60,9 @@ export default function BatchTableRow({
       <TableCell> {batch_name} </TableCell>
       <TableCell> {technology} </TableCell>
 
-      <TableCell>
-        <ListItemText
-          // primary={fDate(createdAt)}
-          primary={fTime(batch_time)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
+      <TableCell>{fTime(batch_time)}</TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
@@ -107,7 +74,8 @@ export default function BatchTableRow({
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
-
+      </TableCell>
+      <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
@@ -116,7 +84,7 @@ export default function BatchTableRow({
   );
 
   const TABLE_HEAD = [
-    { id: 'student', label: 'Students',width:1000 },
+    { id: 'student', label: 'Students', width: 1000 },
     { id: 'enroll_no', label: 'Enroll No', width: 280 },
     { id: ' contact', label: ' Contact', width: 330 },
     { id: 'course', label: 'Course', width: 220 },
@@ -133,9 +101,9 @@ export default function BatchTableRow({
           unmountOnExit
           sx={{ bgcolor: 'background.neutral' }}
         >
-          <Table sx={{width:"100%",display:"unset"}}>
-            <TableHeadCustom  headLabel={TABLE_HEAD} />
-            <Stack component={Paper} > 
+          <Table sx={{ width: '100%', display: 'unset' }}>
+            <TableHeadCustom headLabel={TABLE_HEAD} />
+            <Stack component={Paper}>
               {batch_members?.map((item) => (
                 <Stack
                   key={item._id}
@@ -166,12 +134,12 @@ export default function BatchTableRow({
                       color: 'text.disabled',
                       mt: 0.5,
                     }}
-                    sx={{width:680}}
+                    sx={{ width: 680 }}
                   />
 
-                  <Box sx={{width:"200px"} }>{item?.enrollment_no}</Box>
-                  <Box sx={{width:"200px"}}>{item?.contact}</Box>
-                  <Box sx={{width:"300px"}}>{item?.course}</Box>
+                  <Box sx={{ width: '200px' }}>{item?.enrollment_no}</Box>
+                  <Box sx={{ width: '200px' }}>{item?.contact}</Box>
+                  <Box sx={{ width: '300px' }}>{item?.course}</Box>
 
                   {/* <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box> */}
                 </Stack>

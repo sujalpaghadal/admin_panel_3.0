@@ -50,7 +50,7 @@ import { useGetExam } from 'src/api/examination';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: '#' },
+  { id: 'srNo', label: 'SrNo' },
   { id: 'faculty', label: 'Faculty' },
   { id: 'exam', label: 'Exam' },
   { id: 'description', label: 'Detail' },
@@ -184,7 +184,7 @@ export default function ExpenseListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Exams"
           links={[

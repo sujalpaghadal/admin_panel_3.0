@@ -26,7 +26,7 @@ export default function ExaminationItem({ exam, onView, onEdit, onDelete }) {
   const popover = usePopover();
 
   const { examTitle, examDate, totalMarks, obtained_marks } = exam;
-  
+
   return (
     <>
       <Card>

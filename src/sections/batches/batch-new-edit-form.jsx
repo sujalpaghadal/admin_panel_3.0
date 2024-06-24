@@ -362,7 +362,7 @@ export default function BatchNewEditForm({ batchId }) {
               getOptionLabel={(option) => `${option?.firstName} ${option?.lastName}`}
             />
             <RHFAutocomplete1
-              name={'batch_members'}
+              name='batch_members'
               labelName="Batch Members"
               control={control}
               studentName={studentName}

@@ -39,25 +39,24 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-
-import BatchTableRow from '../batch-table-row';
-import BatchTableToolbar from '../batch-table-toolbar';
-import BatchTableFiltersResult from '../batch-table-filters-result';
 import { useGetBatches } from 'src/api/batch';
 import { useAuthContext } from 'src/auth/hooks';
 import axios from 'axios';
+import BatchTableRow from '../batch-table-row';
+import BatchTableToolbar from '../batch-table-toolbar';
+import BatchTableFiltersResult from '../batch-table-filters-result';
+
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 100 },
-  { id: 'faculty', label: 'Faculty', width: 360 },
-  { id: ' batchName', label: ' Batch Name', width: 390 },
+  { id: 'srNo', label: 'Sr No', align: 'center'  },
+  { id: 'faculty', label: 'Faculty' },
+  { id: ' batchName', label: ' Batch Name' },
   { id: 'technology', label: 'Technology' },
-  { id: 'time', label: 'Time', width: 220 },
-  // { id: 'totalAmount', label: 'Price', width: 140 },
-  // { id: 'status', label: 'Status', width: 110 },
+  { id: 'time', label: 'Time' },
+  { id: 'Student', label: 'Student', align: 'center' },
   { id: '', width: 88 },
 ];
 
@@ -191,7 +190,7 @@ export default function BatchListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
@@ -238,12 +237,6 @@ export default function BatchListView() {
               dense={table.dense}
               numSelected={table.selected.length}
               rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row._id)
-                )
-              }
               action={
                 <Tooltip title="Delete">
                   <IconButton color="primary" onClick={confirm.onTrue}>
@@ -262,12 +255,6 @@ export default function BatchListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row._id)
-                    )
-                  }
                 />
 
                 <TableBody>
@@ -358,7 +345,6 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       (order) =>
         order.technology.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.batch_name.toLowerCase().indexOf(name.toLowerCase()) !== -1
-      // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

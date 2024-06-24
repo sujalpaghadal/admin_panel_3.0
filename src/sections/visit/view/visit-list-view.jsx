@@ -178,7 +178,7 @@ export default function VisitListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
@@ -219,12 +219,12 @@ export default function VisitListView() {
               dense={table.dense}
               numSelected={table.selected.length}
               rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row._id)
-                )
-              }
+              // onSelectAllRows={(checked) =>
+              //   table.onSelectAllRows(
+              //     checked,
+              //     dataFiltered.map((row) => row._id)
+              //   )
+              // }
               action={
                 <Tooltip title="Delete">
                   <IconButton color="primary" onClick={confirm.onTrue}>
@@ -243,12 +243,12 @@ export default function VisitListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row._id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row._id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

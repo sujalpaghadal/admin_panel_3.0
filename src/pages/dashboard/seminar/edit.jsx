@@ -2,22 +2,21 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
-import { PostDetailsHomeView } from 'src/sections/blog/view';
+import SeminarEditView from 'src/sections/seminar/view/seminar-edit-view';
 
 // ----------------------------------------------------------------------
 
-export default function PostDetailsHomePage() {
+export default function SeminarEditPage() {
   const params = useParams();
-
-  const { title } = params;
+  const { id } = params;
 
   return (
     <>
       <Helmet>
-        <title> Post: Details</title>
+        <title> Dashboard: Seminar Edit</title>
       </Helmet>
 
-      {/* <PostDetailsHomeView title={`${title}`} /> */}
+      <SeminarEditView id={`${id}`} />
     </>
   );
 }

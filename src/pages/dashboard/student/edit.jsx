@@ -19,7 +19,6 @@ export default function UserEditPage() {
       </Helmet>
 
       <StudentEditView id={id} />
-      {/* <GuardianView id={`${id}`} /> */}
     </>
   );
 }

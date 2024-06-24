@@ -7,7 +7,7 @@ export default function SeminarListHomePage() {
   return (
     <>
       <Helmet>
-        <title> Post: List</title>
+        <title>Dashboard: Seminar List</title>
       </Helmet>
 
       <SeminarListView />

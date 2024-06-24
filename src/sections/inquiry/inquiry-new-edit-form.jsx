@@ -110,7 +110,6 @@ export default function InquiryNewEditForm({ inquiryId }) {
 
   const postInquiry = async (newInquiry) => {
     const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
-    console.log(URL);
     const response = await axios.post(URL, newInquiry);
     return response.data;
   };
@@ -377,7 +376,8 @@ export default function InquiryNewEditForm({ inquiryId }) {
             >
               <Stack spacing={1}>
                 <Typography variant="subtitle2">How did you come to know about JBS IT?</Typography>
-                <RHFRadioGroup row spacing={4} name="reference_by" options={INQUIRY_REFERENCE_BY} />
+                <RHFRadioGroup row spacing={4} name="reference_by" 
+                options={INQUIRY_REFERENCE_BY} />
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="subtitle2">Why did you choose this Course?</Typography>

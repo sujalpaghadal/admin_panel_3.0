@@ -122,7 +122,6 @@ export default function StudentTableRow({
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onGuardianRow();
             popover.onClose();
           }}
         >

@@ -12,6 +12,7 @@ export function useGetStudents() {
 
   const { data, isLoading, error, isValidating ,mutate } = useSWR(URL, fetcher);
 
+
   const memoizedValue = useMemo(
     () => ({
       students: data?.students || [],

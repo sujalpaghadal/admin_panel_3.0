@@ -198,7 +198,7 @@ export default function StudentAccountGeneral({ id }) {
     };
 
     try {
-      if (id) { 
+      if (id) {
         const response = await updateStudent(addStudent);
         enqueueSnackbar(response.message, { variant: 'success' });
         reset();
@@ -210,16 +210,20 @@ export default function StudentAccountGeneral({ id }) {
       }
       router.push(paths.dashboard.student.list);
     } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' });
+      console.error(error);
     }
-  };
+  });
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
+
+      const newFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      });
+
       if (file) {
-        setProfilePic(file);
-        setValue('profile_pic', file);
+        setValue('photoURL', newFile, { shouldValidate: true });
       }
     },
     [setValue]

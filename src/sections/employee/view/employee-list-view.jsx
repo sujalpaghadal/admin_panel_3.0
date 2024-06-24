@@ -23,6 +23,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import axios from 'axios';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useAuthContext } from 'src/auth/hooks';
 import {
   useTable,
   emptyRows,
@@ -60,6 +61,7 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function EmployeeListView() {
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
@@ -97,9 +99,8 @@ export default function EmployeeListView() {
   const handleDeleteRow = useCallback(
     async (_id) => {
       try {
-        const response = await axios.delete(
-          `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${_id}/deleteEmployee`
-        );
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/${_id}/deleteEmployee`;
+        const response = await axios.delete(URL);
         if (response.status === 200) {
           enqueueSnackbar(response.data.message, { variant: 'success' });
           confirm.onFalse();
@@ -112,21 +113,18 @@ export default function EmployeeListView() {
         enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
       }
     },
-    [enqueueSnackbar, mutate, confirm]
+    [enqueueSnackbar, mutate, confirm,user.company_id]
   );
 
   // Multiple Delete
   const handleDeleteRows = useCallback(async () => {
     try {
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/delete/all-employee`;
+
       const sortedSelectedIds = [...table.selected].sort();
       await Promise.all(
         sortedSelectedIds.map(async (selectedId) => {
-          const response = await axios.delete(
-            `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/delete/all-employee`,
-            {
-              data: { ids: [selectedId] },
-            }
-          );
+          const response = await axios.delete(URL,{data: { ids: [selectedId] }});
           if (response.status === 200) {
             enqueueSnackbar(response.data.data.message, { variant: 'success' });
             mutate();
@@ -140,7 +138,7 @@ export default function EmployeeListView() {
       console.error('Failed to delete Employee', error);
       enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
     }
-  }, [enqueueSnackbar, mutate, confirm, table.selected]);
+  }, [enqueueSnackbar, mutate, confirm, table.selected, user.company_id]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -151,13 +149,13 @@ export default function EmployeeListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Employee', href: paths.dashboard.employee.list },
-            { name: 'Employee List' },
+            { name: 'Employee' },
           ]}
           action={
             <Button
@@ -213,13 +211,13 @@ export default function EmployeeListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row._id)
-                    )
-                  }
+                  // onSort={table.onSort}
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row._id)
+                  //   )
+                  // }
                 />
                 <TableBody>
                   {dataFiltered

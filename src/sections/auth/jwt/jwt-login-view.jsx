@@ -30,8 +30,6 @@ export default function JwtLoginView() {
 
   const router = useRouter();
 
-  const [errorMsg, setErrorMsg] = useState('');
-
   const searchParams = useSearchParams();
 
   const returnTo = searchParams.get('returnTo');
@@ -62,12 +60,10 @@ export default function JwtLoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await login?.(data.email, data.password);
-
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
       console.error(error);
       reset();
-      setErrorMsg(typeof error === 'string' ? error : error.message);
     }
   });
 
@@ -104,10 +100,6 @@ export default function JwtLoginView() {
         }}
       />
 
-      <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        Forgot password?
-      </Link>
-
       <LoadingButton
         fullWidth
         color="inherit"
@@ -124,16 +116,6 @@ export default function JwtLoginView() {
   return (
     <>
       {renderHead}
-
-      {/* <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert> */}
-
-      {!!errorMsg && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {errorMsg}
-        </Alert>
-      )}
 
       <FormProvider methods={methods} onSubmit={onSubmit}>
         {renderForm}

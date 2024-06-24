@@ -5,22 +5,22 @@ import { fetcher } from '../utils/axios';
 import { useAuthContext } from 'src/auth/hooks';
 
 // Hook to get all demos
-export function useGetAllDemos(page, limit) {
+export function useGetAllDemos() {
   const { user } = useAuthContext();
   const DemoURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/demo`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(DemoURL, fetcher);
-  const demo = data?.data || [];
   const memoizedValue = useMemo(
     () => ({
-      demo: demo,
+      demo: data?.data || [],
       demoLoading: isLoading,
       demoError: error,
       demoValidating: isValidating,
-      demoEmpty: !isLoading && !demo.length,
+      demoEmpty: !isLoading && !data.data.length,
       mutate,
     }),
-    [demo, error, isLoading, isValidating, mutate]
+    [data.data, error, isLoading, isValidating, mutate]
   );
+
   return memoizedValue;
 }
 

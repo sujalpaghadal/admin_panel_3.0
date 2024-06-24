@@ -7,6 +7,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { useSettingsContext } from 'src/components/settings';
 
+import logo from 'src/components/logo';
 import Main from './main';
 import Header from './header';
 import NavMini from './nav-mini';
@@ -17,6 +18,7 @@ import NavHorizontal from './nav-horizontal';
 
 export default function DashboardLayout({ children }) {
   const settings = useSettingsContext();
+
 
   const lgUp = useResponsive('up', 'lg');
 

@@ -1,15 +1,13 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 
 import MainLayout from 'src/layouts/main';
+import AuthClassicLayout from 'src/layouts/auth/classic';
 
+import LoginPage from 'src/pages/auth/jwt/login';
 import { authRoutes } from './auth';
-import { HomePage, mainRoutes } from './main';
+import { mainRoutes } from './main';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
-import LoginPage from 'src/pages/auth/jwt/login';
-import { Grid } from '@mui/material';
-import login from '../../assets/login-back/loginBack.webp';
-import AuthClassicLayout from 'src/layouts/auth/classic';
 
 // ----------------------------------------------------------------------
 

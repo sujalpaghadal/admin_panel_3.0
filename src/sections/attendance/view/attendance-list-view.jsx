@@ -1,5 +1,5 @@
 import sumBy from 'lodash/sumBy';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -8,24 +8,23 @@ import Table from '@mui/material/Table';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import { alpha, useTheme } from '@mui/material/styles';
-import TableContainer from '@mui/material/TableContainer';
+import { Button, TableContainer } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
 import { isAfter, isBetween } from 'src/utils/format-time';
 
-import { _invoices, INVOICE_SERVICE_OPTIONS } from 'src/_mock';
+import { INVOICE_SERVICE_OPTIONS } from 'src/_mock';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import  {useGetAllAttendance}  from 'src/api/attendance';
+import { RouterLink } from 'src/routes/components';
 import {
   useTable,
   emptyRows,
@@ -33,19 +32,12 @@ import {
   getComparator,
   TableEmptyRows,
   TableHeadCustom,
-  TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import { useGetCompanyAttendance } from 'src/api/attendance';
 
-import AttendanceAnalytic from '../attendance-analytic';
 import AttendanceTableRow from '../attendance-table-row';
 import AttendanceTableToolbar from '../attendance-table-toolbar';
 import AttendanceTableFiltersResult from '../attendance-table-filters-result';
-import Button from '@mui/material/Button';
-import { RouterLink } from '../../../routes/components/index.js';
-
-// ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'srNo', label: '#', align: 'center' },
@@ -65,22 +57,18 @@ const defaultFilters = {
   date: new Date(),
 };
 
-// ----------------------------------------------------------------------
-
 export default function AttendanceListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const theme = useTheme();
 
-  const { attendance } = useGetCompanyAttendance();
+  const { attendance } = useGetAllAttendance();
 
   const settings = useSettingsContext();
 
   const router = useRouter();
 
   const table = useTable({ defaultOrderBy: 'createDate' });
-
-  const confirm = useBoolean();
 
   const [tableData, setTableData] = useState(attendance);
 

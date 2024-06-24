@@ -16,12 +16,12 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fDate } from 'src/utils/format-time';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
-import DemoFormDialog from './demo-form-dialog';
 import { useState } from 'react';
 import { usePopover } from 'src/components/custom-popover';
 import { useDeleteDemo } from 'src/api/demo';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
+import DemoFormDialog from './demo-form-dialog';
 // ----------------------------------------------------------------------
 
 export default function DemoTableRow({
@@ -38,7 +38,7 @@ export default function DemoTableRow({
   const [demoID, setDemoID] = useState(null);
 
   const { demos, inquiry_id } = row;
-  const { firstName, lastName, email, contact } = inquiry_id || {};
+  const { firstName, lastName, email } = inquiry_id || {};
 
   const confirm = useBoolean();
   const collapse = useBoolean();
@@ -61,10 +61,27 @@ export default function DemoTableRow({
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell> */}
       <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {/* {orderNumber} */}
+          {'23'}
+        </Box>
         <Box>{srNumber}</Box>
       </TableCell>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} /> */}
+
         <ListItemText
+          primary={'ramu kaka'}
+          secondary={'ramu@gmail.com'}
+          primaryTypographyProps={{ typography: 'body2' }}
           primary={`${firstName} ${lastName}`}
           secondary={email}
           primaryTypographyProps={{ variant: 'body2' }}
@@ -75,7 +92,34 @@ export default function DemoTableRow({
         />
       </TableCell>
       <TableCell>
-        <Box>{contact}</Box>
+        <ListItemText
+          primary={fDate(createdAt)}
+          secondary={fTime(createdAt)}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
+
+      {/* <TableCell align="center"> {totalQuantity} </TableCell> */}
+
+      {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
+
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (status === 'completed' && 'success') ||
+            (status === 'pending' && 'warning') ||
+            (status === 'cancelled' && 'error') ||
+            'default'
+          }
+        >
+          {status}
+        </Label>
       </TableCell>
       <TableCell align="right" sx={{ px: 3, whiteSpace: 'nowrap' }}>
         <IconButton
@@ -89,6 +133,10 @@ export default function DemoTableRow({
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
+
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );
@@ -193,6 +241,7 @@ export default function DemoTableRow({
   return (
     <>
       {renderPrimary}
+
       {renderSecondary}
       <ConfirmDialog
         open={confirm.value}

@@ -1,12 +1,12 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { fetcher } from '../utils/axios';
 import { useAuthContext } from 'src/auth/hooks';
+import { fetcher } from '../utils/axios';
 
 export function useGetBatches() {
   const { user } = useAuthContext();
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/batch`;
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/batch`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
@@ -24,8 +24,9 @@ export function useGetBatches() {
 }
 
 export function useGetSingleBatches(SingleBatchID) {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/batch/${SingleBatchID}`;
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/batch/${SingleBatchID}`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
   const memoizedValue = useMemo(
     () => ({
       Singlebatch: data?.data?.batch || [],
