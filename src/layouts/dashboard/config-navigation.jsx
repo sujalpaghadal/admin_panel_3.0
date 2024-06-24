@@ -44,6 +44,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  batches: <Iconify icon="solar:users-group-rounded-bold-duotone" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
@@ -59,7 +60,7 @@ export function useNavData() {
         subheader: t('overview'),
         items: [
           {
-            title: t('app'),
+            title: t('dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
           },
@@ -103,6 +104,13 @@ export function useNavData() {
               { title: t('edit'), path: paths.dashboard.student.demo.edit },
               { title: t('account'), path: paths.dashboard.student.account },
             ],
+          },
+
+          // ACCOUNT
+          {
+            title: t('account'),
+            path: paths.dashboard.account.root,
+            icon: ICONS.user,
           },
 
           // FEES
@@ -179,8 +187,7 @@ export function useNavData() {
           {
             title: t('attendance'),
             path: paths.dashboard.attendance.root,
-            icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.attendance.root }],
+            icon: ICONS.external,
           },
 
           // EXPENSES
@@ -188,18 +195,39 @@ export function useNavData() {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
             icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+          // TASK
+          {
+            title: t('task'),
+            path: paths.dashboard.task.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+          {
+            title: t('visit'),
+            path: paths.dashboard.visit.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+
+          //EXAM
+          {
+            title: t('exam'),
+            path: paths.dashboard.examination.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           // BATCH
           {
             title: t('batches'),
             path: paths.dashboard.batches.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.batches.root },
-              { title: t('details'), path: paths.dashboard.batches.demo.details },
-            ],
+            icon: ICONS.batches,
+            // children: [
+            // { title: t('list'), path: paths.dashboard.batches.root },
+            // { title: t('details'), path: paths.dashboard.batches.demo.details },
+            // ],
           },
 
           // INVOICE

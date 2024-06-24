@@ -21,14 +21,26 @@ import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 import ComplainListView from 'src/sections/overview/complain/view/complain-list-view';
+import ExaminationListPage from 'src/pages/dashboard/examination/list';
+import ExaminationCreatePage from 'src/pages/dashboard/examination/create';
+import ExaminationEditPage from 'src/pages/dashboard/examination/edit';
+import TaskListPage from 'src/pages/dashboard/task/list';
+import TaskCreatePage from 'src/pages/dashboard/task/create';
+import TaskEditPage from 'src/pages/dashboard/task/edit';
+import VisitListPage from 'src/pages/dashboard/visit/list';
+import VisitCreatePage from 'src/pages/dashboard/visit/create';
+import VisitEditPage from 'src/pages/dashboard/visit/edit';
+
+//FEES
+const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
+const InvoiceDetailsView = lazy(() => import('src/sections/overview/fees/invoice-page'));
 
 // OVERVIEW
-const IndexPage = lazy(() => import('src/pages/dashboard/app'));
+const IndexPage = lazy(() => import('src/pages/dashboard/dashboard'));
 const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
-const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
 
 //COMPLAIN
 // const StudentComplainCreateView = lazy(() => import('src/sections/student/view/student-complain-create-view'));
@@ -56,6 +68,7 @@ const SeminarListPage = lazy(() => import('src/pages/dashboard/seminar/list'));
 
 // ATTENDANCE
 const AttendanceListPage = lazy(() => import('src/pages/dashboard/attendance/list'));
+const AttendanceCreatePage = lazy(() => import('src/pages/dashboard/attendance/new-list'));
 
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
@@ -83,6 +96,9 @@ const EmployeeEditPage = lazy(() => import('src/pages/dashboard/employee/edit'))
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 
+// ACCOUNT
+const AccountListPage = lazy(() => import('src/pages/dashboard/account/account'));
+
 // TEST RENDER PAGE BY ROLE
 const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission'));
 
@@ -109,6 +125,10 @@ export const dashboardRoutes = [
       { path: 'fees', element: <FeesPage /> },
       { path: 'complain', element: <ComplainListView /> },
       {
+        path: 'fees/fee-invoice',
+        element: <InvoiceDetailsView id="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2" />,
+      },
+      {
         path: 'inquiry',
         children: [
           { element: <InquiryListPage />, index: true },
@@ -127,6 +147,13 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <StudentEditPage /> },
           { path: ':id/guaridiandetails', element: <GuardianDetailsPage /> },
           { path: 'account', element: <StudentAccountPage /> },
+        ],
+      },
+      {
+        path: 'account',
+        children: [
+          { element: <AccountListPage />, index: true },
+          { path: 'list', element: <AccountListPage /> },
         ],
       },
       {
@@ -180,6 +207,33 @@ export const dashboardRoutes = [
         ],
       },
       {
+        path: 'task',
+        children: [
+          { element: <TaskListPage />, index: true },
+          { path: 'list', element: <TaskListPage /> },
+          { path: 'new', element: <TaskCreatePage /> },
+          { path: ':id/edit', element: <TaskEditPage /> },
+        ],
+      },
+      {
+        path: 'visit',
+        children: [
+          { element: <VisitListPage />, index: true },
+          { path: 'list', element: <VisitListPage /> },
+          { path: 'new', element: <VisitCreatePage /> },
+          { path: ':id/edit', element: <VisitEditPage /> },
+        ],
+      },
+      {
+        path: 'examination',
+        children: [
+          { element: <ExaminationListPage />, index: true },
+          { path: 'list', element: <ExaminationListPage /> },
+          { path: 'new', element: <ExaminationCreatePage /> },
+          { path: ':id/edit', element: <ExaminationEditPage /> },
+        ],
+      },
+      {
         path: 'batches',
         children: [
           { element: <BatchListPage />, index: true },
@@ -201,6 +255,7 @@ export const dashboardRoutes = [
         children: [
           { element: <AttendanceListPage />, index: true },
           { path: 'list', element: <AttendanceListPage /> },
+          { path: 'new', element: <AttendanceCreatePage /> },
         ],
       },
       {

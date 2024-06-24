@@ -26,3 +26,4 @@ export const INQUIRY_INTERESTED_IN = [
 ];
 
 export const DEMO_FACULTY = ['Kaushal Sir', 'Dixita Mam', 'Nisha Mam', 'Rutvik Sir'];
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

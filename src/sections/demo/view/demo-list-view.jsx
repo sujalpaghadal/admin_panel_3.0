@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -51,7 +51,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 const TABLE_HEAD = [
   { id: 'orderNumber', label: 'Sr No', width: 116 },
   { id: 'name', label: 'Inquiry Student' },
-  { id: 'totalAmount', label: 'Contact' },
+  { id: 'totalAmount', label: 'Contact', width: 160 },
   // { id: 'createdAt', label: 'Date', width: 200 },
   // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
   // { id: 'status', label: 'Status', width: 210 },
@@ -78,9 +78,14 @@ export default function DemoListView() {
 
   const confirm = useBoolean();
 
-  const { demo } = useGetAllDemos();
+  const { demo, mutate } = useGetAllDemos();
+  const [tableData, setTableData] = useState();
 
-  const [tableData, setTableData] = useState(demo);
+  useEffect(() => {
+    if (demo) {
+      setTableData(demo);
+    }
+  }, [demo]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -178,41 +183,6 @@ export default function DemoListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <DemoTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -284,6 +254,7 @@ export default function DemoListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        mutate={mutate}
                       />
                     ))}
 
@@ -332,9 +303,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.inquiry.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.inquiry_id.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
