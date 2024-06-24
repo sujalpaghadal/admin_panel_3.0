@@ -32,7 +32,6 @@ export default function AccountCurrentDownload({ title, subheader, chart, ...oth
   const theme = useTheme();
 
   const { colors, series, options } = chart;
-
   const chartSeries = series.map((i) => i.value);
 
   const chartOptions = useChart({

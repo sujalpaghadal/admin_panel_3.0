@@ -34,6 +34,7 @@ export default function AccountNewInvoice({ title, subheader, tableData, tableLa
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
+              <Box></Box>
               {tableData.map((row) => (
                 <AccountNewInvoiceRow key={row.id} row={row} />
               ))}
@@ -92,7 +93,7 @@ function AccountNewInvoiceRow({ row }) {
   return (
     <>
       <TableRow>
-        <TableCell>{row.invoiceNumber}</TableCell>
+        {/* <TableCell>{row.invoiceNumber}</TableCell>
 
         <TableCell>{row.category}</TableCell>
 
@@ -115,7 +116,7 @@ function AccountNewInvoiceRow({ row }) {
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       <CustomPopover
