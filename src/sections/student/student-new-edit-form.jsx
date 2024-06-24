@@ -33,17 +33,20 @@ import FormProvider, {
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useAuthContext } from 'src/auth/hooks';
 import axios from 'axios';
-import { mutate } from 'swr';
 
 // ----------------------------------------------------------------------
 
-export default function StudentNewEditForm({ currentStudent }) {
+export default function StudentNewEditForm({ currentStudent, mutate }) {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuthContext();
   const [profilePic, setProfilePic] = useState(null);
-
+  useEffect(() => {
+    if (currentStudent) {
+      setProfilePic(currentStudent?.profile_pic);
+    }
+  }, [currentStudent]);
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
@@ -86,14 +89,15 @@ export default function StudentNewEditForm({ currentStudent }) {
       discount: currentStudent?.fee_detail?.discount || '',
       amount_paid: currentStudent?.fee_detail?.amount_paid || '',
     }),
-    
+
     [currentStudent]
   );
-  
+
   const methods = useForm({
     // resolver: yupResolver(NewUserSchema),
     defaultValues,
   });
+  console.log(profilePic, 'ppppppp');
 
   const {
     reset,
@@ -116,26 +120,27 @@ export default function StudentNewEditForm({ currentStudent }) {
     if (profilePic) {
       formData.append('profile-pic', profilePic);
     }
-    console.log('form ', studentPayload);
     try {
       const response = await axios.post(URL, formData);
+      mutate();
       enqueueSnackbar(response?.message || 'Student Created Successfully', { variant: 'success' });
     } catch (error) {
       console.error('Failed to create event:', error);
       throw error;
     }
   }
-  
+  console.log('profile_pic : ', profilePic);
+
   //update student api
   async function updateStudent(studentPayload) {
-    console.log("data : ",studentPayload);
+    console.log('data : ', studentPayload);
     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
     const formData = new FormData();
 
     Object.keys(studentPayload).forEach((key) => {
       formData.append(key, studentPayload[key]);
     });
-
+    console.log(profilePic, 'fform');
     if (profilePic) {
       formData.append('profile-pic', profilePic);
     }
@@ -147,7 +152,7 @@ export default function StudentNewEditForm({ currentStudent }) {
       throw error;
     }
   }
-  
+
   const onSubmit = handleSubmit(async (data) => {
     const studentPayload = {
       firstName: data.firstName,
@@ -199,16 +204,11 @@ export default function StudentNewEditForm({ currentStudent }) {
       }
     },
     [setValue]
-    );
-  useEffect(() => {
-    if (currentStudent) {
-      setProfilePic(currentStudent?.profile_pic);
-    }
-  }, [currentStudent])
+  );
 
-    // ============================= HTML CODE VARIABLES =============================
-    
-    const uploadStudentImage = (
+  // ============================= HTML CODE VARIABLES =============================
+
+  const uploadStudentImage = (
     <>
       {mdUp && (
         <Grid item md={4}>
