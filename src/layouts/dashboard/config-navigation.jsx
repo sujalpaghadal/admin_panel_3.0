@@ -20,6 +20,16 @@ const ICONS = {
   chat: icon('ic_chat'),
   mail: icon('ic_mail'),
   user: icon('ic_user'),
+  student: <Iconify icon="ph:student-bold" sx={{ width: 1, height: 1 }} />,
+  employee: <Iconify icon="clarity:employee-solid" sx={{ width: 1, height: 1 }} />,
+  inquiry: <Iconify icon="heroicons-solid:newspaper" sx={{ width: 1, height: 1 }} />,
+  demo: <Iconify icon="material-symbols:demography-outline" sx={{ width: 1, height: 1 }} />,
+  seminar: <Iconify icon="material-symbols:overview-sharp" sx={{ width: 1, height: 1 }} />,
+  attandance: <Iconify icon="fluent:clipboard-task-list-20-filled" sx={{ width: 1, height: 1 }} />,
+  expenses: <Iconify icon="arcticons:day-to-day-expenses" sx={{ width: 1, height: 1 }} />,
+  task: <Iconify icon="fluent:task-list-square-person-20-filled" sx={{ width: 1, height: 1 }} />,
+  visit: <Iconify icon="material-symbols:nest-doorbell-visitor" sx={{ width: 1, height: 1 }} />,
+  exam: <Iconify icon="healthicons:i-exam-multiple-choice-negative" sx={{ width: 1, height: 1 }} />,
   file: icon('ic_file'),
   lock: icon('ic_lock'),
   tour: icon('ic_tour'),
@@ -32,7 +42,6 @@ const ICONS = {
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
   product: icon('ic_product'),
-  inquiry: icon('ic_label'),
   calendar: icon('ic_calendar'),
   disabled: icon('ic_disabled'),
   external: icon('ic_external'),
@@ -40,7 +49,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
-  batches: <Iconify icon="solar:users-group-rounded-bold-duotone" sx={{ width: 1, height: 1 }} />,
+  batches: <Iconify icon="mdi:google-classroom" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
@@ -91,7 +100,7 @@ export function useNavData() {
           {
             title: t('student'),
             path: paths.dashboard.student.list,
-            icon: ICONS.user,
+            icon: ICONS.student,
           },
 
           // FEES
@@ -105,7 +114,7 @@ export function useNavData() {
           {
             title: t('employee'),
             path: paths.dashboard.employee.list,
-            icon: ICONS.user,
+            icon: ICONS.employee,
           },
 
           // INQUIRY
@@ -145,48 +154,48 @@ export function useNavData() {
           {
             title: t('Demo'),
             path: paths.dashboard.demo.root,
-            icon: ICONS.order,
+            icon: ICONS.demo,
           },
 
           // SEMINAR
           {
             title: t('seminar'),
             path: paths.dashboard.seminar.list,
-            icon: ICONS.order,
+            icon: ICONS.seminar,
           },
 
           // ATTENDANCE
           {
             title: t('attendance'),
             path: paths.dashboard.attendance.root,
-            icon: ICONS.external,
+            icon: ICONS.attandance,
           },
 
           // EXPENSES
           {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
-            icon: ICONS.analytics,
+            icon: ICONS.expenses,
             // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
           // TASK
           {
             title: t('task'),
             path: paths.dashboard.task.list,
-            icon: ICONS.analytics,
+            icon: ICONS.task,
             // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
           {
             title: t('visit'),
             path: paths.dashboard.visit.list,
-            icon: ICONS.analytics,
+            icon: ICONS.visit,
             // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           {
             title: t('exam'),
             path: paths.dashboard.examination.list,
-            icon: ICONS.analytics,
+            icon: ICONS.exam,
             // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 

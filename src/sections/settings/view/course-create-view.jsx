@@ -20,7 +20,7 @@ export default function CourseCreatePage() {
       .put(URL, payload)
       .then(() => {
         setInputVal('');
-        enqueueSnackbar('Roles Add Successfully', {
+        enqueueSnackbar('courses Add Successfully', {
           variant: 'success',
         });
         mutate();
@@ -35,7 +35,7 @@ export default function CourseCreatePage() {
     axios
       .put(apiEndpoint, payload)
       .then(() => {
-        enqueueSnackbar('Roles Delete Successfully', {
+        enqueueSnackbar('courses Delete Successfully', {
           variant: 'success',
         });
         mutate();
@@ -70,8 +70,10 @@ export default function CourseCreatePage() {
             <Button
               size="small"
               sx={{
-                fontSize: '16px',
+                fontSize: '14px',
                 height: '100%',
+                padding:0,
+                margin:0
               }}
               variant="outlined"
               color="primary"

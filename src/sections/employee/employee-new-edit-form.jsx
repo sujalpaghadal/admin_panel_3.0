@@ -301,7 +301,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 label="Role"
                 placeholder="Choose a role"
                 fullWidth
-                options={configs.emp_type.map((option) => option)}
+                options={configs.emp_type?.map((option) => option)}
                 getOptionLabel={(option) => option}
               />
 
@@ -320,7 +320,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 label="Technology"
                 placeholder="Choose a Technology"
                 fullWidth
-                options={configs.developer_type.map((option) => option)}
+                options={configs?.developer_type?.map((option) => option)}
                 getOptionLabel={(option) => option}
               />
 

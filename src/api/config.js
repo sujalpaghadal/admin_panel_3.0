@@ -13,17 +13,17 @@ export function useGetConfigs() {
   }
 
   const memoizedValue = useMemo(() => {
-    const configs = data?.data.data[0] || [];
+    const configs = data?.data?.data[0] || [];
     const isLoading = !data && !error;
     return {
       configs,
       configsLoading: isLoading,
       configsError: error,
       configsValidating: isValidating,
-      configsEmpty: !isLoading && configs.length === 0,
+      configsEmpty: !isLoading && configs?.length === 0,
       mutate,
     };
-  }, [data, error, isValidating, mutate]);
+  }, [data?.data?.data[0], error, isValidating, mutate]);
 
   return memoizedValue;
 }

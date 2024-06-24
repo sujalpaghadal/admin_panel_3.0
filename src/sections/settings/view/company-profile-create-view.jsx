@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuthContext } from 'src/auth/hooks';
 import { useSnackbar } from 'src/components/snackbar';
 import { Stack } from '@mui/system';
+import { LoadingButton } from '@mui/lab';
 
 export default function CompanyProfile() {
   const { user } = useAuthContext();
@@ -15,6 +16,7 @@ export default function CompanyProfile() {
     name: '',
     logo: null,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (configs && configs.company_details) {
@@ -62,27 +64,28 @@ export default function CompanyProfile() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/configs/${configs._id}`;
     const payload = { ...configs, company_details: { ...configs.company_details, ...values } };
     console.log(payload);
-    axios
-      .put(URL, payload)
-      .then((res) => {
-        if (res.status === 200) {
-          enqueueSnackbar('Companyname Update Successfully', {
-            variant: 'success',
-          });
-          mutate();
-        }
-      })
-      .catch((err) => {
-        console.error('Update error:', err);
-        enqueueSnackbar(err.response?.data?.message || 'An error occurred', {
-          variant: 'error',
+    try {
+      const res = await axios.put(URL, payload);
+      if (res.status === 200) {
+        enqueueSnackbar('Company name updated successfully', {
+          variant: 'success',
         });
+        mutate();
+      }
+    } catch (err) {
+      console.error('Update error:', err);
+      enqueueSnackbar(err.response?.data?.message || 'An error occurred', {
+        variant: 'error',
       });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,46 +100,52 @@ export default function CompanyProfile() {
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
           <Card>
-            <Stack spacing={3} sx={{ p: 3 }}>
-              <Box sx={{ marginBottom: '20px' }}>
-                <input
-                  id="file-input"
-                  type="file"
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
-                <Avatar
-                  alt="Avatar"
-                  src={configs?.company_details?.logo || ''}
-                  onClick={() => document.getElementById('file-input').click()}
-                  style={{
-                    cursor: 'pointer',
-                    width: 96,
-                    height: 100,
-                    margin: 'auto',
-                    fontSize: '10px',
-                  }}
-                >
-                  Upload Logo
-                </Avatar>
-              </Box>
+            <form onSubmit={handleSubmit}>
+              <Stack spacing={3} sx={{ p: 3 }}>
+                <Box sx={{ marginBottom: '20px' }}>
+                  <input
+                    id="file-input"
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                  <Avatar
+                    alt="Avatar"
+                    src={configs?.company_details?.logo || ''}
+                    onClick={() => document.getElementById('file-input').click()}
+                    style={{
+                      cursor: 'pointer',
+                      width: 96,
+                      height: 100,
+                      margin: 'auto',
+                      fontSize: '10px',
+                    }}
+                  >
+                    Upload Logo
+                  </Avatar>
+                </Box>
 
-              <TextField
-                label="Company Name"
-                id="name"
-                name="name"
-                variant="outlined"
-                fullWidth
-                InputLabelProps={{
-                  style: { color: '#5559CE' },
-                }}
-                value={values.name}
-                onChange={handleChange}
-              />
-              <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </Stack>
+                <TextField
+                  label="Company Name"
+                  id="name"
+                  name="name"
+                  variant="outlined"
+                  fullWidth
+                  value={values.name}
+                  onChange={handleChange}
+                />
+                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'end' }}>
+                  <LoadingButton 
+                    type="submit" 
+                    variant="contained" 
+                    size="small"
+                    loading={loading}
+                  >
+                    Save Changes
+                  </LoadingButton>
+                </Grid>
+              </Stack>
+            </form>
           </Card>
         </Grid>
       </Grid>

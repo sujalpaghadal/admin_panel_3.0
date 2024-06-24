@@ -15,46 +15,48 @@ import Userrolecreatepage from './user-role-create-view';
 import ExpensesCreatePage from './expenses-create-view';
 import Developercreatepage from './developer-role-create-view';
 
+
+
 const TABS = [
   {
     value: 'Expeneses',
     label: 'Expeneses',
-    icon: <Iconify icon="solar:user-id-bold" width={24} />,
+    icon: <Iconify icon="arcticons:day-to-day-expenses" width={24} />,
   },
   {
     value: 'Company Profile',
     label: 'Company Profile',
-    icon: <Iconify icon="solar:bill-list-bold" width={24} />,
+    icon: <Iconify icon="mdi:company" width={24} />,
   },
   {
     value: 'User Role',
     label: 'User Role',
-    icon: <Iconify icon="solar:bell-bing-bold" width={24} />,
+    icon: <Iconify icon="fa6-solid:user-gear" width={24} />,
   },
   {
     value: 'Courses',
     label: 'Courses',
-    icon: <Iconify icon="solar:share-bold" width={24} />,
+    icon: <Iconify icon="hugeicons:course" width={24} />,
   },
   {
     value: 'Lab',
     label: 'Lab',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+    icon: <Iconify icon="mdi:google-classroom" width={24} />,
   },
   {
     value: 'Employee Role',
     label: 'Employee Role',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+    icon: <Iconify icon="clarity:employee-solid" width={24} />,
   },
   {
     value: 'Developer Option',
     label: 'Developer Option',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+    icon: <Iconify icon="material-symbols:developer-mode-tv-outline-rounded" width={24} />,
   },
   {
     value: 'Application Banner',
     label: 'Application Banner',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+    icon: <Iconify icon="mdi:application-edit" width={24} />,
   },
 ];
 
