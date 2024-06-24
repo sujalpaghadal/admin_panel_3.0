@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,7 +23,7 @@ import FormProvider, {
 import { STUDENT_GENDER, courses } from 'src/_mock/_student';
 import countrystatecity from '../../_mock/map/csc.json';
 
-export default function StudentAccountGeneral() {
+export default function StudentAccountGeneral({ id }) {
   const { user } = useAuthContext();
   const router = useRouter();
   const [profilePic, setProfilePic] = useState(null);
@@ -81,6 +81,46 @@ export default function StudentAccountGeneral() {
     formState: { isSubmitting },
   } = methods;
 
+  useEffect(() => {
+    const fetchSingleStudent = async () => {
+      try {
+        if (id) {
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/v2/student/${id}`;
+          const response = await axios.get(URL);
+          const { student } = response?.data;
+          console.log('get', student);
+          reset({
+            firstName: student.firstName,
+            lastName: student.lastName,
+            contact: student.contact,
+            email: student.email,
+            gender: student.gender,
+            course: student.course,
+            education: student.education,
+            school_college: student.school_college,
+            dob: student.dob ? new Date(student.dob) : null,
+            joining_date: student.joining_date ? new Date(student.joining_date) : null,
+            blood_group: student.blood_group,
+            address_1: student.address_detail.address_1,
+            address_2: student.address_detail.address_2,
+            country: student.address_detail.country,
+            state: student.address_detail.state,
+            city: student.address_detail.city,
+            zipcode: student.address_detail.zipcode,
+            enrollment_no: Number(student.enrollment_no),
+            total_amount: Number(student.fee_detail.total_amount),
+            amount_paid: Number(student.fee_detail.amount_paid),
+            discount: Number(student.fee_detail.discount),
+          });
+          setProfilePic(student.profile_pic)
+        }
+      } catch (err) {
+        console.log('ERROR : ', err);
+      }
+    };
+    fetchSingleStudent();
+  }, [id, reset]);
+
   const postStudent = async (addStudent) => {
     try {
       const formData = new FormData();
@@ -94,6 +134,31 @@ export default function StudentAccountGeneral() {
 
       const response = await axios.post(
         `${import.meta.env.VITE_AUTH_API}/api/v2/${user.company_id}/student`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('Update failed. Please try again.');
+    }
+  };
+  const updateStudent = async (addStudent) => {
+    try {
+      const formData = new FormData();
+      Object.keys(addStudent).forEach((key) => {
+        formData.append(key, addStudent[key]);
+      });
+
+      if (profilePic) {
+        formData.append('profile-pic', profilePic);
+      }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_AUTH_API}/api/v2/student/${id}`,
         formData,
         {
           headers: {
@@ -133,21 +198,32 @@ export default function StudentAccountGeneral() {
     };
 
     try {
-      const response = await postStudent(addStudent);
+      if (id) {
+        const response = await updateStudent(addStudent);
+        enqueueSnackbar(response.message, { variant: 'success' });
+        reset();
+      }
+      else {
+        const response = await postStudent(addStudent);
+        enqueueSnackbar(response.message, { variant: 'success' });
+        reset();
+      }
       router.push(paths.dashboard.student.list);
-      enqueueSnackbar(response.message, { variant: 'success' });
-      reset();
     } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' });
+      console.error(error);
     }
-  };
+  });
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
+
+      const newFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      });
+
       if (file) {
-        setProfilePic(file);
-        setValue('profile_pic', file);
+        setValue('photoURL', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -166,7 +242,7 @@ export default function StudentAccountGeneral() {
 
           <Card sx={{ pt: 5, px: 3, mt: 5 }}>
             <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar name="profile-pic" onDrop={handleDrop} />
+              <RHFUploadAvatar name="profile_pic" onDrop={handleDrop} />
             </Box>
           </Card>
         </Grid>
@@ -391,7 +467,7 @@ export default function StudentAccountGeneral() {
       {mdUp && <Grid item md={4} />}
       <Grid item xs={12} md={8} sx={{ display: 'flex', justifyContent: 'end' }}>
         <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-          Add Student
+          {id ? "Update Student" : "Add Student"}
         </LoadingButton>
       </Grid>
     </>

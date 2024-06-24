@@ -11,18 +11,18 @@ import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 
 import { useSettingsContext } from 'src/components/settings';
 
-import StudentProgressDetailsToolbar from '../student-progress-details-toolbar';
+import StudentProgressDetailsToolbar from './student-progress-details-toolbar';
 
 import StudentProgressDetailsHistory from '../student-progrss-details-history';
 
 // ----------------------------------------------------------------------
 
-export default function StudentDetailsView({ id }) {
+export default function StudentDetailsView({ currentStudent }) {
   const settings = useSettingsContext();
 
-  const currentOrder = _orders.filter((order) => order.id === id)[0];
+  const currentOrder = _orders.filter((order) => order.id === currentStudent._id)[0];
 
-  const [status, setStatus] = useState(currentOrder.status);
+  const [status, setStatus] = useState();
 
   const handleChangeStatus = useCallback((newValue) => {
     setStatus(newValue);
@@ -30,18 +30,18 @@ export default function StudentDetailsView({ id }) {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <StudentProgressDetailsToolbar
+      {/* <StudentProgressDetailsToolbar
         backLink={paths.dashboard.order.root}
         orderNumber={currentOrder.orderNumber}
         createdAt={currentOrder.createdAt}
         status={status}
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
-      />
+      /> */}
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+        <Grid xs={12} md={12}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
-            <StudentProgressDetailsHistory history={currentOrder.history} />
+            <StudentProgressDetailsHistory  />
           </Stack>
         </Grid>
       </Grid>

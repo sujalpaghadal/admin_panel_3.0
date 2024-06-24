@@ -36,14 +36,14 @@ export default function StudentProgressDetailsToolbar({
         }}
       >
         <Stack spacing={1} direction="row" alignItems="flex-start">
-          <IconButton component={RouterLink} href={backLink}>
+          <IconButton component={RouterLink}>
             <Iconify icon="eva:arrow-ios-back-fill" />
           </IconButton>
 
           <Stack spacing={0.5}>
             <Stack spacing={1} direction="row" alignItems="center">
-              <Typography variant="h4"> Order {orderNumber} </Typography>
-              <Label
+              {/* <Typography variant="h4"> Order {orderNumber} </Typography> */}
+              {/* <Label
                 variant="soft"
                 color={
                   (status === 'completed' && 'success') ||
@@ -53,11 +53,11 @@ export default function StudentProgressDetailsToolbar({
                 }
               >
                 {status}
-              </Label>
+              </Label> */}
             </Stack>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>
-              {fDateTime(createdAt)}
+              {/* {fDateTime(createdAt)} */}
             </Typography>
           </Stack>
         </Stack>
@@ -76,7 +76,7 @@ export default function StudentProgressDetailsToolbar({
             onClick={popover.onOpen}
             sx={{ textTransform: 'capitalize' }}
           >
-            {status}
+            {/* {status} */}
           </Button>
 
           <Button
@@ -99,7 +99,7 @@ export default function StudentProgressDetailsToolbar({
         arrow="top-right"
         sx={{ width: 140 }}
       >
-        {statusOptions.map((option) => (
+        {/* {statusOptions.map((option) => (
           <MenuItem
             key={option.value}
             selected={option.value === status}
@@ -110,7 +110,7 @@ export default function StudentProgressDetailsToolbar({
           >
             {option.label}
           </MenuItem>
-        ))}
+        ))} */}
       </CustomPopover>
     </>
   );

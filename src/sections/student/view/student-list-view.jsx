@@ -44,20 +44,20 @@ import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
 
 import { useGetStudents } from '../../../api/student';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No',  align: "center" },
-  { id: 'enrollment_no', label: 'Enroll No', align: "center" },
+  { id: 'enrollment_no', label: 'Enroll No', width: 180 },
   { id: 'name', label: 'Name' },
-  { id: 'contact', label: 'Phone Number' },
-  { id: 'course', label: 'Course' },
-  { id: 'joining_date', label: 'Joining date' },
-  { id: 'status', label: 'Status' },
-  { id: '' },
+  { id: 'contact', label: 'Phone Number', width: 180 },
+  { id: 'course', label: 'Course', width: 220 },
+  { id: 'joining_date', label: 'Joining date', width: 180 },
+  { id: 'status', label: 'Status', width: 100 },
+  { id: '', width: 88 },
 ];
 
 const defaultFilters = {
@@ -79,7 +79,7 @@ export default function StudentListView() {
 
   const confirm = useBoolean();
 
-  const { students } = useGetStudents();
+  const { students , mutate } = useGetStudents();
 
   const [tableData, setTableData] = useState(students);
 
@@ -118,30 +118,50 @@ export default function StudentListView() {
   }, []);
 
   const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student`,
+          {
+            data: { ids: ['66754ae906739d63f6b692ff'] },
+          }
+        );
+        if (response.status === 200) {
+          enqueueSnackbar(response.data.message, { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+        } else {
+          enqueueSnackbar(response.data.message, { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete Employee', error);
+        enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+      }
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
 
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-    enqueueSnackbar('Delete success!');
-
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  const handleDeleteRows = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student`,
+          {
+            data: { ids: id },
+          }
+        );
+          enqueueSnackbar(response?.data?.message || "Delete Success", { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+      } catch (error) {
+        console.error('Failed to delete Employee', error);
+        enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+      }
+    },
+    [dataFiltered.length, enqueueSnackbar, table, tableData]
+  );
 
   const handleEditRow = useCallback(
     (id) => {
@@ -285,13 +305,13 @@ export default function StudentListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row, index) => (
+                    .map((row) => (
                       <StudentTableRow
                         key={row._id}
-                        row={{...row, index}}
+                        row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onDeleteRow={() => handleDeleteRows(row._id)}
                         onEditRow={() => handleEditRow(row._id)}
                         onGuardianRow={() => handleGuardianEditRow(row._id)}
                       />
@@ -335,7 +355,7 @@ export default function StudentListView() {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows();
+              handleDeleteRows(table.selected);
               confirm.onFalse();
             }}
           >
@@ -364,7 +384,9 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase())
+      (user) =>
+        (user.firstName && user.firstName.toLowerCase().includes(name.toLowerCase())) ||
+        (user.lastName && user.lastName.toLowerCase().includes(name.toLowerCase()))
     );
   }
 

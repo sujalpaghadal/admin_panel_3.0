@@ -12,7 +12,7 @@ export function useGetAllAttendance() {
 
 
   const memoizedValue = useMemo(() => {
-    
+
     const attendance = data?.attendance || [];
 
     return {
@@ -26,6 +26,26 @@ export function useGetAllAttendance() {
   }, [data, isLoading, error, isValidating, mutate]);
 
   return memoizedValue;
+}
+
+// Hook to get single student attendance
+export function useGetSingleStudentAttendance(studentId) {
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/attendance/student/${studentId}`;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  console.log("data ",data);
+  // const memoizedValue = useMemo(() => {
+  //   const attendance = data?.data?.attendance || [];
+  //   return {
+  //     attendance,
+  //     attendanceLoading: isLoading,
+  //     attendanceError: error,
+  //     attendanceValidating: isValidating,
+  //     attendanceEmpty: !isLoading && attendance.length === 0,
+  //   };
+  // }, [data, isLoading, error, isValidating]);
+
+  return data;
 }
 
 export async function useGetAttendanceAdd(postData) {

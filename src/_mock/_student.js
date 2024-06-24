@@ -17,18 +17,18 @@ export const STUDENT_GENDER = ['male', 'female', 'other'];
 export const courses = [
   {
     value: 'master_in_flutter_development',
-    label: 'Master In Flutter Development',
+    label: 'Flutter Development',
   },
   {
     value: 'master_in_android_development',
-    label: 'Master In Android Development',
+    label: 'Android Development',
   },
-  { value: 'master_in_game_development', label: 'Master In Game Development' },
+  { value: 'master_in_game_development', label: 'Game Development' },
   {
     value: 'master_in_full_stack_development',
-    label: 'Master In Full Stack Development',
+    label: 'Full Stack Development',
   },
-  { value: 'master_in_web_development', label: 'Master In Web Development' },
+  { value: 'master_in_web_development', label: 'Web Development' },
   { value: 'node_js', label: 'Node JS' },
   { value: 'react_js', label: 'React JS' },
   { value: 'python', label: 'Python' },

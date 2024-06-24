@@ -103,11 +103,25 @@ export function useNavData() {
             icon: ICONS.student,
           },
 
+          // ACCOUNT
+          {
+            title: t('account'),
+            path: paths.dashboard.account.root,
+            icon: ICONS.user,
+          },
+
           // FEES
           {
             title: t('fees'),
             path: paths.dashboard.general.fees,
             icon: ICONS.invoice,
+          },
+
+          // COMPLAIN
+          {
+            title: t('Complaints'),
+            path: paths.dashboard.general.complain,
+            icon: ICONS.file,
           },
 
           // EMPLOYEE

@@ -17,15 +17,16 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import GuardianAddForm from './guardian-add-form';
 
 import GuardianItem from './guardian-item';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
-export default function StudentGuardianDetails({ addressBook = [] }) {
+export default function StudentGuardianDetails({ currentStudent , mutate}) {
   const [addressId, setAddressId] = useState('');
   const [editAddressId, setEditAddressId] = useState(null);
 
   const popover = usePopover();
-
+  const [deletedGuardian, setDeletedGuardian] = useState(null);
   const GuardianNewForm = useBoolean();
 
   const handleAddNewAddress = useCallback((address) => {
@@ -33,9 +34,20 @@ export default function StudentGuardianDetails({ addressBook = [] }) {
   }, []);
 
   const handleSelectedId = useCallback(
-    (event, id) => {
-      popover.onOpen(event);
+    (id) => {
+      // handleClose();
       setAddressId(id);
+        const filteredGuardian = currentStudent?.guardian_detail?.filter((item) => item._id !== id);
+      console.log("fil ",filteredGuardian);
+        const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
+        try {
+          axios
+            .put(URL, { ...currentStudent, guardian_detail: filteredGuardian })
+            .then((res) => mutate(), setDeletedGuardian(null))
+            .catch((err) => console.log(err));
+        } catch (error) {
+          console.error(error);
+        }
     },
     [popover]
   );
@@ -72,20 +84,30 @@ export default function StudentGuardianDetails({ addressBook = [] }) {
         />
 
         <Stack spacing={2.5} sx={{ p: 3 }}>
-          {addressBook.map((address) => (
+          {currentStudent?.guardian_detail?.map((item) => (
             <GuardianItem
               variant="outlined"
-              key={address.id}
-              address={address}
+              key={item.id}
+              guardian={item}
               action={
-                <IconButton
-                  onClick={(event) => {
-                    handleSelectedId(event, `${address.id}`);
-                  }}
-                  sx={{ position: 'absolute', top: 8, right: 8 }}
-                >
-                  <Iconify icon="eva:more-vertical-fill" />
-                </IconButton>
+                <>
+                  {/* <IconButton
+                   onClick={(event) => {
+                     popover.onOpen(event);
+                     // handleSelectedId(`${item._id}`);
+                     setDeletedGuardian(item._id);
+                   }}
+                   sx={{ position: 'absolute', top: 8, right: 8 }}
+                 >
+                   <Iconify icon="eva:more-vertical-fill" />
+                 </IconButton> */}
+                  <IconButton
+                    color={popover.open ? 'inherit' : 'default'}
+                    onClick={() => handleSelectedId(item._id)}
+                  >
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                  </IconButton>
+                </>
               }
               sx={{
                 p: 2.5,
@@ -96,7 +118,7 @@ export default function StudentGuardianDetails({ addressBook = [] }) {
         </Stack>
       </Card>
 
-      <CustomPopover open={popover.open} onClose={handleClose}>
+      {/* <CustomPopover open={popover.open} onClose={handleClose}>
         <MenuItem onClick={handleEdit}>
           <Iconify icon="solar:pen-bold" />
           Edit
@@ -104,21 +126,23 @@ export default function StudentGuardianDetails({ addressBook = [] }) {
 
         <MenuItem
           onClick={() => {
-            handleClose();
             console.info('DELETE', addressId);
+            handleSelectedId(deletedGuardian);
+            handleClose();
           }}
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
 
       <GuardianAddForm
         open={GuardianNewForm.value}
         onClose={GuardianNewForm.onFalse}
         onCreate={handleAddNewAddress}
         addressId={editAddressId}
+        currentStudent={currentStudent}
       />
     </>
   );

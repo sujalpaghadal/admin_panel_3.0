@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -13,17 +13,22 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import StudentAccountGeneral from '../student-account-general';
-import StudentAccountBilling from '../student-account-billing';
 
 import StudentAccountChangePassword from '../student-account-change-password';
 
 import StudentAccountBillingHistory from '../student-account-billing-history';
 
-import StudentAttendanceListView from './student-attendance-list-view';
+import StudentAttendanceListView from '../attendance/student-attendance-list-view';
 
-import ExaminationListView from './examination-list-view';
+import ExaminationListView from '../examination/examination-list-view';
 
-import StudentComplainCreateView from './student-complain-create-view';
+import StudentNewEditForm from '../student-new-edit-form';
+import { useGetSingleStudent, useGetStudents } from 'src/api/student';
+import RemarkView from './remarks/remark-view';
+import GuardianView from '../guardian/student-guardian-view';
+import FeesView from '../feesDetails/fee-installment-view';
+import StudentAttendanceView from '../attendance/student-attendance-view';
+import StudentDetailsView from '../progress/student-details-view';
 
 // ----------------------------------------------------------------------
 
@@ -48,26 +53,31 @@ const TABS = [
     label: 'Attendance',
     icon: <Iconify icon="solar:share-bold" width={24} />,
   },
-  {
-    value: 'Progress',
-    label: 'Progress',
-    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
-  },
+  // {
+  //   value: 'Progress',
+  //   label: 'Progress',
+  //   icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+  // },
   {
     value: 'Examination',
     label: 'Examination',
     icon: <Iconify icon="ic:round-vpn-key" width={24} />,
   },
+  // {
+  //   value: 'Complains',
+  //   label: 'Complains',
+  //   icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+  // },
   {
-    value: 'Complains & remarks',
-    label: 'Complains & remarks',
+    value: 'Remarks',
+    label: 'Remarks',
     icon: <Iconify icon="ic:round-vpn-key" width={24} />,
   },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function StudentCreateView() {
+export default function StudentCreateView({ currentStudent, mutate }) {
   const settings = useSettingsContext();
 
   const [currentTab, setCurrentTab] = useState('Personal Details');
@@ -78,17 +88,19 @@ export default function StudentCreateView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        heading="Student"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Student', href: paths.dashboard.student.list },
-          { name: 'New Student' },
-        ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      />
+      {!currentStudent && (
+        <CustomBreadcrumbs
+          heading="Student"
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Student', href: paths.dashboard.student.list },
+            { name: 'New Student' },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
+      )}
 
       <Tabs
         value={currentTab}
@@ -102,25 +114,22 @@ export default function StudentCreateView() {
         ))}
       </Tabs>
 
-      {currentTab === 'Personal Details' && <StudentAccountGeneral />}
+      {currentTab === 'Personal Details' && (
+        <StudentNewEditForm currentStudent={currentStudent} mutate={mutate} />
+      )}
 
       {currentTab === 'Guardian Info' && (
-        <StudentAccountBilling
-          plans={_userPlans}
-          cards={_userPayment}
-          invoices={_userInvoices}
-          addressBook={_userAddressBook}
-        />
+        <GuardianView currentStudent={currentStudent} mutate={mutate} />
       )}
-      {currentTab === 'fees details' && <StudentAccountBillingHistory invoices={_userInvoices} />}
+      {currentTab === 'fees details' && <FeesView currentStudent={currentStudent} />}
 
-      {currentTab === 'Attendance' && <StudentAttendanceListView />}
+      {currentTab === 'Attendance' && <StudentAttendanceView currentStudent={currentStudent} />}
 
-      {currentTab === 'Progress' && <StudentAccountChangePassword />}
+      {currentTab === 'Progress' && <StudentDetailsView currentStudent={currentStudent} />}
 
-      {currentTab === 'Examination' && <ExaminationListView />}
+      {currentTab === 'Examination' && <ExaminationListView currentStudent={currentStudent} />}
 
-      {currentTab === 'Complains & remarks' && <StudentComplainCreateView />}
+      {currentTab === 'Remarks' && <RemarkView currentStudent={currentStudent} mutate={mutate} />}
     </Container>
   );
 }

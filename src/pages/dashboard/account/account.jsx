@@ -1,15 +1,15 @@
 import { Helmet } from 'react-helmet-async';
-import { StudentCreateView } from 'src/sections/student/view';
+import { AccountView } from 'src/sections/main_account/view';
 
 // ----------------------------------------------------------------------
 
-export default function AccountPage() {
+export default function DemoListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Account Settings</title>
+        <title> Dashboard: Demo List</title>
       </Helmet>
-    <StudentCreateView />
+      <AccountView />
     </>
   );
 }
