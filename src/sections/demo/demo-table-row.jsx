@@ -22,14 +22,14 @@ import { useDeleteDemo } from 'src/api/demo';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 // ----------------------------------------------------------------------
 export default function DemoTableRow({
-                                       row,
-                                       selected,
-                                       onViewRow,
-                                       onSelectRow,
-                                       onDeleteRow,
-                                       srNumber,
-                                       mutate,
-                                     }) {
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+  srNumber,
+  mutate,
+}) {
   const [open, setOpen] = useState(false);
   const [demosID, setDemosID] = useState(null);
   const [demoID, setDemoID] = useState(null);
@@ -50,9 +50,9 @@ export default function DemoTableRow({
   };
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <Box>{srNumber}</Box>
       </TableCell>

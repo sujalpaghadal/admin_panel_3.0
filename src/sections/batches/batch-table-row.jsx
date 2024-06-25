@@ -84,13 +84,15 @@ export default function BatchTableRow({
   );
 
   const TABLE_HEAD = [
-    { id: 'student', label: 'Students', width: 1000 },
-    { id: 'enroll_no', label: 'Enroll No', width: 280 },
-    { id: ' contact', label: ' Contact', width: 330 },
-    { id: 'course', label: 'Course', width: 220 },
-    // { id: 'totalAmount', label: 'Price', width: 140 },
-    // { id: 'status', label: 'Status', width: 110 },
-    { id: '', width: 88 },
+    { id: 'student', label: 'Students', width: 'auto' },
+    {
+      id: 'enroll_no',
+      label: 'Enroll No',
+      width: 'auto',
+    },
+    { id: ' contact', label: ' Contact', width: 'auto' },
+    { id: 'course', label: 'Course', width: 'auto' },
+    { id: '', width: 'auto' },
   ];
   const renderSecondary = (
     <TableRow>
@@ -134,12 +136,12 @@ export default function BatchTableRow({
                       color: 'text.disabled',
                       mt: 0.5,
                     }}
-                    sx={{ width: 680 }}
+                    sx={{ width: '100%' }}
                   />
 
-                  <Box sx={{ width: '200px' }}>{item?.enrollment_no}</Box>
-                  <Box sx={{ width: '200px' }}>{item?.contact}</Box>
-                  <Box sx={{ width: '300px' }}>{item?.course}</Box>
+                  <Box sx={{ width: '100%' }}>{item?.enrollment_no}</Box>
+                  <Box sx={{ width: '100%' }}>{item?.contact}</Box>
+                  <Box sx={{ width: '100%' }}>{item?.course}</Box>
 
                   {/* <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box> */}
                 </Stack>

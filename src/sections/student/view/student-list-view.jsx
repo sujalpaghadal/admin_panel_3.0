@@ -79,7 +79,7 @@ export default function StudentListView() {
 
   const confirm = useBoolean();
 
-  const { students , mutate } = useGetStudents();
+  const { students, mutate } = useGetStudents();
 
   const [tableData, setTableData] = useState(students);
 
@@ -152,9 +152,9 @@ export default function StudentListView() {
             data: { ids: id },
           }
         );
-          enqueueSnackbar(response?.data?.message || "Delete Success", { variant: 'success' });
-          confirm.onFalse();
-          mutate();
+        enqueueSnackbar(response?.data?.message || 'Delete Success', { variant: 'success' });
+        confirm.onFalse();
+        mutate();
       } catch (error) {
         console.error('Failed to delete Employee', error);
         enqueueSnackbar('Failed to delete Employee', { variant: 'error' });

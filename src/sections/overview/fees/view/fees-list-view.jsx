@@ -158,10 +158,10 @@ export default function FeesListView() {
             href: paths.dashboard.root,
           },
           {
-            name: 'Students',
+            name: 'Fees',
             href: paths.dashboard.student.list,
           },
-          { name: 'Fees' },
+          // { name: 'Fees' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

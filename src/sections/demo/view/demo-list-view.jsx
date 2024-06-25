@@ -54,7 +54,7 @@ const TABLE_HEAD = [
   // { id: 'createdAt', label: 'Date', width: 200 },
   // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
   // { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'status', label: 'Status', width: 210 },
+  // { id: 'status', label: 'Status', width: 210 },
   { id: '', width: 88 },
 ];
 
@@ -80,8 +80,6 @@ export default function DemoListView() {
 
   const { demo, mutate } = useGetAllDemos();
 
-  console.log(demo);
-  console.log(demo);
   const [tableData, setTableData] = useState();
 
   useEffect(() => {
@@ -179,8 +177,8 @@ export default function DemoListView() {
               href: paths.dashboard.root,
             },
             {
-              name: 'Order',
-              href: paths.dashboard.order.root,
+              name: 'demo',
+              href: paths.dashboard.demo.root,
             },
             { name: 'List' },
           ]}
@@ -238,12 +236,12 @@ export default function DemoListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -252,10 +250,11 @@ export default function DemoListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row, index) => (
                       <DemoTableRow
                         key={row.id}
                         row={row}
+                        srNumber={index + 1}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
