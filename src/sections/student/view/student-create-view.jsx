@@ -88,49 +88,48 @@ export default function StudentCreateView({ currentStudent, mutate }) {
 
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      {!currentStudent && (
-        <CustomBreadcrumbs
-          heading="Student"
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Student', href: paths.dashboard.student.list },
-            { name: 'New Student' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
-      )}
-
-      { currentStudent && <Tabs
-        value={currentTab}
-        onChange={handleChangeTab}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
-        {TABS.map((tab) => (
-          <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
-        ))}
-      </Tabs>}
-
-      {currentTab === 'Personal Details' && (
-        <StudentNewEditForm currentStudent={currentStudent} mutate={mutate} />
-      )}
-
-      {currentTab === 'Guardian Info' && (
-        <GuardianView currentStudent={currentStudent} mutate={mutate} />
-      )}
-      {currentTab === 'fees details' && <FeesView currentStudent={currentStudent} />}
-
-      {currentTab === 'Attendance' && <StudentAttendanceView currentStudent={currentStudent} />}
-
-      {currentTab === 'Progress' && <StudentDetailsView currentStudent={currentStudent} />}
-
-      {currentTab === 'Examination' && <ExaminationListView currentStudent={currentStudent} />}
-
-      {currentTab === 'Remarks' && <RemarkView currentStudent={currentStudent} mutate={mutate} />}
-    </Container>
+    <>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        {!currentStudent && (
+          <CustomBreadcrumbs
+            heading="Student"
+            links={[
+              { name: 'Dashboard', href: paths.dashboard.root },
+              { name: 'Student', href: paths.dashboard.student.list },
+              { name: 'New Student' },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+        )}
+        {currentStudent && (
+          <Tabs
+            value={currentTab}
+            onChange={handleChangeTab}
+            sx={{
+              ml: -3,
+              mb: { xs: 3, md: 5 },
+            }}
+          >
+            {TABS.map((tab) => (
+              <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
+            ))}
+          </Tabs>
+        )}
+        {currentTab === 'Personal Details' && (
+          <StudentNewEditForm currentStudent={currentStudent} mutate={mutate} />
+        )}
+        {currentTab === 'Guardian Info' && (
+          <GuardianView currentStudent={currentStudent} mutate={mutate} />
+        )}
+        {currentTab === 'fees details' && <FeesView currentStudent={currentStudent} />}
+        {currentTab === 'Attendance' && <StudentAttendanceView currentStudent={currentStudent} />}
+        {currentTab === 'Progress' && <StudentDetailsView currentStudent={currentStudent} />}
+        {currentTab === 'Examination' && <ExaminationListView currentStudent={currentStudent} />}
+        {currentTab === 'Remarks' && <RemarkView currentStudent={currentStudent} mutate={mutate} />}
+       
+      </Container>
+    </>
   );
 }

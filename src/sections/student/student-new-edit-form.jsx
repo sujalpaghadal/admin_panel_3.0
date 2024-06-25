@@ -37,178 +37,190 @@ import axios from 'axios';
 // ----------------------------------------------------------------------
 
 export default function StudentNewEditForm({ currentStudent, mutate }) {
-  const router = useRouter();
-  const mdUp = useResponsive('up', 'md');
-  const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuthContext();
-  const [profilePic, setProfilePic] = useState(null);
-  useEffect(() => {
-    if (currentStudent) {
-      setProfilePic(currentStudent?.profile_pic);
-    }
-  }, [currentStudent]);
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
-  });
-console.log(currentStudent,"cur Stu");
-  const defaultValues = useMemo(
-    () => ({
-      profile_pic: currentStudent?.profile_pic || '',
-      firstName: currentStudent?.firstName || '',
-      lastName: currentStudent?.lastName || '',
-      contact: currentStudent?.contact || '',
-      email: currentStudent?.email || '',
-      gender: currentStudent?.gender || '',
-      course: currentStudent?.course || '',
-      education: currentStudent?.education || '',
-      school_college: currentStudent?.school_college || '',
-      dob: currentStudent?.dob ? new Date(currentStudent.dob) : '',
-      joining_date: currentStudent?.joining_date ? new Date(currentStudent.joining_date) : '',
-      blood_group: currentStudent?.blood_group || '',
-      address_1: currentStudent?.address_detail?.address_1 || '',
-      address_2: currentStudent?.address_detail?.address_2 || '',
-      country: currentStudent?.address_detail?.country || '',
-      state: currentStudent?.address_detail?.state || '',
-      city: currentStudent?.address_detail?.city || '',
-      zipcode: currentStudent?.address_detail?.zipcode || '',
-      enrollment_no: currentStudent?.enrollment_no || '',
-      total_amount: currentStudent?.fee_detail?.total_amount || '',
-      discount: currentStudent?.fee_detail?.discount || '',
-      amount_paid: currentStudent?.fee_detail?.amount_paid || '',
-      no_of_installments: currentStudent?.fee_detail?.no_of_installments || '',
-      upcoming_installment_date: currentStudent?.fee_detail?.upcoming_installment_date
-        ? new Date(currentStudent?.fee_detail?.upcoming_installment_date)
-        : '',
-    }),
+   const router = useRouter();
+   const mdUp = useResponsive('up', 'md');
+   const { enqueueSnackbar } = useSnackbar();
+   const { user } = useAuthContext();
+   const [profilePic, setProfilePic] = useState(null);
 
-    [currentStudent]
-  );
+   useEffect(() => {
+     if (currentStudent) {
+       setProfilePic(currentStudent?.profile_pic);
+     }
+   }, [currentStudent]);
 
-  const methods = useForm({
-    // resolver: yupResolver(NewUserSchema),
-    defaultValues,
-  });
+   const NewUserSchema = Yup.object().shape({
+     firstName: Yup.string().required('First Name is required'),
+     lastName: Yup.string().required('Last Name is required'),
+     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+     contact: Yup.string().required('Phone Number is required'),
+     gender: Yup.string().required('Gender is required'),
+     course: Yup.string().required('Course is required'),
+     education: Yup.string().required('Education is required'),
+     school_college: Yup.string().required('School/College is required'),
+     dob: Yup.date().nullable().required('Date of Birth is required'),
+     joining_date: Yup.date().nullable().required('Joining Date is required'),
+     blood_group: Yup.string().required('Blood Group is required'),
+     address_1: Yup.string().required('Address Line 1 is required'),
+     country: Yup.string().required('Country is required'),
+     state: Yup.string().required('State is required'),
+     city: Yup.string().required('City is required'),
+     zipcode: Yup.string().required('Zip/Code is required'),
+     enrollment_no: Yup.number().required('Enrollment No is required'),
+     total_amount: Yup.number().required('Total Amount is required'),
+     amount_paid: Yup.number().required('Amount Paid is required'),
+     discount: Yup.number().required('Discount is required'),
+     no_of_installments: Yup.number().required('Number of Installments is required'),
+     upcoming_installment_date: Yup.date()
+       .nullable()
+       .required('Upcoming Installment Date is required'),
+     profile_pic: Yup.mixed()
+       .test('fileType', 'Unsupported File Format', (value) => {
+         if (!value) return false; // No file uploaded is valid
+         const supportedFormats = ['image/jpeg', 'image/png', 'image/webp'];
+         return supportedFormats.includes(value.type);
+       })
+       .required('Profile Picture is required'),
+   });
 
-  const {
-    reset,
-    watch,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+   const defaultValues = useMemo(
+     () => ({
+       profile_pic: currentStudent?.profile_pic || '',
+       firstName: currentStudent?.firstName || '',
+       lastName: currentStudent?.lastName || '',
+       contact: currentStudent?.contact || '',
+       email: currentStudent?.email || '',
+       gender: currentStudent?.gender || '',
+       course: currentStudent?.course || '',
+       education: currentStudent?.education || '',
+       school_college: currentStudent?.school_college || '',
+       dob: currentStudent?.dob ? new Date(currentStudent.dob) : null,
+       joining_date: currentStudent?.joining_date ? new Date(currentStudent.joining_date) : null,
+       blood_group: currentStudent?.blood_group || '',
+       address_1: currentStudent?.address_detail?.address_1 || '',
+       address_2: currentStudent?.address_detail?.address_2 || '',
+       country: currentStudent?.address_detail?.country || '',
+       state: currentStudent?.address_detail?.state || '',
+       city: currentStudent?.address_detail?.city || '',
+       zipcode: currentStudent?.address_detail?.zipcode || '',
+       enrollment_no: currentStudent?.enrollment_no || '',
+       total_amount: currentStudent?.fee_detail?.total_amount || '',
+       discount: currentStudent?.fee_detail?.discount || '',
+       amount_paid: currentStudent?.fee_detail?.amount_paid || '',
+       no_of_installments: currentStudent?.fee_detail?.no_of_installments || '',
+       upcoming_installment_date: currentStudent?.fee_detail?.upcoming_installment_date
+         ? new Date(currentStudent?.fee_detail?.upcoming_installment_date)
+         : null,
+     }),
+     [currentStudent]
+   );
 
-  const values = watch();
+   const methods = useForm({
+     resolver: yupResolver(NewUserSchema),
+     defaultValues,
+   });
 
-  //create student api
-  async function createStudent(studentPayload) {
-    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/student`;
-    const formData = new FormData();
-    Object.keys(studentPayload).forEach((key) => {
-      formData.append(key, studentPayload[key]);
-    });
-    if (profilePic) {
-      formData.append('profile-pic', profilePic);
-    }
-    try {
-      const response = await axios.post(URL, formData);
-      // mutate();
-      enqueueSnackbar(response?.message || 'Student Created Successfully', { variant: 'success' });
-    } catch (error) {
-      console.error('Failed to create event:', error);
-      throw error;
-    }
-  }
+   const {
+     reset,
+     watch,
+     control,
+     handleSubmit,
+     formState: { isSubmitting, errors },
+   } = methods;
 
-  //update student api
-  async function updateStudent(studentPayload) {
-    console.log('data : ', studentPayload);
-    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
-    const formData = new FormData();
+   const values = watch();
 
-    Object.keys(studentPayload).forEach((key) => {
-      formData.append(key, studentPayload[key]);
-    });
-    console.log(profilePic, 'fform');
-    if (profilePic) {
-      formData.append('profile-pic', profilePic);
-    }
-    try {
-      const response = await axios.put(URL, formData);
-      enqueueSnackbar(response?.message || 'Student Updated Successfully', { variant: 'success' });
-    } catch (error) {
-      console.error('Failed to create event:', error);
-      throw error;
-    }
-  }
+   const createStudent = async (studentPayload) => {
+     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/student`;
+     const formData = new FormData();
+     Object.keys(studentPayload).forEach((key) => {
+       formData.append(key, studentPayload[key]);
+     });
+     if (profilePic) {
+       formData.append('profile-pic', profilePic);
+     }
+     try {
+       const response = await axios.post(URL, formData);
+       enqueueSnackbar(response?.message || 'Student Created Successfully', { variant: 'success' });
+     } catch (error) {
+       console.error('Failed to create student:', error);
+       throw error;
+     }
+   };
 
-  const onSubmit = handleSubmit(async (data) => {
-    const studentPayload = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      contact: data.contact,
-      email: data.email,
-      gender: data.gender,
-      course: data.course,
-      education: data.education,
-      school_college: data.school_college,
-      dob: data.dob,
-      joining_date: data.joining_date,
-      blood_group: data.blood_group,
-      address_1: data.address_1,
-      address_2: data.address_2,
-      country: data.country.label,
-      state: data.state,
-      city: data.city,
-      zipcode: data.zipcode,
-      enrollment_no: Number(data.enrollment_no),
-      total_amount: Number(data.total_amount),
-      amount_paid: Number(data.amount_paid),
-      discount: Number(data.discount),
-      upcoming_installment_date: data.upcoming_installment_date,
-      no_of_installments: data.no_of_installments,
-    };
-    try {
-      if (currentStudent?.firstName) {
-        await updateStudent(studentPayload);
-      } else {
-        await createStudent(studentPayload);
-      }
-      router.push(paths.dashboard.student.list);
-      reset();
-    } catch (err) {
-      console.log('ERROR : ', err);
-    }
-  });
+   const updateStudent = async (studentPayload) => {
+     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
+     const formData = new FormData();
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
+     Object.keys(studentPayload).forEach((key) => {
+       formData.append(key, studentPayload[key]);
+     });
 
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
+     if (profilePic) {
+       formData.append('profile-pic', profilePic);
+     }
 
-      if (file) {
-        setProfilePic(file);
-        setValue('profile_pic', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+     try {
+       const response = await axios.put(URL, formData);
+       enqueueSnackbar(response?.message || 'Student Updated Successfully', { variant: 'success' });
+     } catch (error) {
+       console.error('Failed to update student:', error);
+       throw error;
+     }
+   };
+
+   const onSubmit = handleSubmit(async (data) => {
+     const studentPayload = {
+       firstName: data.firstName,
+       lastName: data.lastName,
+       contact: data.contact,
+       email: data.email,
+       gender: data.gender,
+       course: data.course,
+       education: data.education,
+       school_college: data.school_college,
+       dob: data.dob,
+       joining_date: data.joining_date,
+       blood_group: data.blood_group,
+       address_1: data.address_1,
+       address_2: data.address_2,
+       country: data.country.label,
+       state: data.state,
+       city: data.city,
+       zipcode: data.zipcode,
+       enrollment_no: Number(data.enrollment_no),
+       total_amount: Number(data.total_amount),
+       amount_paid: Number(data.amount_paid),
+       discount: Number(data.discount),
+       upcoming_installment_date: data.upcoming_installment_date,
+       no_of_installments: data.no_of_installments,
+     };
+
+     try {
+       if (currentStudent?.firstName) {
+         await updateStudent(studentPayload);
+       } else {
+         await createStudent(studentPayload);
+       }
+       router.push(paths.dashboard.student.list);
+       reset();
+     } catch (err) {
+       console.error('Error submitting form:', err);
+     }
+   });
+
+   const handleDrop = useCallback((acceptedFiles) => {
+     const file = acceptedFiles[0];
+     const newFile = Object.assign(file, {
+       preview: URL.createObjectURL(file),
+     });
+
+     if (file) {
+       setProfilePic(file);
+       methods.setValue('profile_pic', newFile, { shouldValidate: true });
+     }
+   }, []);
+
 
   // ============================= HTML CODE VARIABLES =============================
 
@@ -347,11 +359,36 @@ console.log(currentStudent,"cur Stu");
                 name="country"
                 label="Country"
                 placeholder="Choose a country"
-                options={countries}
+                options={countrystatecity.map((country) => country.name)}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
               />
-              <RHFTextField name="state" label="State" />
-              <RHFTextField name="city" label="City" />
+              <RHFAutocomplete
+                name="state"
+                label="State"
+                placeholder="Choose a State"
+                options={
+                  watch('country')
+                    ? countrystatecity
+                        .find((country) => country.name === watch('country'))
+                        ?.states.map((state) => state.name) || []
+                    : []
+                }
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+              />
+              <RHFAutocomplete
+                name="city"
+                label="City"
+                placeholder="Choose a State"
+                options={
+                  watch('state')
+                    ? countrystatecity
+                        .find((country) => country.name === watch('country'))
+                        ?.states.find((state) => state.name === watch('state'))
+                        ?.cities.map((city) => city.name) || []
+                    : []
+                }
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+              />
               <RHFTextField name="zipcode" label="Zip/Code" />
             </Box>
           </Stack>
