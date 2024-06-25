@@ -40,15 +40,15 @@ import { useGetStudents } from 'src/api/student';
 
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: '#', width: 68, align: "center" },
-  { id: 'name', label: 'Name' },
-  { id: 'createdAt', label: 'Enroll No' },
+  { id: '', label: 'Sr No', align:'center' },
+  { id: 'profile', label: 'Profile' },
+  { id: 'enroll', label: 'Enroll No' },
+  { id: 'studentName', label: 'Student Name' },
   { id: 'course', label: 'Course' },
   { id: 'joining_date', label: 'Joining Date' },
   { id: 'contact', label: 'Contact' },
-  { id: '', label: '' },
+  { id: '', label: 'Installments', align: "center" },
 ];
-
 const defaultFilters = {
   name: '',
   status: 'all',
@@ -105,7 +105,7 @@ export default function FeesListView() {
     [table]
   );
   const handleEditRow = () => {
-    
+
   };
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);

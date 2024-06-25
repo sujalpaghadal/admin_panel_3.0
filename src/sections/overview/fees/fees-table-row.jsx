@@ -51,7 +51,6 @@ export default function FeesTableRow({
     lastName,
   } = row;
 
-  const { installments } = fee_detail;
   const confirm = useBoolean();
   const dialog = useBoolean();
   const collapse = useBoolean();
@@ -80,7 +79,7 @@ export default function FeesTableRow({
     const fetchInstallmentId = async () => {
       try {
         if (deleteInstallmentId) {
-          const currentStatus = row.fee_detail.installments.find(
+          const currentStatus = row?.fee_detail?.installments.find(
             (item) => item._id === deleteInstallmentId
           );
           if (currentStatus) {
@@ -94,7 +93,7 @@ export default function FeesTableRow({
       }
     };
     fetchInstallmentId();
-  }, [deleteInstallmentId, reset, row.fee_detail.installments]);
+  }, [deleteInstallmentId, reset, row?.fee_detail?.installments]);
 
   const handleInstallmentDelete = (item) => {
     setDeleteInstallmentId(item._id);
@@ -117,7 +116,7 @@ export default function FeesTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell>
+      <TableCell align={"center"}>
         <Box
           onClick={onViewRow}
           sx={{
@@ -203,7 +202,7 @@ export default function FeesTableRow({
         />
       </TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
