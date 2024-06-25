@@ -8,7 +8,7 @@ import { fDate } from 'src/utils/format-time';
 const FeesView = ({ currentStudent }) => {
 
   const TABLE_HEAD = [
-    { id: '', label: 'Sr no.' },
+    { id: '', label: '#', align: "center" },
     { id: 'installment_date', label: 'Installment Date' },
     { id: 'amount', label: 'Amount' },
     { id: 'payment_date', label: 'Payment Date' },
@@ -27,11 +27,11 @@ const FeesView = ({ currentStudent }) => {
               <TableBody>
                 {currentStudent?.fee_detail.installments.map((row, index) => (
                   <TableRow key={row.name}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell align={"center"}>{index + 1}</TableCell>
                     <TableCell>{fDate(row.installment_date)}</TableCell>
                     <TableCell>{row.amount}</TableCell>
                     <TableCell>{fDate(row.payment_date)}</TableCell>
-                    <TableCell>{row.status == 'pending' ? '' : row.payment_mode}</TableCell>
+                    <TableCell>{row.status === 'pending' ? '' : row.payment_mode}</TableCell>
                     <TableCell>
                       <Label
                         variant="soft"

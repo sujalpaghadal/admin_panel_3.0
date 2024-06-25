@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -14,14 +13,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Autocomplete, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { STUDENT_GENDER, courses } from 'src/_mock/_student';
 import countrystatecity from '../../_mock/map/csc.json';
-
 import { countries } from 'src/assets/data';
-
 import Label from 'src/components/label';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
@@ -33,9 +29,8 @@ import FormProvider, {
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useAuthContext } from 'src/auth/hooks';
 import axios from 'axios';
-
+import CardHeader from '@mui/material/CardHeader';
 // ----------------------------------------------------------------------
-
 export default function StudentNewEditForm({ currentStudent, mutate }) {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
@@ -48,22 +43,38 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     }
   }, [currentStudent]);
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
+    contact: Yup.string().required('Phone Number is required'),
+    gender: Yup.string().required('Gender is required'),
+    course: Yup.string().required('Course is required'),
+    education: Yup.string().required('Education is required'),
+    school_college: Yup.string().required('School/College is required'),
+    dob: Yup.date().nullable().required('Date of Birth is required'),
+    joining_date: Yup.date().nullable().required('Joining Date is required'),
+    blood_group: Yup.string().required('Blood Group is required'),
+    address_1: Yup.string().required('Address Line 1 is required'),
     country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
     state: Yup.string().required('State is required'),
     city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    zipcode: Yup.string().required('Zip/Code is required'),
+    enrollment_no: Yup.number().required('Enrollment No is required'),
+    total_amount: Yup.number().required('Total Amount is required'),
+    amount_paid: Yup.number().required('Amount Paid is required'),
+    discount: Yup.number().required('Discount is required'),
+    no_of_installments: Yup.number().required('Number of Installments is required'),
+    upcoming_installment_date: Yup.date()
+      .nullable()
+      .required('Upcoming Installment Date is required'),
+    profile_pic: Yup.mixed()
+      .test('fileType', 'Unsupported File Format', (value) => {
+        if (!value) return false; // No file uploaded is valid
+        const supportedFormats = ['image/jpeg', 'image/png', 'image/webp'];
+        return supportedFormats.includes(value.type);
+      })
+      .required('Profile Picture is required'),
   });
-console.log(currentStudent,"cur Stu");
   const defaultValues = useMemo(
     () => ({
       profile_pic: currentStudent?.profile_pic || '',
@@ -75,8 +86,8 @@ console.log(currentStudent,"cur Stu");
       course: currentStudent?.course || '',
       education: currentStudent?.education || '',
       school_college: currentStudent?.school_college || '',
-      dob: currentStudent?.dob ? new Date(currentStudent.dob) : '',
-      joining_date: currentStudent?.joining_date ? new Date(currentStudent.joining_date) : '',
+      dob: currentStudent?.dob ? new Date(currentStudent.dob) : null,
+      joining_date: currentStudent?.joining_date ? new Date(currentStudent.joining_date) : null,
       blood_group: currentStudent?.blood_group || '',
       address_1: currentStudent?.address_detail?.address_1 || '',
       address_2: currentStudent?.address_detail?.address_2 || '',
@@ -91,30 +102,23 @@ console.log(currentStudent,"cur Stu");
       no_of_installments: currentStudent?.fee_detail?.no_of_installments || '',
       upcoming_installment_date: currentStudent?.fee_detail?.upcoming_installment_date
         ? new Date(currentStudent?.fee_detail?.upcoming_installment_date)
-        : '',
+        : null,
     }),
-
     [currentStudent]
   );
-
   const methods = useForm({
-    // resolver: yupResolver(NewUserSchema),
+    resolver: yupResolver(NewUserSchema),
     defaultValues,
   });
-
   const {
     reset,
     watch,
     control,
-    setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
-
   const values = watch();
-
-  //create student api
-  async function createStudent(studentPayload) {
+  const createStudent = async (studentPayload) => {
     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/student`;
     const formData = new FormData();
     Object.keys(studentPayload).forEach((key) => {
@@ -125,24 +129,18 @@ console.log(currentStudent,"cur Stu");
     }
     try {
       const response = await axios.post(URL, formData);
-      // mutate();
       enqueueSnackbar(response?.message || 'Student Created Successfully', { variant: 'success' });
     } catch (error) {
-      console.error('Failed to create event:', error);
+      console.error('Failed to create student:', error);
       throw error;
     }
-  }
-
-  //update student api
-  async function updateStudent(studentPayload) {
-    console.log('data : ', studentPayload);
+  };
+  const updateStudent = async (studentPayload) => {
     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/student/${currentStudent?._id}`;
     const formData = new FormData();
-
     Object.keys(studentPayload).forEach((key) => {
       formData.append(key, studentPayload[key]);
     });
-    console.log(profilePic, 'fform');
     if (profilePic) {
       formData.append('profile-pic', profilePic);
     }
@@ -150,11 +148,10 @@ console.log(currentStudent,"cur Stu");
       const response = await axios.put(URL, formData);
       enqueueSnackbar(response?.message || 'Student Updated Successfully', { variant: 'success' });
     } catch (error) {
-      console.error('Failed to create event:', error);
+      console.error('Failed to update student:', error);
       throw error;
     }
-  }
-
+  };
   const onSubmit = handleSubmit(async (data) => {
     const studentPayload = {
       firstName: data.firstName,
@@ -190,25 +187,20 @@ console.log(currentStudent,"cur Stu");
       router.push(paths.dashboard.student.list);
       reset();
     } catch (err) {
-      console.log('ERROR : ', err);
+      console.error('Error submitting form:', err);
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setProfilePic(file);
-        setValue('profile_pic', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+  const handleDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    const newFile = Object.assign(file, {
+      preview: URL.createObjectURL(file),
+    });
+    if (file) {
+      setProfilePic(file);
+      methods.setValue('profile_pic', newFile, { shouldValidate: true });
+    }
+  }, []);
 
   // ============================= HTML CODE VARIABLES =============================
 
@@ -222,7 +214,6 @@ console.log(currentStudent,"cur Stu");
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Basic info, profile pic, Name, Course, Enrollment no...
           </Typography>
-
           <Card sx={{ pt: 5, px: 3, mt: 5 }}>
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar name="profile_pic" onDrop={handleDrop} />
@@ -230,11 +221,9 @@ console.log(currentStudent,"cur Stu");
           </Card>
         </Grid>
       )}
-
       <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Personal Details" />}
-
           <Stack spacing={3} sx={{ p: 3 }}>
             <Box
               columnGap={2}
@@ -314,7 +303,6 @@ console.log(currentStudent,"cur Stu");
       </Grid>
     </>
   );
-
   const renderAddress = (
     <>
       {mdUp && (
@@ -327,7 +315,6 @@ console.log(currentStudent,"cur Stu");
           </Typography>
         </Grid>
       )}
-
       <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Address Details" />}
@@ -347,11 +334,36 @@ console.log(currentStudent,"cur Stu");
                 name="country"
                 label="Country"
                 placeholder="Choose a country"
-                options={countries}
+                options={countrystatecity.map((country) => country.name)}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
               />
-              <RHFTextField name="state" label="State" />
-              <RHFTextField name="city" label="City" />
+              <RHFAutocomplete
+                name="state"
+                label="State"
+                placeholder="Choose a State"
+                options={
+                  watch('country')
+                    ? countrystatecity
+                    .find((country) => country.name === watch('country'))
+                    ?.states.map((state) => state.name) || []
+                    : []
+                }
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+              />
+              <RHFAutocomplete
+                name="city"
+                label="City"
+                placeholder="Choose a State"
+                options={
+                  watch('state')
+                    ? countrystatecity
+                    .find((country) => country.name === watch('country'))
+                    ?.states.find((state) => state.name === watch('state'))
+                    ?.cities.map((city) => city.name) || []
+                    : []
+                }
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+              />
               <RHFTextField name="zipcode" label="Zip/Code" />
             </Box>
           </Stack>
@@ -359,7 +371,6 @@ console.log(currentStudent,"cur Stu");
       </Grid>
     </>
   );
-
   const renderAmount = (
     <>
       {mdUp && (
@@ -372,7 +383,6 @@ console.log(currentStudent,"cur Stu");
           </Typography>
         </Grid>
       )}
-
       <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Fee Details" />}
@@ -389,7 +399,6 @@ console.log(currentStudent,"cur Stu");
               <RHFTextField name="total_amount" label="Total Amount" />
               <RHFTextField name="amount_paid" label="Amount Paid" />
               <RHFTextField name="discount" label="Discount" />
-
               <Stack spacing={1.5}>
                 <Controller
                   name="upcoming_installment_date"
@@ -417,16 +426,12 @@ console.log(currentStudent,"cur Stu");
       </Grid>
     </>
   );
-
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={5}>
         {uploadStudentImage}
-
         {renderAddress}
-
         {renderAmount}
-
         <Grid item xs={12}>
           <Stack direction="row" spacing={1.5} justifyContent="flex-end">
             <Button
@@ -445,7 +450,6 @@ console.log(currentStudent,"cur Stu");
     </FormProvider>
   );
 }
-
 StudentNewEditForm.propTypes = {
   currentStudent: PropTypes.object,
 };

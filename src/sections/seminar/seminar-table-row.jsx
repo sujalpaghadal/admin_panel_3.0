@@ -37,12 +37,12 @@ export default function SeminarTableRow({
   const collapse = useBoolean();
 
   const TABLE_HEAD = [
-    { id: 'srNo', label: 'Sr No', width: '240px',align:'center' },
-    { id: 'Image', label: 'image', width: '250px' ,align:'center'},
-    { id: 'Role', label: 'Role', width: '250px' ,align:'center'},
-    { id: ' Name', label: ' Name', width: '250px',align:'center' },
-    { id: 'Contact', label: 'Contact', width: '250px' ,align:'center'},
-    { id: 'email', label: 'Email', width: '250px' ,align:'center'},
+    { id: 'srNo', label: 'Sr No', width: '280px', align: 'center' },
+    { id: 'Image', label: 'image', width: '295px', align: 'center' },
+    { id: 'Role', label: 'Role', width: '295px', align: 'center' },
+    { id: ' Name', label: ' Name', width: '295px', align: 'center' },
+    { id: 'Contact', label: 'Contact', width: '295px', align: 'center' },
+    { id: 'email', label: 'Email', width: '295px', align: 'center' },
   ];
 
   return (
@@ -101,21 +101,29 @@ export default function SeminarTableRow({
                       },
                     }}
                   >
-                    <TableCell sx={{ width: '240px' }} align="center">{index + 1}</TableCell>
-                    <TableCell sx={{ width: '240px' }} align="center">
+                    <TableCell sx={{ width: '100%' }} align="center">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell sx={{ width: '100%' }} align="center">
                       <Avatar
                         src={item.avatar_url}
                         variant="rounded"
-                        sx={{ width: 50, height: 50, m: 'auto'}}
+                        sx={{ width: 50, height: 50, m: 'auto' }}
                       />
                     </TableCell>
 
-                    <TableCell sx={{ width: '240px' }} align="center">{item.role}</TableCell>
-                    <TableCell sx={{ width: '240px' }} align="center">
+                    <TableCell sx={{ width: '100%' }} align="center">
+                      {item.role}
+                    </TableCell>
+                    <TableCell sx={{ width: '100%' }} align="center">
                       {item.firstName + ' ' + item.lastName}
                     </TableCell>
-                    <TableCell sx={{ width: '240px' }} align="center">{item.contact}</TableCell>
-                    <TableCell sx={{ width: '240px' }} align="center">{item.email}</TableCell>
+                    <TableCell sx={{ width: '100%' }} align="center">
+                      {item.contact}
+                    </TableCell>
+                    <TableCell sx={{ width: '100%' }} align="center">
+                      {item.email}
+                    </TableCell>
                   </Stack>
                 ))}
               </Stack>

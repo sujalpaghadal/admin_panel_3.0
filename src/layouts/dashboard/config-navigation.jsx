@@ -7,6 +7,7 @@ import { useTranslate } from 'src/locales';
 // import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -53,9 +54,11 @@ const ICONS = {
 };
 
 // ----------------------------------------------------------------------
-
 export function useNavData() {
+  const { user } = useAuthContext();
+  console.log(user);
   const { t } = useTranslate();
+
   const data = useMemo(
     () => [
       // OVERVIEW
@@ -68,27 +71,13 @@ export function useNavData() {
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
           },
-          // {
-          //   title: t('ecommerce'),
-          //   path: paths.dashboard.general.ecommerce,
-          //   icon: ICONS.ecommerce,
-          // },
-          // {
-          //   title: t('analytics'),
-          //   path: paths.dashboard.general.analytics,
-          //   icon: ICONS.analytics,
-          // },
-          // {
-          //   title: t('banking'),
-          //   path: paths.dashboard.general.banking,
-          //   icon: ICONS.banking,
-          // },
-          // {
-          //   title: t('booking'),
-          //   path: paths.dashboard.general.booking,
-          //   icon: ICONS.booking,
-          // },
-        ],
+          // ACCOUNT
+          user.role === 'Admin' && {
+            title: t('account'),
+            path: paths.dashboard.account.root,
+            icon: ICONS.user,
+          },
+        ].filter(Boolean),
       },
 
       // MANAGEMENT
@@ -96,32 +85,29 @@ export function useNavData() {
       {
         subheader: t('management'),
         items: [
-          // STUDENT
+          // VISIT
           {
+            title: t('visit'),
+            path: paths.dashboard.visit.list,
+            icon: ICONS.visit,
+          },
+          // INQUIRY
+          {
+            title: t('inquiry'),
+            path: paths.dashboard.inquiry.list,
+            icon: ICONS.inquiry,
+          },
+          // DEMO
+          {
+            title: t('Demo'),
+            path: paths.dashboard.demo.root,
+            icon: ICONS.demo,
+          },
+          // STUDENT
+          user.role !== 'student' && {
             title: t('student'),
             path: paths.dashboard.student.list,
             icon: ICONS.student,
-          },
-
-          // ACCOUNT
-          {
-            title: t('account'),
-            path: paths.dashboard.account.root,
-            icon: ICONS.user,
-          },
-
-          // FEES
-          {
-            title: t('fees'),
-            path: paths.dashboard.general.fees,
-            icon: ICONS.invoice,
-          },
-
-          // COMPLAIN
-          {
-            title: t('Complaints'),
-            path: paths.dashboard.general.complain,
-            icon: ICONS.file,
           },
 
           // EMPLOYEE
@@ -130,124 +116,71 @@ export function useNavData() {
             path: paths.dashboard.employee.list,
             icon: ICONS.employee,
           },
-
-          // INQUIRY
+        ].filter(Boolean), // Filter out any falsy values
+      },
+      {
+        subheader: t('management'),
+        items: [
+          // BATCH
           {
-            title: t('inquiry'),
-            path: paths.dashboard.inquiry.list,
-            icon: ICONS.inquiry,
+            title: t('batches'),
+            path: paths.dashboard.batches.root,
+            icon: ICONS.batches,
           },
-          // PRODUCT
-          // {
-          //   title: t('product'),
-          //   path: paths.dashboard.product.root,
-          //   icon: ICONS.product,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.product.root },
-          //     {
-          //       title: t('details'),
-          //       path: paths.dashboard.product.demo.details,
-          //     },
-          //     { title: t('create'), path: paths.dashboard.product.new },
-          //     { title: t('edit'), path: paths.dashboard.product.demo.edit },
-          //   ],
-          // },
-
-          // ORDER
-          // {
-          //   title: t('order'),
-          //   path: paths.dashboard.order.root,
-          //   icon: ICONS.order,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.order.root },
-          //     { title: t('details'), path: paths.dashboard.order.demo.details },
-          //   ],
-          // },
-
-          // DEMO
-          {
-            title: t('Demo'),
-            path: paths.dashboard.demo.root,
-            icon: ICONS.demo,
-          },
-
-          // SEMINAR
-          {
-            title: t('seminar'),
-            path: paths.dashboard.seminar.list,
-            icon: ICONS.seminar,
-          },
-
           // ATTENDANCE
           {
             title: t('attendance'),
             path: paths.dashboard.attendance.root,
             icon: ICONS.attandance,
           },
-
-          // EXPENSES
-          {
-            title: t('expenses'),
-            path: paths.dashboard.expenses.list,
-            icon: ICONS.expenses,
-            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
-          },
-          // TASK
-          {
-            title: t('task'),
-            path: paths.dashboard.task.list,
-            icon: ICONS.task,
-            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
-          },
-          {
-            title: t('visit'),
-            path: paths.dashboard.visit.list,
-            icon: ICONS.visit,
-            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
-          },
-
+          // EXAM
           {
             title: t('exam'),
             path: paths.dashboard.examination.list,
             icon: ICONS.exam,
-            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
-
-          // BATCH
+          // SEMINAR
           {
-            title: t('batches'),
-            path: paths.dashboard.batches.root,
-            icon: ICONS.batches,
-            // children: [
-            // { title: t('list'), path: paths.dashboard.batches.root },
-            // { title: t('details'), path: paths.dashboard.batches.demo.details },
-            // ],
+            title: t('seminar'),
+            path: paths.dashboard.seminar.list,
+            icon: ICONS.seminar,
           },
-
-          // INVOICE
-          // {
-          //   title: t('invoice'),
-          //   path: paths.dashboard.invoice.root,
-          //   icon: ICONS.invoice,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.invoice.root },
-          //     {
-          //       title: t('details'),
-          //       path: paths.dashboard.invoice.demo.details,
-          //     },
-          //     { title: t('create'), path: paths.dashboard.invoice.new },
-          //     { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
-          //   ],
-          // },
-
+          // FEES
+          {
+            title: t('fees'),
+            path: paths.dashboard.general.fees,
+            icon: ICONS.invoice,
+          },
+        ],
+      },
+      {
+        subheader: t('management'),
+        items: [
           // CALENDAR
           {
             title: t('calendar'),
             path: paths.dashboard.calendar,
             icon: ICONS.calendar,
           },
-
-          // // KANBAN
+          // EXPENSES
+          {
+            title: t('expenses'),
+            path: paths.dashboard.expenses.list,
+            icon: ICONS.expenses,
+          },
+          // TASK
+          {
+            title: t('task'),
+            path: paths.dashboard.task.list,
+            icon: ICONS.task,
+          },
+          // COMPLAIN
+          {
+            title: t('Complaints'),
+            path: paths.dashboard.general.complain,
+            icon: ICONS.file,
+          },
+          // KANBAN
           // {
           //   title: t('kanban'),
           //   path: paths.dashboard.kanban,
@@ -256,7 +189,7 @@ export function useNavData() {
         ],
       },
     ],
-    [t]
+    [t, user.role] // Include user.role as a dependency
   );
 
   return data;
