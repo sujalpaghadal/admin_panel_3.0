@@ -8,7 +8,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Jbs: Login</title>
+        <title> Sign In</title>
       </Helmet>
 
       <JwtLoginView />

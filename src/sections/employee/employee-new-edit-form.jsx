@@ -155,7 +155,7 @@ export default function EmployeeNewEditForm({ employee }) {
 
     try {
       let response;
-      if (employee._id) {
+      if (employee) {
         response = await updateEmployee(employee._id, formData);
         router.push(paths.dashboard.employee.list);
       } else {
@@ -243,14 +243,14 @@ export default function EmployeeNewEditForm({ employee }) {
                     <DatePicker
                       {...field}
                       label="Date of Birth"
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          error={!!error}
-                          helperText={error ? error.message : ''}
-                        />
-                      )}
+                      format="dd/MM/yyyy"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: !!error,
+                          helperText: error?.message,
+                        },
+                      }}
                     />
                   )}
                 />
@@ -297,14 +297,14 @@ export default function EmployeeNewEditForm({ employee }) {
                     <DatePicker
                       {...field}
                       label="Joining Date"
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          error={!!error}
-                          helperText={error ? error.message : ''}
-                        />
-                      )}
+                      format="dd/MM/yyyy"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: !!error,
+                          helperText: error?.message,
+                        },
+                      }}
                     />
                   )}
                 />

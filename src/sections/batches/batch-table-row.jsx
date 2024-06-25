@@ -83,17 +83,7 @@ export default function BatchTableRow({
     </TableRow>
   );
 
-  const TABLE_HEAD = [
-    { id: 'student', label: 'Students', width: 'auto' },
-    {
-      id: 'enroll_no',
-      label: 'Enroll No',
-      width: 'auto',
-    },
-    { id: ' contact', label: ' Contact', width: 'auto' },
-    { id: 'course', label: 'Course', width: 'auto' },
-    { id: '', width: 'auto' },
-  ];
+ 
   const renderSecondary = (
     <TableRow>
       <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
@@ -103,51 +93,47 @@ export default function BatchTableRow({
           unmountOnExit
           sx={{ bgcolor: 'background.neutral' }}
         >
-          <Table sx={{ width: '100%', display: 'unset' }}>
-            <TableHeadCustom headLabel={TABLE_HEAD} />
-            <Stack component={Paper}>
-              {batch_members?.map((item) => (
-                <Stack
-                  key={item._id}
-                  direction="row"
-                  alignItems="center"
-                  sx={{
-                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                    '&:not(:last-of-type)': {
-                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                    },
-                    pl: 3,
+
+          <Stack component={Paper} sx={{ m: 1.5 }}>
+            {batch_members?.map((item) => (
+              <Stack
+                key={item._id}
+                direction="row"
+                alignItems="center"
+                sx={{
+                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                  '&:not(:last-of-type)': {
+                    borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                  },
+                  pl: 3,
+                }}
+              >
+                <Avatar
+                  src={item?.profile_pic}
+                  variant="rounded"
+                  sx={{ width: 48, height: 48, mr: 2 }}
+                />
+
+                <ListItemText
+                  primary={`${item?.firstName} ${item?.lastName}`}
+                  secondary={item?.email}
+                  primaryTypographyProps={{
+                    typography: 'body2',
                   }}
-                >
-                  <Avatar
-                    src={item?.profile_pic}
-                    variant="rounded"
-                    sx={{ width: 48, height: 48, mr: 2 }}
-                  />
-
-                  <ListItemText
-                    primary={`${item?.firstName} ${item?.lastName}`}
-                    secondary={item?.email}
-                    primaryTypographyProps={{
-                      typography: 'body2',
-                    }}
-                    secondaryTypographyProps={{
-                      component: 'span',
-                      color: 'text.disabled',
-                      mt: 0.5,
-                    }}
-                    sx={{ width: '100%' }}
-                  />
-
-                  <Box sx={{ width: '100%' }}>{item?.enrollment_no}</Box>
-                  <Box sx={{ width: '100%' }}>{item?.contact}</Box>
-                  <Box sx={{ width: '100%' }}>{item?.course}</Box>
-
-                  {/* <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box> */}
-                </Stack>
-              ))}
-            </Stack>
-          </Table>
+                  secondaryTypographyProps={{
+                    component: 'span',
+                    color: 'text.disabled',
+                    mt: 0.5,
+                  }}
+                  sx={{ width: '100%' }}
+                />
+               
+                <Box sx={{ width: '100%' }}>{item?.enrollment_no}</Box>
+                <Box sx={{ width: '100%' }}>{item?.contact}</Box>
+                <Box sx={{ width: '100%' }}>{item?.course}</Box>
+              </Stack>
+            ))}
+          </Stack>
         </Collapse>
       </TableCell>
     </TableRow>
