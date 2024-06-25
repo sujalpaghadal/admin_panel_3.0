@@ -42,7 +42,7 @@ import { useGetEmployees } from '../../../api/employee';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No' },
+  { id: '', label: '#' },
   { id: 'name', label: 'Name' },
   { id: 'contact', label: 'Phone Number', width: 180 },
   { id: 'technology', label: 'Technology', width: 220 },

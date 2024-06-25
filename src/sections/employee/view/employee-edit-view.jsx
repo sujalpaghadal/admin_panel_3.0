@@ -8,11 +8,13 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import EmployeeNewEditForm from '../employee-new-edit-form';
+import { useGetSingleEmployee } from 'src/api/employee';
 
 // ----------------------------------------------------------------------
 
 export default function EmployeeEditView({ id }) {
   const settings = useSettingsContext();
+  const { employee } = useGetSingleEmployee(id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -27,14 +29,14 @@ export default function EmployeeEditView({ id }) {
             name: 'Employee',
             href: paths.dashboard.employee.list,
           },
-          { name: 'Employee Edit'},
+          { name: 'Employee Edit' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <EmployeeNewEditForm employeeId={id} />
+      {employee && <EmployeeNewEditForm employee={employee} />}
     </Container>
   );
 }

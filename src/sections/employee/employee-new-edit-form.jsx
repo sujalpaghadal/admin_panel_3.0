@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,24 +21,21 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useGetConfigs } from 'src/api/config';
 import { EMPLOYEE_GENDER, ROLE } from 'src/_mock/_employee';
-import FormProvider, {
-  RHFUploadAvatar,
-  RHFTextField,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import { RHFUploadAvatar, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import countrystatecity from '../../_mock/map/csc.json';
+import FormProvider from 'src/components/hook-form/form-provider';
+import { cond } from 'lodash';
+import { useGetSingleEmployee } from 'src/api/employee';
 
-
-export default function EmployeeNewEditForm({ employeeId }) {
+export default function EmployeeNewEditForm({ employee }) {
   const { user } = useAuthContext();
   const router = useRouter();
   const { configs, mutate } = useGetConfigs();
   const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const mdUp = useResponsive('up', 'md');
-
 
   const NewEmployeeSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
@@ -56,75 +53,40 @@ export default function EmployeeNewEditForm({ employeeId }) {
     qualification: Yup.string().required('Qualification is required'),
   });
 
+  const defaultValues = useMemo(() => ({
+    firstName: employee?.firstName || '',
+    lastName: employee?.lastName || '',
+    contact: employee?.contact || '',
+    dob: new Date(employee?.dob) || null,
+    email: employee?.email || '',
+    gender: employee?.gender || '',
+    role: employee?.role || '',
+    qualification: employee?.qualification || '',
+    technology: employee?.technology || '',
+    experience: employee?.experience || 0,
+    joining_date: new Date(employee?.joining_date) || null,
+    address_1: employee?.address_detail?.address_1 || '',
+    address_2: employee?.address_detail?.address_2 || '',
+    country: employee?.address_detail?.country || '',
+    state: employee?.address_detail?.state || '',
+    city: employee?.address_detail?.city || '',
+    zipcode: employee?.address_detail?.zipcode || '',
+    avatar_url: employee?.avatar_url || null,
+  }));
+
   const methods = useForm({
-    resolver: yupResolver(NewEmployeeSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      contact: '',
-      dob: null,
-      email: '',
-      gender: '',
-      role: '',
-      qualification: '',
-      technology: '',
-      experience: 0,
-      joining_date: null,
-      address_1: '',
-      address_2: '',
-      country: '',
-      state: '',
-      city: '',
-      zipcode: '',
-      avatar_url: null,
-    },
+    // resolver: yupResolver(NewEmployeeSchema),
+    defaultValues,
   });
 
   const {
     reset,
-    control,
-    watch,
     handleSubmit,
+    control,
     setValue,
+    watch,
     formState: { isSubmitting },
   } = methods;
-
-  useEffect(() => {
-    const fetchEmployeeById = async () => {
-      try {
-        if (employeeId) {
-          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
-          const response = await axios.get(URL);
-          const { data } = response.data;
-          reset({
-            firstName: data.firstName,
-            lastName: data.lastName,
-            contact: data.contact,
-            dob: data.dob ? new Date(data.dob) : null,
-            email: data.email,
-            gender: data.gender,
-            role: data.role,
-            qualification: data.qualification,
-            technology: data.technology,
-            experience: data.experience,
-            joining_date: data.joining_date ? new Date(data.joining_date) : null,
-            address_1: data.address_detail?.address_1 || '',
-            address_2: data.address_detail?.address_2 || '',
-            country: data.address_detail?.country || '',
-            state: data.address_detail?.state || '',
-            city: data.address_detail?.city || '',
-            zipcode: data.address_detail?.zipcode || '',
-            avatar_url: data.avatar_url || '',
-          });
-          setProfilePic(data.avatar_url);
-        }
-      } catch (error) {
-        console.error('Failed to fetch employee:', error);
-      }
-    };
-
-    fetchEmployeeById();
-  }, [employeeId, reset]);
 
   const createEmployee = async (formData) => {
     try {
@@ -142,10 +104,9 @@ export default function EmployeeNewEditForm({ employeeId }) {
       throw new Error('Creation failed. Please try again.');
     }
   };
-
   const updateEmployee = async (id, formData) => {
     try {
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employee._id}`;
       const response = await axios.put(URL, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -157,8 +118,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
       throw error;
     }
   };
-
-  const onSubmit = async (data) => {
+  const onSubmit = handleSubmit(async (data) => {
     const addemployee = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -195,13 +155,12 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
     try {
       let response;
-      if (employeeId) {
-        response = await updateEmployee(employeeId, formData);
+      if (employee._id) {
+        response = await updateEmployee(employee._id, formData);
         router.push(paths.dashboard.employee.list);
       } else {
         response = await createEmployee(formData);
         router.push(paths.dashboard.employee.list);
-
       }
       enqueueSnackbar(response.message, {
         variant: 'success',
@@ -212,14 +171,17 @@ export default function EmployeeNewEditForm({ employeeId }) {
         variant: 'error',
       });
     }
-  };
+  });
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
+      const newFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      });
       if (file) {
         setProfilePic(file);
-        setValue('avatar_url', file);
+        setValue('avatar_url', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -238,7 +200,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
           <Card sx={{ pt: 5, px: 3, mt: 5 }}>
             <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar name="profile-pic" onDrop={handleDrop} />
+              <RHFUploadAvatar name="avatar_url" onDrop={handleDrop} />
             </Box>
           </Card>
         </Grid>
@@ -294,15 +256,17 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 />
               </Stack>
 
-              <RHFAutocomplete
-                name="role"
-                type="role"
-                label="Role"
-                placeholder="Choose a role"
-                fullWidth
-                options={configs.emp_type?.map((option) => option)}
-                getOptionLabel={(option) => option}
-              />
+              {configs?.emp_type && (
+                <RHFAutocomplete
+                  name="role"
+                  type="role"
+                  label="Role"
+                  placeholder="Choose a role"
+                  fullWidth
+                  options={configs?.emp_type.map((option) => option)}
+                  getOptionLabel={(option) => option}
+                />
+              )}
 
               <RHFTextField
                 name="experience"
@@ -313,15 +277,17 @@ export default function EmployeeNewEditForm({ employeeId }) {
               />
 
               <RHFTextField name="qualification" label="Qualification" />
-              <RHFAutocomplete
-                name="Technology"
-                type="technology"
-                label="Technology"
-                placeholder="Choose a Technology"
-                fullWidth
-                options={configs?.developer_type?.map((option) => option)}
-                getOptionLabel={(option) => option}
-              />
+              {configs?.developer_type && (
+                <RHFAutocomplete
+                  name="technology"
+                  type="technology"
+                  label="Technology"
+                  placeholder="Choose a Technology"
+                  fullWidth
+                  options={configs?.developer_type?.map((option) => option)}
+                  getOptionLabel={(option) => option}
+                />
+              )}
 
               <Stack spacing={1.5}>
                 <Controller
@@ -448,14 +414,14 @@ export default function EmployeeNewEditForm({ employeeId }) {
       {mdUp && <Grid item md={4} />}
       <Grid item xs={12} md={8} sx={{ display: 'flex', justifyContent: 'end' }}>
         <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-          {!employeeId ? 'Add Employee' : 'Save Changes'}
+          {!employee?._id ? 'Add Employee' : 'Save Changes'}
         </LoadingButton>
       </Grid>
     </>
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         {renderProperties}
         {renderAddress}
@@ -466,5 +432,5 @@ export default function EmployeeNewEditForm({ employeeId }) {
 }
 
 EmployeeNewEditForm.propTypes = {
-  employeeId: PropTypes.string,
+  employee: PropTypes.string,
 };
