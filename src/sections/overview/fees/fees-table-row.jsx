@@ -305,7 +305,7 @@ export default function FeesTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -314,7 +314,7 @@ export default function FeesTableRow({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem
           onClick={() => {
@@ -322,7 +322,7 @@ export default function FeesTableRow({
             popover.onClose();
           }}
         >
-          <Iconify icon="solar:eye-bold" />
+          <Iconify icon="solar:pen-bold" />
           Edit
         </MenuItem>
         <MenuItem

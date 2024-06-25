@@ -6,7 +6,7 @@ import { useAuthContext } from '../auth/hooks/index.js';
 
 export function useGetStudents(page, limit) {
   const { user } = useAuthContext();
-  
+
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user.company_id}/student`;
 
   const { data, isLoading, error, isValidating , mutate} = useSWR(URL, fetcher);
