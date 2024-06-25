@@ -80,14 +80,14 @@ export default function DashboardView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Typography
-        variant="h4"
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
-        Hi, Welcome back
-      </Typography>
+      {/* <Typography */}
+      {/*   variant="h4" */}
+      {/*   sx={{ */}
+      {/*     mb: { xs: 3, md: 5 }, */}
+      {/*   }} */}
+      {/* > */}
+      {/*   Hi, Welcome back */}
+      {/* </Typography> */}
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <DashboardCount
@@ -125,8 +125,8 @@ export default function DashboardView() {
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardDemoInquiryChart
-              title="Visits - Inquiry"
-              subheader="(+43% Income | +12% Expense) than last year"
+              title="Visits & Inquiry"
+              // subheader="(+43% Income | +12% Expense) than last year"
               chart={{
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
                 series: [
@@ -177,7 +177,7 @@ export default function DashboardView() {
         <Grid xs={12} md={4}>
           <Stack spacing={3}>
             <DashboardAttendenceChart
-              title="Student Attendance"
+              title="Today's Attendance"
               total={parseInt(dashboardData?.students)}
               chart={{
                 series: [
@@ -196,7 +196,7 @@ export default function DashboardView() {
         <Grid xs={12} md={4}>
           <Stack spacing={3}>
             <DashboardUpcomingDemo
-              title="Demos"
+              title="Upcoming Demos"
               subheader={`You have ${demo.length} demos`}
               list={demo.slice(-5)}
             />
@@ -205,7 +205,7 @@ export default function DashboardView() {
         <Grid xs={12} md={8}>
           <Stack spacing={3}>
             <DashboardCourseChart
-              title="All Courses"
+              title="Courses analytics"
               chart={{
                 series: output,
                 colors: [

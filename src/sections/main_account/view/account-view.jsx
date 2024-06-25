@@ -70,7 +70,7 @@ export default function AccountView() {
           <AccountSalesOverview title="Account Overview" data={_ecommerceSalesOverview} />
         </Grid>
         <Grid item xs={12} md={4}>
-          <AccountWidgetSummary title="Today Income" total={10000} icon={<BookingIllustration />} />
+          <AccountWidgetSummary title="Today's Income" total={10000} icon={<BookingIllustration />} />
         </Grid>
         {data.map((item, index) => (
           <Grid key={index} item xs={12} md={6} lg={4}>
@@ -79,10 +79,10 @@ export default function AccountView() {
         ))}
         <Grid item xs={12} lg={8}>
           <AccountNewInvoice
-            title="OverDue List"
+            title="Overdue payments"
             tableData={overdue}
             tableLabels={[
-              { id: 'id', label: 'Invoice ID' },
+              { id: 'id', label: '#', align:"center" },
               { id: 'category', label: 'Name' },
               { id: 'price', label: 'Fee' },
               { id: 'status', label: 'Contact' },
