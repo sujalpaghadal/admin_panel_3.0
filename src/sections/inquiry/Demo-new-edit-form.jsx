@@ -109,11 +109,12 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
       }}
     >
       <DialogTitle sx={{ textAlign: 'center' }}>Demo Add</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ pb: 3 }}>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={2} sx={{ p: 2 }}>
+            <Stack>
               <Box
+              sx={{py:"15px"}}
                 columnGap={2}
                 rowGap={3}
                 display="grid"
@@ -123,6 +124,7 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                 }}
               >
                 <RHFAutocomplete
+                
                   name="faculty_name"
                   label="Faculty Name"
                   placeholder="Faculty Name"
@@ -195,9 +197,11 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                   )}
                 />
               </Box>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                Add Demo
-              </LoadingButton>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '20px' }}>
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  Add Demo
+                </LoadingButton>
+              </Box>
             </Stack>
           </form>
         </FormProvider>

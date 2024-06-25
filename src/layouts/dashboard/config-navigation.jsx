@@ -27,7 +27,7 @@ const ICONS = {
   demo: <Iconify icon="material-symbols:demography-outline" sx={{ width: 1, height: 1 }} />,
   seminar: <Iconify icon="material-symbols:overview-sharp" sx={{ width: 1, height: 1 }} />,
   attandance: <Iconify icon="fluent:clipboard-task-list-20-filled" sx={{ width: 1, height: 1 }} />,
-  expenses: <Iconify icon="arcticons:day-to-day-expenses" sx={{ width: 1, height: 1 }} />,
+  expenses: <Iconify icon="mingcute:wallet-fill" sx={{ width: 1, height: 1 }} />,
   task: <Iconify icon="fluent:task-list-square-person-20-filled" sx={{ width: 1, height: 1 }} />,
   visit: <Iconify icon="material-symbols:nest-doorbell-visitor" sx={{ width: 1, height: 1 }} />,
   exam: <Iconify icon="healthicons:i-exam-multiple-choice-negative" sx={{ width: 1, height: 1 }} />,
@@ -56,7 +56,6 @@ const ICONS = {
 // ----------------------------------------------------------------------
 export function useNavData() {
   const { user } = useAuthContext();
-  console.log(user);
   const { t } = useTranslate();
 
   const data = useMemo(
@@ -72,7 +71,7 @@ export function useNavData() {
             icon: ICONS.dashboard,
           },
           // ACCOUNT
-          user.role === 'Admin' && {
+          user?.role === 'Admin' && {
             title: t('account'),
             path: paths.dashboard.account.root,
             icon: ICONS.user,
@@ -104,7 +103,7 @@ export function useNavData() {
             icon: ICONS.demo,
           },
           // STUDENT
-          user.role !== 'student' && {
+          user?.role !== 'student' && {
             title: t('student'),
             path: paths.dashboard.student.list,
             icon: ICONS.student,
@@ -189,7 +188,7 @@ export function useNavData() {
         ],
       },
     ],
-    [t, user.role] // Include user.role as a dependency
+    [t, user?.role] // Include user.role as a dependency
   );
 
   return data;

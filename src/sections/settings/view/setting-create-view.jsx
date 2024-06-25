@@ -15,14 +15,7 @@ import Userrolecreatepage from './user-role-create-view';
 import ExpensesCreatePage from './expenses-create-view';
 import Developercreatepage from './developer-role-create-view';
 
-
-
 const TABS = [
-  {
-    value: 'Expeneses',
-    label: 'Expeneses',
-    icon: <Iconify icon="arcticons:day-to-day-expenses" width={24} />,
-  },
   {
     value: 'Company Profile',
     label: 'Company Profile',
@@ -34,6 +27,16 @@ const TABS = [
     icon: <Iconify icon="fa6-solid:user-gear" width={24} />,
   },
   {
+    value: 'Employee Role',
+    label: 'Employee Role',
+    icon: <Iconify icon="clarity:employee-solid" width={24} />,
+  },
+  {
+    value: 'Expeneses',
+    label: 'Expeneses',
+    icon: <Iconify icon="mingcute:wallet-fill" width={24} />,
+  },
+  {
     value: 'Courses',
     label: 'Courses',
     icon: <Iconify icon="hugeicons:course" width={24} />,
@@ -42,11 +45,6 @@ const TABS = [
     value: 'Lab',
     label: 'Lab',
     icon: <Iconify icon="mdi:google-classroom" width={24} />,
-  },
-  {
-    value: 'Employee Role',
-    label: 'Employee Role',
-    icon: <Iconify icon="clarity:employee-solid" width={24} />,
   },
   {
     value: 'Developer Option',

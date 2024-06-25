@@ -83,9 +83,9 @@ export default function DashboardCourseChart({ title, subheader, chart, ...other
         />
       </Box>
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+      {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
 
-      <Box
+      {/* <Box
         display="grid"
         gridTemplateColumns="repeat(2, 1fr)"
         sx={{ textAlign: 'center', typography: 'h4' }}
@@ -103,7 +103,7 @@ export default function DashboardCourseChart({ title, subheader, chart, ...other
           </Box>
           $18,765
         </Stack>
-      </Box>
+      </Box> */}
     </Card>
   );
 }

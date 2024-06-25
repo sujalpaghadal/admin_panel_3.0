@@ -45,7 +45,7 @@ export default function StudentTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+        <TableCell >
           {row.enrollment_no}
         </TableCell>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>

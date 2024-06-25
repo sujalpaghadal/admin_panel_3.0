@@ -45,7 +45,7 @@ const TABLE_HEAD = [
   { id: 'appointment', label: 'Appointment' },
   { id: 'contact', label: 'Contact', align: 'center' },
   { id: 'email', label: 'Email', align: 'center' },
-  { id: 'demo', label: 'Demo', width: 110, align: 'center' },
+  { id: 'demo', label: 'Demo', align: 'center' },
   { id: '', width: 88 },
 ];
 
