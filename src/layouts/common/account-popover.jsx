@@ -10,14 +10,14 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
 // import { useMockedUser } from 'src/hooks/use-mocked-user';
 
 import { useAuthContext } from 'src/auth/hooks';
-
+import { PATH_AFTER_LOGIN } from 'src/config-global';
 import { varHover } from 'src/components/animate';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ const OPTIONS = [
   },
   {
     label: 'Settings',
-    linkTo: paths.dashboard.student.account,
+    linkTo: paths.dashboard.setting,
   },
 ];
 
@@ -40,7 +40,8 @@ const OPTIONS = [
 
 export default function AccountPopover() {
   const router = useRouter();
-
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
   const { user, logout } = useAuthContext();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -51,7 +52,7 @@ export default function AccountPopover() {
     try {
       await logout();
       popover.onClose();
-      router.replace('/');
+      router.push("/");
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Unable to logout!', { variant: 'error' });

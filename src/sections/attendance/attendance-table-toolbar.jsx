@@ -27,15 +27,15 @@ export default function AttendanceTableToolbar({ filters, onFilters, dateError, 
     [onFilters]
   );
 
-  const handleFilterService = useCallback(
-    (event) => {
-      onFilters(
-        'service',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
-    },
-    [onFilters]
-  );
+  // const handleFilterService = useCallback(
+  //   (event) => {
+  //     onFilters(
+  //       'service',
+  //       typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
+  //     );
+  //   },
+  //   [onFilters]
+  // );
 
   const handleFilterStartDate = useCallback(
     (newValue) => {
@@ -62,32 +62,51 @@ export default function AttendanceTableToolbar({ filters, onFilters, dateError, 
         }}
         sx={{
           p: 2.5,
-          pr: { xs: 2.5, md: 1 },
         }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 180 },
-          }}
-        >
-          <InputLabel>Service</InputLabel>
-          <Select
-            multiple
-            value={filters.service}
-            onChange={handleFilterService}
-            input={<OutlinedInput label="Service" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {serviceOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.service.includes(option)} />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {/* <FormControl */}
+        {/*   sx={{ */}
+        {/*     flexShrink: 0, */}
+        {/*     width: { xs: 1, md: 180 }, */}
+        {/*   }} */}
+        {/* > */}
+        {/*   <InputLabel>Service</InputLabel> */}
+        {/*   <Select */}
+        {/*     multiple */}
+        {/*     value={filters.service} */}
+        {/*     onChange={handleFilterService} */}
+        {/*     input={<OutlinedInput label="Service" />} */}
+        {/*     renderValue={(selected) => selected.map((value) => value).join(', ')} */}
+        {/*     sx={{ textTransform: 'capitalize' }} */}
+        {/*   > */}
+        {/*     {serviceOptions.map((option) => ( */}
+        {/*       <MenuItem key={option} value={option}> */}
+        {/*         <Checkbox disableRipple size="small" checked={filters.service.includes(option)} /> */}
+        {/*         {option} */}
+        {/*       </MenuItem> */}
+        {/*     ))} */}
+        {/*   </Select> */}
+        {/* </FormControl> */}
+
+        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1, pr: 1.5 }}>
+          <TextField
+            fullWidth
+            value={filters.name}
+            onChange={handleFilterName}
+            placeholder="Search student..."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* <IconButton onClick={popover.onOpen}> */}
+          {/*   <Iconify icon="eva:more-vertical-fill" /> */}
+          {/* </IconButton> */}
+        </Stack>
 
         <DatePicker
           label="Start date"
@@ -119,25 +138,7 @@ export default function AttendanceTableToolbar({ filters, onFilters, dateError, 
           }}
         />
 
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
-          <TextField
-            fullWidth
-            value={filters.name}
-            onChange={handleFilterName}
-            placeholder="Search customer or invoice number..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
 
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </Stack>
       </Stack>
 
       <CustomPopover

@@ -6,7 +6,6 @@ import { fetcher } from '../utils/axios';
 export function useGetExpense(user) {
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/expense`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-  console.log(user);
 
   const memoizedValue = useMemo(
     () => ({

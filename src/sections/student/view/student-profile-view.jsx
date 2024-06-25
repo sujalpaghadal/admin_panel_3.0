@@ -68,10 +68,10 @@ export default function StudentProfileView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading="Student Profile"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.student.root },
+          { name: 'Student', href: paths.dashboard.student.list },
           { name: user?.displayName },
         ]}
         sx={{

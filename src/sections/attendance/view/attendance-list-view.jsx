@@ -1,5 +1,5 @@
 import sumBy from 'lodash/sumBy';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -8,24 +8,23 @@ import Table from '@mui/material/Table';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import { alpha, useTheme } from '@mui/material/styles';
-import TableContainer from '@mui/material/TableContainer';
+import { Button, TableContainer } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
 import { isAfter, isBetween } from 'src/utils/format-time';
 
-import { _invoices, INVOICE_SERVICE_OPTIONS } from 'src/_mock';
+import { INVOICE_SERVICE_OPTIONS } from 'src/_mock';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import  {useGetAllAttendance}  from 'src/api/attendance';
+import { RouterLink } from 'src/routes/components';
 import {
   useTable,
   emptyRows,
@@ -33,27 +32,20 @@ import {
   getComparator,
   TableEmptyRows,
   TableHeadCustom,
-  TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import { useGetAllAttendance } from 'src/api/attendance';
 
-import AttendanceAnalytic from '../attendance-analytic';
 import AttendanceTableRow from '../attendance-table-row';
 import AttendanceTableToolbar from '../attendance-table-toolbar';
 import AttendanceTableFiltersResult from '../attendance-table-filters-result';
 
-
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
+  { id: 'srNo', label: '#', align: 'center' },
   { id: 'name', label: 'Name' },
-  { id: 'Date', label: 'Date' },
-  { id: 'contact', label: 'Contact' },
-  // { id: 'price', label: 'Amount' },
-  // { id: 'sent', label: 'Sent', align: 'center' },
+  { id: 'enroll_no', label: 'Enroll No' },
+  { id: 'email', label: 'Email' },
+  { id: 'course', label: 'Course' },
   { id: 'status', label: 'Status' },
-  { id: '' },
 ];
 
 const defaultFilters = {
@@ -62,9 +54,8 @@ const defaultFilters = {
   status: 'all',
   startDate: null,
   endDate: null,
+  date: new Date(),
 };
-
-// ----------------------------------------------------------------------
 
 export default function AttendanceListView() {
   const { enqueueSnackbar } = useSnackbar();
@@ -78,8 +69,6 @@ export default function AttendanceListView() {
   const router = useRouter();
 
   const table = useTable({ defaultOrderBy: 'createDate' });
-
-  const confirm = useBoolean();
 
   const [tableData, setTableData] = useState(attendance);
 
@@ -109,7 +98,7 @@ export default function AttendanceListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
+  const getInvoiceLength = (status) => attendance.filter((item) => item.status === status).length;
 
   const getTotalAmount = (status) =>
     sumBy(
@@ -120,24 +109,24 @@ export default function AttendanceListView() {
   const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
 
   const TABS = [
-    { value: 'all', label: 'All', color: 'default', count: tableData.length },
+    { value: 'all', label: 'All', color: 'default', count: attendance.length },
     {
-      value: 'Present',
+      value: 'present',
       label: 'Present',
       color: 'success',
-      count: getInvoiceLength('Present'),
+      count: getInvoiceLength('present'),
     },
     {
-      value: 'Late',
+      value: 'late',
       label: 'Late',
       color: 'warning',
-      count: getInvoiceLength('Late'),
+      count: getInvoiceLength('late'),
     },
     {
-      value: 'Absent',
+      value: 'absent',
       label: 'Absent',
       color: 'error',
-      count: getInvoiceLength('Absent'),
+      count: getInvoiceLength('absent'),
     },
   ];
 
@@ -207,94 +196,30 @@ export default function AttendanceListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Attendance logs"
           links={[
             {
               name: 'Dashboard',
               href: paths.dashboard.root,
             },
             {
-              name: 'Invoice',
-              href: paths.dashboard.invoice.root,
-            },
-            {
-              name: 'List',
+              name: 'Attendance logs',
             },
           ]}
-          // action={
-          //   <Button
-          //     component={RouterLink}
-          //     href={paths.dashboard.invoice.new}
-          //     variant="contained"
-          //     startIcon={<Iconify icon="mingcute:add-line" />}
-          //   >
-          //     New Invoice
-          //   </Button>
-          // }
+          action={
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.attendance.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Add Attendance
+            </Button>
+          }
           sx={{
             mb: { xs: 3, md: 5 },
           }}
         />
-
-        {/* <Card
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        >
-          <Scrollbar>
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-              sx={{ py: 2 }}
-            >
-              <AttendanceAnalytic
-                title="Total"
-                total={tableData.length}
-                percent={100}
-                price={sumBy(tableData, 'totalAmount')}
-                icon="solar:bill-list-bold-duotone"
-                color={theme.palette.info.main}
-              />
-
-              <AttendanceAnalytic
-                title="Paid"
-                total={getInvoiceLength('paid')}
-                percent={getPercentByStatus('paid')}
-                price={getTotalAmount('paid')}
-                icon="solar:file-check-bold-duotone"
-                color={theme.palette.success.main}
-              />
-
-              <AttendanceAnalytic
-                title="Pending"
-                total={getInvoiceLength('pending')}
-                percent={getPercentByStatus('pending')}
-                price={getTotalAmount('pending')}
-                icon="solar:sort-by-time-bold-duotone"
-                color={theme.palette.warning.main}
-              />
-
-              <AttendanceAnalytic
-                title="Overdue"
-                total={getInvoiceLength('overdue')}
-                percent={getPercentByStatus('overdue')}
-                price={getTotalAmount('overdue')}
-                icon="solar:bell-bing-bold-duotone"
-                color={theme.palette.error.main}
-              />
-
-              <AttendanceAnalytic
-                title="Draft"
-                total={getInvoiceLength('draft')}
-                percent={getPercentByStatus('draft')}
-                price={getTotalAmount('draft')}
-                icon="solar:file-corrupted-bold-duotone"
-                color={theme.palette.text.secondary}
-              />
-            </Stack>
-          </Scrollbar>
-        </Card> */}
-
         <Card>
           <Tabs
             value={filters.status}
@@ -345,45 +270,6 @@ export default function AttendanceListView() {
           )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            {/* <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) => {
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                );
-              }}
-              action={
-                <Stack direction="row">
-                  <Tooltip title="Sent">
-                    <IconButton color="primary">
-                      <Iconify icon="iconamoon:send-fill" />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Download">
-                    <IconButton color="primary">
-                      <Iconify icon="eva:download-outline" />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Print">
-                    <IconButton color="primary">
-                      <Iconify icon="solar:printer-minimalistic-bold" />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Delete">
-                    <IconButton color="primary" onClick={confirm.onTrue}>
-                      <Iconify icon="solar:trash-bin-trash-bold" />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              }
-            /> */}
-
             <Scrollbar>
               <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
                 <TableHeadCustom
@@ -393,12 +279,6 @@ export default function AttendanceListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
                 />
 
                 <TableBody>
@@ -407,10 +287,10 @@ export default function AttendanceListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row, index) => (
                       <AttendanceTableRow
                         key={row.id}
-                        row={row}
+                        row={{ ...row, index }}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
@@ -442,29 +322,6 @@ export default function AttendanceListView() {
           />
         </Card>
       </Container>
-
-      {/* <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      /> */}
     </>
   );
 }
@@ -480,15 +337,16 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
-  }); 
+  });
 
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
     inputData = inputData.filter(
       (invoice) =>
-        // invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        invoice.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        invoice.student_id.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        invoice.student_id.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        invoice.student_id.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -504,7 +362,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((invoice) => isBetween(invoice.createDate, startDate, endDate));
+      inputData = inputData.filter((invoice) => isBetween(invoice.date, startDate, endDate));
     }
   }
 

@@ -2,23 +2,23 @@ import React from 'react';
 import { Autocomplete, Checkbox, Chip, TextField } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
-const RHFAutocomplete1 = ({ control, studentName }) => (
+const RHFAutocomplete1 = ({ name, control, studentName, labelName }) => (
   <Controller
-    name="batch_members"
+    name={name}
     control={control}
     render={({ field }) => (
       <Autocomplete
         {...field}
         multiple
         options={studentName}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option?.firstName}
         value={field.value || []}
         isOptionEqualToValue={(option, value) => option._id === value._id}
         onChange={(event, newValue) => field.onChange(newValue)}
         renderOption={(props, option, { selected }) => (
           <li {...props}>
             <Checkbox style={{ marginRight: 8 }} checked={selected} />
-            {option.name}
+            {`${option?.firstName} ${option?.lastName}`}
           </li>
         )}
         renderTags={(selected, getTagProps) =>
@@ -26,7 +26,7 @@ const RHFAutocomplete1 = ({ control, studentName }) => (
             <Chip
               {...getTagProps({ index })}
               key={option?._id}
-              label={option?.name}
+              label={`${option?.firstName} ${option?.lastName}`}
               size="small"
               color="info"
               variant="soft"
@@ -34,7 +34,7 @@ const RHFAutocomplete1 = ({ control, studentName }) => (
           ))
         }
         renderInput={(params) => (
-          <TextField {...params} label="Batch Members" placeholder="Batch Members" />
+          <TextField {...params} label={labelName} placeholder={labelName} />
         )}
       />
     )}

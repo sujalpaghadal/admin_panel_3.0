@@ -33,6 +33,7 @@ import {
 } from 'src/components/table';
 
 import { useGetInquiry } from 'src/api/inquiry';
+import { useAuthContext } from 'src/auth/hooks';
 
 import InquiryTableRow from '../inquiry-table-row';
 import InquiryTableToolbar from '../inquiry-table-toolbar';
@@ -57,7 +58,6 @@ const defaultFilters = {
 
 export default function InquiryListView() {
   const { enqueueSnackbar } = useSnackbar();
-
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -99,27 +99,52 @@ export default function InquiryListView() {
     [table]
   );
 
-  const handleDeleteRows = useCallback(async () => {
-    try {
-      const sortedSelectedIds = [...table.selected].sort();
-      const selectedIds = sortedSelectedIds.map((selectedId) => selectedId);
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry`;
-      const response = await axios.delete(URL, {
-        data: { ids: selectedIds },
-      });
-      if (response.status === 200) {
-        console.log('delete response:', response);
-        enqueueSnackbar(response.data.message, { variant: 'success' });
-        mutate();
-        confirm.onFalse();
-      } else {
-        enqueueSnackbar(response.data.message, { variant: 'error' });
+  // Single Delete
+  const handleDeleteRow = useCallback(
+    async (_id) => {
+      try {
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry`;
+        const response = await axios.delete(URL, {
+          data: { ids: _id },
+        });
+        if (response.status === 200) {
+          enqueueSnackbar(response.data.message, { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+        } else {
+          enqueueSnackbar(response.data.message, { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete Inquiry', error);
+        enqueueSnackbar('Failed to delete Inquiry', { variant: 'error' });
       }
-    } catch (error) {
-      console.error('Failed to delete inquiries', error);
-      enqueueSnackbar('Failed to delete inquiries', { variant: 'error' });
-    }
-  }, [table.selected, enqueueSnackbar, mutate, confirm]);
+    },
+    [enqueueSnackbar, mutate, confirm]
+  );
+
+  const handleDeleteRows = useCallback(
+    async (_id) => {
+      try {
+        const sortedSelectedIds = [...table.selected].sort();
+        const selectedIds = sortedSelectedIds.map((selectedId) => selectedId);
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry`;
+        const response = await axios.delete(URL, {
+          data: { ids: selectedIds },
+        });
+        if (response.status === 200) {
+          enqueueSnackbar(response.data.message, { variant: 'success' });
+          mutate();
+          confirm.onFalse();
+        } else {
+          enqueueSnackbar(response.data.message, { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete inquiries', error);
+        enqueueSnackbar('Failed to delete inquiries', { variant: 'error' });
+      }
+    },
+    [table.selected, enqueueSnackbar, mutate, confirm]
+  );
 
   const handleEditRow = useCallback(
     (id) => {
@@ -130,13 +155,13 @@ export default function InquiryListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Inquiry List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Inquiry', href: paths.dashboard.inquiry.list },
-            { name: 'Inquiry List' },
+            { name: 'Inquiry' },
           ]}
           action={
             <Button
@@ -185,12 +210,12 @@ export default function InquiryListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -206,7 +231,7 @@ export default function InquiryListView() {
                         row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRows(row._id, selectedIds)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
                         onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}

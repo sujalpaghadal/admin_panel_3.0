@@ -64,9 +64,9 @@ export default function CalendarView() {
   const { data } = calendar;
 
   const leaveTypeColors = {
-    'holiday': '#006099',
+    holiday: '#006099',
     'student leave': '#6B728E',
-    'notice': '#836FFF',
+    notice: '#836FFF',
   };
 
   const handleLeaveStatusColor = (status) => {

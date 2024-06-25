@@ -21,7 +21,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _expenses, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -48,15 +48,13 @@ import ExpenseTableFiltersResult from '../expenses-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
-
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 120 },
+  { id: 'srNo', label: 'Sr No' },
   { id: 'type', label: 'Type' },
-  { id: 'description', label: 'Description', width: 290 },
-  { id: 'amount', label: 'Amount', width: 320 },
-  { id: 'date', label: 'Date date', width: 230 },
-  { id: '', width: 88 },
+  { id: 'description', label: 'Description' },
+  { id: 'amount', label: 'Amount' },
+  { id: 'date', label: 'Date date' },
+  { id: '' },
 ];
 
 const defaultFilters = {
@@ -68,7 +66,7 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function ExpenseListView() {
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
@@ -84,29 +82,28 @@ export default function ExpenseListView() {
     }
   }, [expense]);
 
-  
-  const handleDeleteRow = useCallback(async (id) => {
-    try {
-      
-     const response = await axios.delete(
-        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/delete/all-expense`,
-        { data: { ids: id } }
+  const handleDeleteRow = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/delete/all-expense`,
+          { data: { ids: id } }
         );
         if (response.status === 200) {
           enqueueSnackbar('deleted successfully', { variant: 'success' });
-          
+
           confirm.onFalse();
           mutate();
         } else {
-        enqueueSnackbar('Failed to delete items', { variant: 'error' });
+          enqueueSnackbar('Failed to delete items', { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete inquiry', error);
+        enqueueSnackbar('Failed to delete expense', { variant: 'error' });
       }
-    } catch(error) {
-       console.error('Failed to delete inquiry', error);
-       enqueueSnackbar('Failed to delete expense', { variant: 'error' });
-    }
     },
-    [enqueueSnackbar,mutate, table, tableData]
-    );
+    [enqueueSnackbar, mutate, table, tableData]
+  );
 
   const handleDeleteRows = useCallback(async () => {
     try {
@@ -129,7 +126,6 @@ export default function ExpenseListView() {
       enqueueSnackbar('Failed to delete Expenses', { variant: 'error' });
     }
   }, [enqueueSnackbar, mutate, table, confirm]);
-
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -186,7 +182,7 @@ export default function ExpenseListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
@@ -210,7 +206,11 @@ export default function ExpenseListView() {
         />
 
         <Card>
-          <ExpenseTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_roles} />
+          <ExpenseTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            roleOptions={_expenses}
+          />
 
           {canReset && (
             <ExpenseTableFiltersResult
@@ -355,7 +355,7 @@ function applyFilter({ inputData, comparator, filters }) {
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((user) => role.includes(user.type));
   }
 
   return inputData;

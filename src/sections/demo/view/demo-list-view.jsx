@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -19,13 +19,11 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { isAfter, isBetween } from 'src/utils/format-time';
 
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
+import { ORDER_STATUS_OPTIONS } from 'src/_mock';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
@@ -39,22 +37,24 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { useGetAllDemos } from 'src/api/demo';
+
 import DemoTableRow from '../demo-table-row';
 import DemoTableToolbar from '../demo-table-toolbar';
 import DemoTableFiltersResult from '../demo-table-filters-result';
-import { useGetAllDemos } from 'src/api/demo';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
+// const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'orderNumber', label: 'Sr No', width: 116 },
   { id: 'name', label: 'Inquiry Student' },
-  { id: 'totalAmount', label: 'Contact' },
+  { id: 'totalAmount', label: 'Contact', width: 160 },
   // { id: 'createdAt', label: 'Date', width: 200 },
   // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
-  // { id: 'status', label: 'Status', width: 210 },
+  // { id: 'totalAmount', label: 'Price', width: 140 },
+  { id: 'status', label: 'Status', width: 210 },
   { id: '', width: 88 },
 ];
 
@@ -78,9 +78,17 @@ export default function DemoListView() {
 
   const confirm = useBoolean();
 
-  const { demo } = useGetAllDemos();
+  const { demo, mutate } = useGetAllDemos();
 
-  const [tableData, setTableData] = useState(demo);
+  console.log(demo);
+  console.log(demo);
+  const [tableData, setTableData] = useState();
+
+  useEffect(() => {
+    if (demo) {
+      setTableData(demo);
+    }
+  }, [demo]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -164,13 +172,17 @@ export default function DemoListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Demo List"
+          heading="List"
           links={[
             {
               name: 'Dashboard',
               href: paths.dashboard.root,
             },
-            { name: 'Demo List' },
+            {
+              name: 'Order',
+              href: paths.dashboard.order.root,
+            },
+            { name: 'List' },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
@@ -178,41 +190,6 @@ export default function DemoListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <DemoTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -275,15 +252,15 @@ export default function DemoListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row, index) => (
+                    .map((row) => (
                       <DemoTableRow
                         key={row.id}
                         row={row}
-                        srNumber={index + 1}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        mutate={mutate}
                       />
                     ))}
 
@@ -332,9 +309,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.inquiry.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.inquiry.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.inquiry_id.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.inquiry_id.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

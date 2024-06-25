@@ -28,10 +28,10 @@ export default function StudentTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
-  onGuardianRow,
 }) {
-  const { firstName, lastName, profile_pic, course, joining_date, email, contact, index } =
-    row;
+  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =row;
+
+
   const confirm = useBoolean();
 
   const quickEdit = useBoolean();
@@ -45,9 +45,6 @@ export default function StudentTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
-          {index + 1}
-        </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
           {row.enrollment_no}
         </TableCell>
@@ -88,11 +85,6 @@ export default function StudentTableRow({
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-          <Tooltip title="Quick Edit" placement="top" arrow>
-            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip>
 
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -109,7 +101,7 @@ export default function StudentTableRow({
         sx={{ width: 140 }}
       >
         <MenuItem
-          onClick={() => {
+          onClick={(row) => {
             confirm.onTrue();
             popover.onClose();
           }}
@@ -130,7 +122,6 @@ export default function StudentTableRow({
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onGuardianRow();
             popover.onClose();
           }}
         >

@@ -125,7 +125,7 @@ export default function CalendarFilters({
         {orderBy(events, ['end'], ['desc']).map((event) => (
           <ListItemButton
             key={event.id}
-            onClick={() => onClickEvent(`${event.id}`)}
+            // onClick={() => onClickEvent(`${event.id}`)}
             sx={{
               py: 1.5,
               borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,

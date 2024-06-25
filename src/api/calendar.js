@@ -3,7 +3,7 @@ import useSWR, { mutate } from 'swr';
 
 import { fetcher, endpoints } from 'src/utils/axios';
 import axios from 'axios';
-import { useAuthContext } from 'src/auth/hooks';
+import { useAuthContext } from '../auth/hooks/index';
 
 // ----------------------------------------------------------------------
 
@@ -13,6 +13,24 @@ const options = {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
 };
+
+export function useGetCalendar(page, limit) {
+  const { user } = useAuthContext();
+  const calendarURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/event`;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(calendarURL, fetcher);
+  const memoizedValue = useMemo(
+    () => ({
+      calendar: data || [],
+      calendarLoading: isLoading,
+      calendarError: error,
+      calendarValidating: isValidating,
+      calendarEmpty: !isLoading && !data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+  return memoizedValue;
+}
 
 export function useGetEvents() {
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, options);
@@ -35,7 +53,7 @@ export function useGetEvents() {
   return memoizedValue;
 }
 
-.0
+
 // ----------------------------------------------------------------------
 
 export async function createEvent(eventData) {

@@ -1,13 +1,9 @@
 import { useState, useCallback } from 'react';
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
@@ -19,14 +15,10 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { isAfter, isBetween } from 'src/utils/format-time';
 
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
-
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useTable,
@@ -43,20 +35,17 @@ import FeesTableFiltersResult from '../fees-table-filters-result';
 import FeesTableRow from '../fees-table-row';
 import FeesTableToolbar from '../fees-table-toolbar';
 import { useGetStudents } from 'src/api/student';
-import InvoiceDetailsView from '../invoice-page';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Sr No' },
-  { id: 'name', label: 'Profile' },
+  { id: 'orderNumber', label: '#', width: 68, align: "center" },
+  { id: 'name', label: 'Name' },
   { id: 'createdAt', label: 'Enroll No' },
-  { id: 'studentName', label: 'Student Name' },
   { id: 'course', label: 'Course' },
   { id: 'joining_date', label: 'Joining Date' },
-  { id: 'conatact', label: 'Contact' },
+  { id: 'contact', label: 'Contact' },
   { id: '', label: '' },
 ];
 
@@ -73,8 +62,6 @@ export default function FeesListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const table = useTable({ defaultOrderBy: 'feesNumber' });
-
-  const settings = useSettingsContext();
 
   const router = useRouter();
 
@@ -173,10 +160,10 @@ export default function FeesListView() {
             href: paths.dashboard.root,
           },
           {
-            name: 'Fees',
-            href: paths.dashboard.general.fees,
+            name: 'Students',
+            href: paths.dashboard.student.list,
           },
-          { name: 'List' },
+          { name: 'Fees' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
@@ -184,40 +171,7 @@ export default function FeesListView() {
       />
 
       <Card>
-        <Tabs
-          value={filters.status}
-          onChange={handleFilterStatus}
-          sx={{
-            px: 2.5,
-            boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-          }}
-        >
-          {STATUS_OPTIONS.map((tab) => (
-            <Tab
-              key={tab.value}
-              iconPosition="end"
-              value={tab.value}
-              label={tab.label}
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                  }
-                  color={
-                    (tab.value === 'completed' && 'success') ||
-                    (tab.value === 'pending' && 'warning') ||
-                    (tab.value === 'cancelled' && 'error') ||
-                    'default'
-                  }
-                >
-                  {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                    ? tableData.filter((user) => user.status === tab.value).length
-                    : tableData.length}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
+
 
         <FeesTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
 

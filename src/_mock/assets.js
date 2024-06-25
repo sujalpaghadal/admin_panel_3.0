@@ -247,6 +247,16 @@ export const _roles = [
   'Reception'
 ];
 
+export const _expenses = [
+  'Rent',
+  'Electricity Bill',
+  'Salary',
+  'Stationary',
+  'Maintenance',
+  'New Asset Purchase',
+  'Office Expense',
+]
+
 
 
 // ----------------------------------------------------------------------

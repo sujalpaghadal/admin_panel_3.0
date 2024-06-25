@@ -52,7 +52,7 @@ export default function DemoTableToolbar({ filters, onFilters, dateError }) {
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <DatePicker
+        <DatePicker
           label="Start date"
           value={filters.startDate}
           onChange={handleFilterStartDate}
@@ -84,7 +84,7 @@ export default function DemoTableToolbar({ filters, onFilters, dateError }) {
               bottom: { md: -40 },
             },
           }}
-        /> */}
+        />
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
@@ -101,13 +101,13 @@ export default function DemoTableToolbar({ filters, onFilters, dateError }) {
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </Stack>
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -139,7 +139,7 @@ export default function DemoTableToolbar({ filters, onFilters, dateError }) {
           <Iconify icon="solar:export-bold" />
           Export
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }

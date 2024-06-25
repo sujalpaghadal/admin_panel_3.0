@@ -51,6 +51,7 @@ export default function FeesTableRow({
     lastName,
   } = row;
 
+  const { installments } = fee_detail;
   const confirm = useBoolean();
   const dialog = useBoolean();
   const collapse = useBoolean();
@@ -175,7 +176,7 @@ export default function FeesTableRow({
             component: 'span',
             color: 'text.disabled',
           }}
-        />
+        />{' '}
       </TableCell>
 
       <TableCell>

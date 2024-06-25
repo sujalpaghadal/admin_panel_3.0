@@ -32,7 +32,7 @@ export default function AttendanceTableRow({
   onEditRow,
   onDeleteRow,
 }) {
-  const { firstName, lastName, status, date, contact } = row;
+  const {  date, status, student_id, index } = row;
 
   const confirm = useBoolean();
 
@@ -45,19 +45,22 @@ export default function AttendanceTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell> */}
 
+        <TableCell align="center">{index + 1}</TableCell>
+
+
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={invoiceTo.name} sx={{ mr: 2 }}>
             {invoiceTo.name.charAt(0).toUpperCase()}
           </Avatar> */}
-          <Avatar alt={firstName} sx={{ mr: 2 }}>
-            {firstName.charAt(0).toUpperCase()}
+          <Avatar alt={student_id?.firstName} sx={{ mr: 2 }}>
+            {student_id?.profile_pic || student_id?.firstName?.charAt(0).toUpperCase()}
           </Avatar>
 
           <ListItemText
             disableTypography
             primary={
               <Typography variant="body2" noWrap>
-                {firstName + ' ' + lastName}
+                {(student_id?.firstName + ' ' + student_id?.lastName) || ''}
               </Typography>
             }
             secondary={
@@ -67,51 +70,26 @@ export default function AttendanceTableRow({
                 onClick={onViewRow}
                 sx={{ color: 'text.disabled', cursor: 'pointer' }}
               >
-                {firstName + ' ' + lastName}
+                {student_id?.email}
               </Link>
             }
           />
         </TableCell>
 
-        <TableCell>
-          <ListItemText
-            primary={fDate(date)}
-            secondary={fTime(date)}
-            // primary={'15 may'}
-            // secondary={'5:89'}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
-        </TableCell>
 
-        <TableCell>
-          <ListItemText
-            primary={contact}
-            // secondary={fTime(dueDate)}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
-        </TableCell>
+        <TableCell>{student_id?.enrollment_no}</TableCell>
 
-        {/* <TableCell>{fCurrency(totalAmount)}</TableCell> */}
+        <TableCell>{student_id?.email}</TableCell>
 
-        {/* <TableCell align="center">{sent}</TableCell> */}
+        <TableCell>{student_id?.course}</TableCell>
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (status === 'Present' && 'success') ||
-              (status === 'Absent' && 'warning') ||
-              (status === 'Late' && 'error') ||
+              (status === 'present' && 'success') ||
+              (status === 'late' && 'warning') ||
+              (status === 'absent' && 'error') ||
               'default'
             }
           >

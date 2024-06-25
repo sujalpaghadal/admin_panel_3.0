@@ -36,9 +36,9 @@ export default function ExpenseTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox" sx={{ width: '90px' }}>
+        {/* <TableCell padding="checkbox" sx={{ width: '90px' }}>
           <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{index + 1}</TableCell>
 
