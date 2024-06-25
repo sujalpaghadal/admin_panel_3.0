@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Grid, Box, Card } from '@mui/material';
+import { TextField, Button, Typography, Grid, Box, Card, CardHeader } from '@mui/material';
 import { useGetConfigs } from 'src/api/config';
 import axios from 'axios';
 import { useAuthContext } from 'src/auth/hooks';
@@ -50,43 +50,43 @@ export default function Developercreatepage() {
       <Box
         sx={{
           width: '100%',
-          maxWidth: '600px',
           marginBottom: '10px',
           padding: '10px',
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={9}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              onChange={(e) => setInputVal(e.target.value)}
-              label="Role"
-              value={inputVal}
-              sx={{
-                fontSize: '16px',
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Button
-              size="small"
-              sx={{
-                fontSize: '16px',
-                height: '100%',
-              }}
-              variant="outlined"
-              color="primary"
-              onClick={handleClick}
-            >
-              Add
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      <Box sx={{ width: '100%', maxWidth: '100%', padding: '10px' }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12}>
+            <CardHeader title="Add Our Developer Option" />
+          </Grid>
+          <Grid item md={4} xs={12}>
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '600px',
+                marginBottom: '10px',
+                padding: '10px',
+              }}
+            >
+              <Grid item>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  onChange={(e) => setInputVal(e.target.value)}
+                  label="Role"
+                  value={inputVal}
+                  sx={{
+                    fontSize: '16px',
+                  }}
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '20px' }}>
+                  <Button variant="contained" onClick={handleClick}>
+                    Add
+                  </Button>
+                </Box>
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={8}>
             <Card>
               <Stack spacing={3} sx={{ p: 3 }}>
                 <Box
@@ -95,7 +95,7 @@ export default function Developercreatepage() {
                   display="grid"
                   gridTemplateColumns={{
                     xs: 'repeat(1, 1fr)',
-                    md: 'repeat(3, 1fr)',
+                    sm: 'repeat(2, 1fr)',
                   }}
                 >
                   {configs?.developer_type &&
@@ -109,7 +109,7 @@ export default function Developercreatepage() {
                           width: '100%',
                           boxShadow: 4,
                           borderRadius: 1,
-                          p: 1,
+                          p: 2,
                           m: 1,
                         }}
                         key={index}
@@ -133,6 +133,7 @@ export default function Developercreatepage() {
           </Grid>
         </Grid>
       </Box>
+      
     </>
   );
 }
