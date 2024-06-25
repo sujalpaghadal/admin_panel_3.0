@@ -61,7 +61,6 @@ export default function EmployeeQuickEditForm({ currentEmployee, open, onClose }
     try {
       const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${currentEmployee._id}/updateEmployee`;
       const response = axios.put(URL, data);
-      console.log(response);
       reset();
       onClose();
       mutate();

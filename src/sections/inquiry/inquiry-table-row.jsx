@@ -37,9 +37,9 @@ export default function InquiryTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell>
           <Box>{index + 1}</Box>
@@ -53,12 +53,15 @@ export default function InquiryTableRow({
 
         <TableCell align="center"> {email} </TableCell>
 
-        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' ,align: 'center' }}>
-          <Tooltip title="Demo" placement="top" arrow>
+        <TableCell align="center">
+          {/* <Tooltip title="Demo" placement="top" arrow>
             <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" sx={{textAlign: 'center' }}/>
+              <Iconify icon="solar:pen-bold" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
+          <Button variant="contained" onClick={quickEdit.onTrue}>
+            + Demo
+          </Button>
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
@@ -96,11 +99,7 @@ export default function InquiryTableRow({
         </MenuItem>
       </CustomPopover>
 
-      <DemoNewEditForm
-        currentId={row}
-        open={quickEdit.value}
-        onClose={quickEdit.onFalse}
-      />
+      <DemoNewEditForm currentId={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
 
       <ConfirmDialog
         open={confirm.value}

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useParams } from 'src/routes/hooks';
 
 import { StudentEditView } from 'src/sections/student/view';
-import GuardianView from 'src/sections/student/view/student-guardian-view';
+import GuardianView from 'src/sections/student/guardian/student-guardian-view';
 
 // ----------------------------------------------------------------------
 

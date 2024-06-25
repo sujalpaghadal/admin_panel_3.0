@@ -28,10 +28,9 @@ export default function StudentTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
-  onGuardianRow,
 }) {
-  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =
-    row.personal_info;
+  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =row;
+
 
   const confirm = useBoolean();
 
@@ -46,7 +45,7 @@ export default function StudentTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+        <TableCell >
           {row.enrollment_no}
         </TableCell>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
@@ -75,9 +74,9 @@ export default function StudentTableRow({
           <Label
             variant="soft"
             color={
-              (row.status === 'Completed' && 'success') ||
-              (row.status === 'Running' && 'warning') ||
-              (row.status === 'Leaved' && 'error') ||
+              (row.status === 'completed' && 'success') ||
+              (row.status === 'running' && 'warning') ||
+              (row.status === 'leaved' && 'error') ||
               'default'
             }
           >
@@ -86,11 +85,6 @@ export default function StudentTableRow({
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-          <Tooltip title="Quick Edit" placement="top" arrow>
-            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip>
 
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -107,7 +101,7 @@ export default function StudentTableRow({
         sx={{ width: 140 }}
       >
         <MenuItem
-          onClick={() => {
+          onClick={(row) => {
             confirm.onTrue();
             popover.onClose();
           }}
@@ -128,7 +122,6 @@ export default function StudentTableRow({
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onGuardianRow();
             popover.onClose();
           }}
         >

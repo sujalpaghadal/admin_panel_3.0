@@ -9,7 +9,6 @@ export default function EmployeeListPage() {
   const params = useParams();
 
   const { id } = params;
-  console.log(id);
   return (
     <>
       <Helmet>

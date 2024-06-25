@@ -1,55 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { RHFAutocomplete } from 'src/components/hook-form';
-import { DEMO_FACULTY } from 'src/_mock/_inquiry';
-import { DatePicker, TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Box, Stack } from '@mui/system';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
+import { useAuthContext } from 'src/auth/hooks';
+import dayjs from 'dayjs';
+import { RHFAutocomplete } from 'src/components/hook-form';
 
 export default function DemoNewEditForm({ open, onClose, currentId }) {
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuthContext();
+  const [facultyOptions, setFacultyOptions] = useState([]);
+  const [selectedFacultyId, setSelectedFacultyId] = useState(null);
 
   const NewUserSchema = Yup.object().shape({
-    faculty_name: Yup.string().required('Faculty name is required'),
-    note: Yup.string().required('Note is required'),
     date: Yup.date().required('Date is required'),
-    time: Yup.date().required('Time is required'),
+    technology: Yup.string().required('Technology is required'),
+    detail: Yup.string().required('Detail is required'),
   });
 
-  function formatDate(inputDate) {
-    const originalDate = new Date(inputDate);
-    const day = originalDate.getDate();
-    const month = originalDate.getMonth() + 1;
-    const year = originalDate.getFullYear();
-    const formattedDay = day < 10 ? `0${day}` : day;
-    const formattedMonth = month < 10 ? `0${month}` : month;
-    return `${year}-${formattedMonth}-${formattedDay}`;
-  }
+  useEffect(() => {
+    const fetchFacultyName = async () => {
+      try {
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/faculty`;
+        const response = await axios.get(URL);
+        if (response.status === 200) {
+          const fetchedOptions = response.data.data.map((e) => ({
+            label: `${e.firstName} ${e.lastName}`,
+            id: e._id,
+          }));
+          setFacultyOptions(fetchedOptions);
+        } else {
+          enqueueSnackbar('Failed to fetch faculty data', { variant: 'error' });
+        }
+      } catch (error) {
+        enqueueSnackbar('Failed to fetch faculty data', { variant: 'error' });
+      }
+    };
 
-  function formatTime(inputTime) {
-    const originalTime = new Date(inputTime);
-    const hours = originalTime.getHours();
-    const minutes = originalTime.getMinutes();
-    const amPM = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${formattedHours}:${formattedMinutes} ${amPM}`;
-  }
+    fetchFacultyName();
+  }, [user.company_id, enqueueSnackbar]);
 
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
     defaultValues: {
-      faculty_name: '',
-      note: '',
+      inquiry_id: currentId,
+      company_id: user.company_id,
+      faculty_id: '',
       date: null,
-      time: null,
+      technology: '',
+      detail: '',
     },
   });
 
@@ -59,14 +66,12 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
     control,
   } = methods;
 
-  // Create Demo
-  const createDemo = async (newDemo) => {
+  const createDemo = async (payload) => {
     try {
-      const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/demo`;
-      const response = await axios.post(URL, newDemo);
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/v2/demo`;
+      const response = await axios.post(URL, payload);
       return response.data;
     } catch (error) {
-      console.error('Error creating demo:', error);
       throw error;
     }
   };
@@ -74,25 +79,19 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
   const onSubmit = async (data) => {
     try {
       const payload = {
-        entries: [
-          {
-            faculty_name: data.faculty_name,
-            note: data.note,
-            date: formatDate(data.date),
-            time: formatTime(data.time),
-            status: 'pending',
-          },
-        ],
-        inquiry_id: currentId?._id,
+        inquiry_id: currentId._id,
+        company_id: user.company_id,
+        detail: data.detail,
+        technology: data.technology,
+        date: dayjs(data.date).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+        faculty_id: selectedFacultyId,
       };
-      console.log('Payload:', payload);
       const response = await createDemo(payload);
       enqueueSnackbar(response.message, {
         variant: 'success',
       });
       onClose();
     } catch (error) {
-      console.error('Error submitting demo:', error);
       enqueueSnackbar('Failed to create demo', {
         variant: 'error',
       });
@@ -110,11 +109,12 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
       }}
     >
       <DialogTitle sx={{ textAlign: 'center' }}>Demo Add</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ pb: 3 }}>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={2} sx={{ p: 2 }}>
+            <Stack>
               <Box
+              sx={{py:"15px"}}
                 columnGap={2}
                 rowGap={3}
                 display="grid"
@@ -123,28 +123,30 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                   md: 'repeat(1, 1fr)',
                 }}
               >
-                <Controller
+                <RHFAutocomplete
+                
                   name="faculty_name"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <RHFAutocomplete
-                      {...field}
-                      options={DEMO_FACULTY}
-                      getOptionLabel={(option) => option}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Faculty Name"
-                          placeholder="Faculty Name"
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          fullWidth
-                        />
-                      )}
-                      onChange={(event, value) => field.onChange(value)}
+                  label="Faculty Name"
+                  placeholder="Faculty Name"
+                  fullWidth
+                  options={facultyOptions}
+                  getOptionLabel={(option) => option.label}
+                  onChange={(event, value) => {
+                    const selectedOption = facultyOptions.find(
+                      (option) => option.label === value?.label
+                    );
+                    setSelectedFacultyId(selectedOption ? selectedOption.id : null);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Faculty Name"
+                      placeholder="Faculty Name"
+                      fullWidth
                     />
                   )}
                 />
+
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <Controller
                     name="date"
@@ -159,26 +161,7 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                             {...params}
                             error={!!error}
                             helperText={error ? error.message : null}
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Controller
-                    name="time"
-                    control={control}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                      <TimePicker
-                        label="Time"
-                        value={value}
-                        onChange={onChange}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            error={!!error}
-                            helperText={error ? error.message : null}
+                            fullWidth
                           />
                         )}
                       />
@@ -186,25 +169,39 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                   />
                 </LocalizationProvider>
                 <Controller
-                  name="note"
+                  name="technology"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState: { error } }) => (
                     <TextField
                       {...field}
-                      label="Notes"
-                      multiline
-                      rows={4}
-                      cols={10}
-                      placeholder="Notes"
-                      variant="outlined"
+                      label="Technology"
+                      placeholder="Technology"
+                      error={!!error}
+                      helperText={error ? error.message : null}
+                      fullWidth
+                    />
+                  )}
+                />
+                <Controller
+                  name="detail"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <TextField
+                      {...field}
+                      label="Detail"
+                      placeholder="Detail"
+                      error={!!error}
+                      helperText={error ? error.message : null}
                       fullWidth
                     />
                   )}
                 />
               </Box>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                Add Demo
-              </LoadingButton>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: '20px' }}>
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  Add Demo
+                </LoadingButton>
+              </Box>
             </Stack>
           </form>
         </FormProvider>
@@ -216,5 +213,5 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
 DemoNewEditForm.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  currentId: PropTypes.object.isRequired,
+  currentId: PropTypes.object,
 };

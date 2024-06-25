@@ -1,21 +1,18 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { paths } from 'src/routes/paths';
 
 import { useTranslate } from 'src/locales';
 
-import Label from 'src/components/label';
+// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
-  // OR
-  // <Iconify icon="fluent:mail-24-filled" />
-  // https://icon-sets.iconify.design/solar/
-  // https://www.streamlinehq.com/icons
 );
 
 const ICONS = {
@@ -24,6 +21,16 @@ const ICONS = {
   chat: icon('ic_chat'),
   mail: icon('ic_mail'),
   user: icon('ic_user'),
+  student: <Iconify icon="ph:student-bold" sx={{ width: 1, height: 1 }} />,
+  employee: <Iconify icon="clarity:employee-solid" sx={{ width: 1, height: 1 }} />,
+  inquiry: <Iconify icon="heroicons-solid:newspaper" sx={{ width: 1, height: 1 }} />,
+  demo: <Iconify icon="material-symbols:demography-outline" sx={{ width: 1, height: 1 }} />,
+  seminar: <Iconify icon="material-symbols:overview-sharp" sx={{ width: 1, height: 1 }} />,
+  attandance: <Iconify icon="fluent:clipboard-task-list-20-filled" sx={{ width: 1, height: 1 }} />,
+  expenses: <Iconify icon="mingcute:wallet-fill" sx={{ width: 1, height: 1 }} />,
+  task: <Iconify icon="fluent:task-list-square-person-20-filled" sx={{ width: 1, height: 1 }} />,
+  visit: <Iconify icon="material-symbols:nest-doorbell-visitor" sx={{ width: 1, height: 1 }} />,
+  exam: <Iconify icon="healthicons:i-exam-multiple-choice-negative" sx={{ width: 1, height: 1 }} />,
   file: icon('ic_file'),
   lock: icon('ic_lock'),
   tour: icon('ic_tour'),
@@ -36,7 +43,6 @@ const ICONS = {
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
   product: icon('ic_product'),
-  inquiry: icon('ic_label'),
   calendar: icon('ic_calendar'),
   disabled: icon('ic_disabled'),
   external: icon('ic_external'),
@@ -44,11 +50,12 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  batches: <Iconify icon="mdi:google-classroom" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
-
 export function useNavData() {
+  const { user } = useAuthContext();
   const { t } = useTranslate();
 
   const data = useMemo(
@@ -59,31 +66,17 @@ export function useNavData() {
         subheader: t('overview'),
         items: [
           {
-            title: t('app'),
+            title: t('dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
           },
-          {
-            title: t('ecommerce'),
-            path: paths.dashboard.general.ecommerce,
-            icon: ICONS.ecommerce,
+          // ACCOUNT
+          user?.role === 'Admin' && {
+            title: t('account'),
+            path: paths.dashboard.account.root,
+            icon: ICONS.user,
           },
-          {
-            title: t('analytics'),
-            path: paths.dashboard.general.analytics,
-            icon: ICONS.analytics,
-          },
-          {
-            title: t('banking'),
-            path: paths.dashboard.general.banking,
-            icon: ICONS.banking,
-          },
-          {
-            title: t('booking'),
-            path: paths.dashboard.general.booking,
-            icon: ICONS.booking,
-          },
-        ],
+        ].filter(Boolean),
       },
 
       // MANAGEMENT
@@ -91,143 +84,111 @@ export function useNavData() {
       {
         subheader: t('management'),
         items: [
-          // STUDENT
+          // VISIT
           {
-            title: t('student'),
-            path: paths.dashboard.student.root,
-            icon: ICONS.user,
-            children: [
-              { title: t('profile'), path: paths.dashboard.student.root },
-              { title: t('list'), path: paths.dashboard.student.list },
-              { title: t('create'), path: paths.dashboard.student.new },
-              { title: t('edit'), path: paths.dashboard.student.demo.edit },
-              { title: t('account'), path: paths.dashboard.student.account },
-            ],
+            title: t('visit'),
+            path: paths.dashboard.visit.list,
+            icon: ICONS.visit,
           },
-
-          // FEES
+          // INQUIRY
           {
-            title: t('fees'),
-            path: paths.dashboard.general.fees,
-            icon: ICONS.invoice,
+            title: t('inquiry'),
+            path: paths.dashboard.inquiry.list,
+            icon: ICONS.inquiry,
+          },
+          // DEMO
+          {
+            title: t('Demo'),
+            path: paths.dashboard.demo.root,
+            icon: ICONS.demo,
+          },
+          // STUDENT
+          user?.role !== 'student' && {
+            title: t('student'),
+            path: paths.dashboard.student.list,
+            icon: ICONS.student,
           },
 
           // EMPLOYEE
           {
             title: t('employee'),
             path: paths.dashboard.employee.list,
-            icon: ICONS.user,
+            icon: ICONS.employee,
           },
-
-          // INQUIRY
-          {
-            title: t('inquiry'),
-            path: paths.dashboard.inquiry.root,
-            icon: ICONS.inquiry,
-          },
-
-          // PRODUCT
-          {
-            title: t('product'),
-            path: paths.dashboard.product.root,
-            icon: ICONS.product,
-            children: [
-              { title: t('list'), path: paths.dashboard.product.root },
-              {
-                title: t('details'),
-                path: paths.dashboard.product.demo.details,
-              },
-              { title: t('create'), path: paths.dashboard.product.new },
-              { title: t('edit'), path: paths.dashboard.product.demo.edit },
-            ],
-          },
-
-          // ORDER
-          {
-            title: t('order'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.order.root },
-              { title: t('details'), path: paths.dashboard.order.demo.details },
-            ],
-          },
-
-          // DEMO
-          {
-            title: t('Demo'),
-            path: paths.dashboard.demo.root,
-            icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.demo.root }],
-          },
-
-          // SEMINAR
-          {
-            title: t('seminar'),
-            path: paths.dashboard.seminar.root,
-            icon: ICONS.order,
-          },
-
-          // ATTENDANCE
-          {
-            title: t('attendance'),
-            path: paths.dashboard.attendance.root,
-            icon: ICONS.order,
-            children: [{ title: t('list'), path: paths.dashboard.attendance.root }],
-          },
-
-          // EXPENSES
-          {
-            title: t('expenses'),
-            path: paths.dashboard.expenses.list,
-            icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
-          },
-
+        ].filter(Boolean), // Filter out any falsy values
+      },
+      {
+        subheader: t('management'),
+        items: [
           // BATCH
           {
             title: t('batches'),
             path: paths.dashboard.batches.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.batches.root },
-              { title: t('details'), path: paths.dashboard.batches.demo.details },
-            ],
+            icon: ICONS.batches,
           },
-
-          // INVOICE
+          // ATTENDANCE
           {
-            title: t('invoice'),
-            path: paths.dashboard.invoice.root,
-            icon: ICONS.invoice,
-            children: [
-              { title: t('list'), path: paths.dashboard.invoice.root },
-              {
-                title: t('details'),
-                path: paths.dashboard.invoice.demo.details,
-              },
-              { title: t('create'), path: paths.dashboard.invoice.new },
-              { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
-            ],
+            title: t('attendance'),
+            path: paths.dashboard.attendance.root,
+            icon: ICONS.attandance,
           },
-
+          // EXAM
+          {
+            title: t('exam'),
+            path: paths.dashboard.examination.list,
+            icon: ICONS.exam,
+          },
+          // SEMINAR
+          {
+            title: t('seminar'),
+            path: paths.dashboard.seminar.list,
+            icon: ICONS.seminar,
+          },
+          // FEES
+          {
+            title: t('fees'),
+            path: paths.dashboard.general.fees,
+            icon: ICONS.invoice,
+          },
+        ],
+      },
+      {
+        subheader: t('management'),
+        items: [
           // CALENDAR
           {
             title: t('calendar'),
             path: paths.dashboard.calendar,
             icon: ICONS.calendar,
           },
-
-          // KANBAN
+          // EXPENSES
           {
-            title: t('kanban'),
-            path: paths.dashboard.kanban,
-            icon: ICONS.kanban,
+            title: t('expenses'),
+            path: paths.dashboard.expenses.list,
+            icon: ICONS.expenses,
           },
+          // TASK
+          {
+            title: t('task'),
+            path: paths.dashboard.task.list,
+            icon: ICONS.task,
+          },
+          // COMPLAIN
+          {
+            title: t('Complaints'),
+            path: paths.dashboard.complain.root,
+            icon: ICONS.file,
+          },
+          // KANBAN
+          // {
+          //   title: t('kanban'),
+          //   path: paths.dashboard.kanban,
+          //   icon: ICONS.kanban,
+          // },
         ],
       },
     ],
-    [t]
+    [t, user?.role] // Include user.role as a dependency
   );
 
   return data;
