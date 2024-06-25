@@ -9,7 +9,7 @@ export function useGetStudents(page, limit) {
   
   const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user.company_id}/student`;
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating , mutate} = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -18,8 +18,9 @@ export function useGetStudents(page, limit) {
       studentsError: error,
       studentsValidating: isValidating,
       studentsEmpty: !isLoading && !data?.students.length,
+      mutate,
     }),
-    [data?.students, error, isLoading, isValidating]
+    [data?.students, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;

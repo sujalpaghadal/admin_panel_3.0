@@ -80,7 +80,7 @@ export default function FeesListView() {
 
   const confirm = useBoolean();
 
-  const { students } = useGetStudents();
+  const { students , mutate} = useGetStudents();
 
   const [tableData, setTableData] = useState(students);
 
@@ -117,7 +117,9 @@ export default function FeesListView() {
     },
     [table]
   );
-
+  const handleEditRow = () => {
+    
+  };
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
   }, []);
@@ -260,12 +262,12 @@ export default function FeesListView() {
                 rowCount={dataFiltered.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-                onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(
-                    checked,
-                    dataFiltered.map((row) => row.id)
-                  )
-                }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
               />
 
               <TableBody>
@@ -279,10 +281,12 @@ export default function FeesListView() {
                       index={index}
                       key={index}
                       row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
-                      onDeleteRow={() => handleDeleteRow(row.id)}
-                      onViewRow={() => handleViewRow(row.id)}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
+                      onDeleteRow={() => handleDeleteRow(row._id)}
+                      onViewRow={() => handleViewRow(row._id)}
+                      onEditRow={() => handleEditRow(row._id)}
+                      mutate={mutate}
                     />
                   ))}
 
@@ -341,7 +345,7 @@ export default function FeesListView() {
 function applyFilter({ inputData, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
   const stabilizedThis = inputData.map((el, index) => [el, index]);
-  
+
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
@@ -351,16 +355,16 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   inputData = stabilizedThis.map((el) => el[0]);
   if (name) {
     inputData = inputData.filter(
-      ( item ) =>
+      (item) =>
         item.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         item.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1
-        );
+    );
   }
 
   if (status !== 'all') {
     inputData = inputData.filter((order) => order.status === status);
   }
-  
+
   if (!dateError) {
     if (startDate && endDate) {
       // console.log("fil : ",inputData);

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -12,18 +11,21 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-
 import { useBoolean } from 'src/hooks/use-boolean';
-
 import { fCurrency } from 'src/utils/format-number';
 import { fDate, fTime } from 'src/utils/format-time';
-
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
+import { FormProvider, useForm, Controller } from 'react-hook-form';
+import { Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { LoadingButton } from '@mui/lab';
+import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -34,9 +36,10 @@ export default function FeesTableRow({
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  mutate,
 }) {
-  const { enrollment_no, fee_detail } = row;
-  
+  const { enrollment_no } = row;
+  const [deleteInstallmentId, setDeleteInstallmentId] = useState();
   const {
     profile_pic,
     course,
@@ -47,20 +50,72 @@ export default function FeesTableRow({
     firstName,
     lastName,
   } = row;
-  
-  const { installments } = fee_detail;
-  const confirm = useBoolean();
 
+  const confirm = useBoolean();
+  const dialog = useBoolean();
   const collapse = useBoolean();
   const router = useRouter();
   const popover = usePopover();
 
+  const OPTIONS = [
+    { value: 'paid', label: 'Paid' },
+    { value: 'pending', label: 'Pending' },
+  ];
+
+  const methods = useForm({
+    defaultValues: {
+      status: '',
+    },
+  });
+
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { isSubmitting },
+  } = methods;
+
+  useEffect(() => {
+    const fetchInstallmentId = async () => {
+      try {
+        if (deleteInstallmentId) {
+          const currentStatus = row.fee_detail.installments.find(
+            (item) => item._id === deleteInstallmentId
+          );
+          if (currentStatus) {
+            reset({
+              status: OPTIONS.find((option) => option.value === currentStatus.status),
+            });
+          }
+        }
+      } catch (err) {
+        console.log('ERROR : ', err);
+      }
+    };
+    fetchInstallmentId();
+  }, [deleteInstallmentId, reset, row.fee_detail.installments]);
+
+  const handleInstallmentDelete = (item) => {
+    setDeleteInstallmentId(item._id);
+  };
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      const statusValue = data.status.value;
+      await axios.put(
+        `${import.meta.env.VITE_AUTH_API}/api/v2/student/${row._id}/installment/${deleteInstallmentId}`,
+        { ...data, status: statusValue }
+      );
+      mutate();
+      dialog.onFalse();
+      setDeleteInstallmentId('');
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
       <TableCell>
         <Box
           onClick={onViewRow}
@@ -102,19 +157,17 @@ export default function FeesTableRow({
       </TableCell>
 
       <TableCell align="center">
-        {' '}
         <ListItemText
-          primary={firstName + ' ' + lastName}
+          primary={`${firstName} ${lastName}`}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
             color: 'text.disabled',
           }}
-        />{' '}
+        />
       </TableCell>
 
       <TableCell align="center">
-        {' '}
         <ListItemText
           primary={course}
           primaryTypographyProps={{ typography: 'body2' }}
@@ -122,7 +175,7 @@ export default function FeesTableRow({
             component: 'span',
             color: 'text.disabled',
           }}
-        />{' '}
+        />
       </TableCell>
 
       <TableCell>
@@ -136,6 +189,7 @@ export default function FeesTableRow({
           }}
         />
       </TableCell>
+
       <TableCell>
         <ListItemText
           primary={contact}
@@ -147,6 +201,7 @@ export default function FeesTableRow({
           }}
         />
       </TableCell>
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -158,10 +213,6 @@ export default function FeesTableRow({
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
-
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </TableCell>
     </TableRow>
@@ -177,14 +228,14 @@ export default function FeesTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {installments.map((item, index) => (
+            {row?.fee_detail?.installments?.map((item, index) => (
               <Stack
                 key={index}
                 direction="row"
                 alignItems="center"
                 sx={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  justifyContent: 'space-around',
                   p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
                   '&:not(:last-of-type)': {
                     borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
@@ -212,7 +263,6 @@ export default function FeesTableRow({
 
                 <Box sx={{ width: 110, textAlign: 'right' }}>{item.payment_mode}</Box>
                 <Box sx={{ width: 110, textAlign: 'right' }}>
-                  {/* {item.status} */}
                   <Label
                     variant="soft"
                     color={
@@ -225,6 +275,16 @@ export default function FeesTableRow({
                     {item.status}
                   </Label>
                 </Box>
+                <Box>
+                  <IconButton
+                    color={popover.open ? 'inherit' : 'default'}
+                    onClick={(e) => {
+                      popover.onOpen(e), handleInstallmentDelete(item);
+                    }}
+                  >
+                    <Iconify icon="eva:more-vertical-fill" />
+                  </IconButton>
+                </Box>
               </Stack>
             ))}
           </Stack>
@@ -232,6 +292,7 @@ export default function FeesTableRow({
       </TableCell>
     </TableRow>
   );
+
   return (
     <>
       {renderPrimary}
@@ -257,18 +318,16 @@ export default function FeesTableRow({
 
         <MenuItem
           onClick={() => {
-            onViewRow();
+            dialog.onTrue();
             popover.onClose();
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          Edit
         </MenuItem>
         <MenuItem
           onClick={() => {
-            // onViewRow();
-            
-            router.push(paths.dashboard.general.feesInvoice)
+            router.push(paths.dashboard.general.feesInvoice);
             popover.onClose();
           }}
         >
@@ -288,6 +347,53 @@ export default function FeesTableRow({
           </Button>
         }
       />
+      {dialog.value && (
+        <Dialog
+          fullWidth
+          maxWidth={false}
+          open={dialog.value}
+          onClose={dialog.onFalse}
+          PaperProps={{
+            sx: { maxWidth: 720 },
+          }}
+        >
+          <FormProvider {...methods}>
+            <form onSubmit={onSubmit}>
+              <DialogTitle sx={{ fontSize: '25px !important' }}>Update Status</DialogTitle>
+
+              <DialogContent>
+                <Box>
+                  <RHFAutocomplete
+                    name="status"
+                    label="Status"
+                    options={OPTIONS}
+                    getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.value}>
+                        {option.label}
+                      </li>
+                    )}
+                    // Ensure the value is correctly set to the status
+                    value={methods.watch('status')}
+                    onChange={(_, newValue) => methods.setValue('status', newValue)}
+                  />
+                </Box>
+              </DialogContent>
+
+              <DialogActions>
+                <Button variant="outlined" onClick={dialog.onFalse}>
+                  Cancel
+                </Button>
+
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  Update
+                </LoadingButton>
+              </DialogActions>
+            </form>
+          </FormProvider>
+        </Dialog>
+      )}
     </>
   );
 }
