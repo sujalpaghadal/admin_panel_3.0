@@ -179,7 +179,7 @@ export default function ComplainListView() {
             },
             {
               name: 'complain',
-              href: paths.dashboard.invoice.root,
+              href: paths.dashboard.complain.root,
             },
             {
               name: 'List',

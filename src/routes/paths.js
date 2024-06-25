@@ -112,7 +112,6 @@ export const paths = {
       booking: `${ROOTS.DASHBOARD}/booking`,
 
       fees: `${ROOTS.DASHBOARD}/fees`,
-      complain: `${ROOTS.DASHBOARD}/complain`,
       feesInvoice: `${ROOTS.DASHBOARD}/fees/fee-invoice`,
     },
 
@@ -137,6 +136,10 @@ export const paths = {
 
     account: {
       root: `${ROOTS.DASHBOARD}/account`,
+    },
+
+    complain: {
+      root: `${ROOTS.DASHBOARD}/complain`,
     },
 
     employee: {

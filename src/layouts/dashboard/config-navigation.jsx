@@ -176,7 +176,7 @@ export function useNavData() {
           // COMPLAIN
           {
             title: t('Complaints'),
-            path: paths.dashboard.general.complain,
+            path: paths.dashboard.complain.root,
             icon: ICONS.file,
           },
           // KANBAN
