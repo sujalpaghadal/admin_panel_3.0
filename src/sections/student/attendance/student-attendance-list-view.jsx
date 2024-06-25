@@ -61,8 +61,6 @@ export default function StudentAttendanceListView({ attendance }) {
 
   const theme = useTheme();
 
-  // const { attendance } = useGetAllAttendance();
-
   const settings = useSettingsContext();
 
   const router = useRouter();
