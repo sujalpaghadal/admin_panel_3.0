@@ -194,7 +194,7 @@ export default function StudentAttendanceListView({ attendance }) {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
+        {/* <CustomBreadcrumbs
           heading="List"
           links={[
             {
@@ -202,17 +202,14 @@ export default function StudentAttendanceListView({ attendance }) {
               href: paths.dashboard.root,
             },
             {
-              name: 'Invoice',
+              name: 'student',
               href: paths.dashboard.invoice.root,
-            },
-            {
-              name: 'List',
             },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
           }}
-        />
+        /> */}
 
         <Card>
           <Tabs

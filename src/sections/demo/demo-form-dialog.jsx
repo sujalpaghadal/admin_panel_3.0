@@ -18,11 +18,13 @@ import { useSnackbar } from 'notistack';
 import dayjs from 'dayjs';
 import { useAuthContext } from 'src/auth/hooks';
 import { useEditDemo } from 'src/api/demo';
+import { useGetConfigs } from 'src/api/config';
 
 export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate }) {
   const { enqueueSnackbar } = useSnackbar();
   const [options, setOptions] = useState([]);
   const [facultyID, setFacultyID] = useState();
+  const { configs } = useGetConfigs();
 
   const NewUserSchema = Yup.object().shape({
     faculty_name: Yup.object()
@@ -36,6 +38,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
     technology: Yup.string().required('Technology are required'),
     date: Yup.date().nullable().required('Date is required'),
     time: Yup.date().nullable().required('Time is required'),
+    status: Yup.string().required('Status is required'),
   });
 
   const methods = useForm({
@@ -46,6 +49,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       technology: '',
       date: null,
       time: null,
+      status: null,
     },
   });
 
@@ -61,13 +65,14 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/demo/${demoID}`;
       const response = await axios.get(URL);
       if (response) {
-        const { faculty, detail, date, time, technology } = response.data.data;
+        const { faculty, detail, date, time, technology, status } = response.data.data;
         const faculty_name = { label: `${faculty.firstName} ${faculty.lastName}`, id: faculty._id };
         setValue('faculty_name', faculty_name);
         setValue('details', detail);
         setValue('date', dayjs(date));
         setValue('time', dayjs(time));
         setValue('technology', technology);
+        setValue('status', status);
         setFacultyID(faculty._id);
       } else {
         enqueueSnackbar('Demo not found', {
@@ -120,7 +125,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
         technology: data.technology,
         date: dayjs(data.date).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
         time: dayjs(data.time).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-        status: 'pending',
+        status: data.status,
       };
       const response = await useEditDemo(payload, demoID);
       mutate();
@@ -145,6 +150,8 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       setFacultyID(null);
     }
   };
+
+  const status = ['Pending', 'Completed', 'cancelled'];
 
   return (
     <div>
@@ -215,7 +222,26 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
                       )}
                     />
                   </LocalizationProvider>
-                  <RHFTextField name="technology" label="Technology" />
+                  {/* <RHFTextField name="technology" label="Technology" /> */}
+                  {configs?.developer_type && (
+                    <RHFAutocomplete
+                      name="technology"
+                      type="technology"
+                      label="Technology"
+                      placeholder="Choose a Technology"
+                      fullWidth
+                      options={configs?.developer_type?.map((option) => option)}
+                      getOptionLabel={(option) => option}
+                    />
+                  )}
+                  <RHFAutocomplete
+                    name="status"
+                    label="Choose a status"
+                    placeholder="Choose a status"
+                    fullWidth
+                    options={status}
+                    getOptionLabel={(option) => option}
+                  />
                   <Controller
                     name="details"
                     control={control}

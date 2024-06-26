@@ -40,7 +40,7 @@ import SeminarTableRow from '../seminar-table-row';
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No' },
   { id: 'title', label: 'Title' },
-  { id: 'Discription', label: 'Discription' },
+  { id: 'Discription', label: 'Details' },
   { id: 'Date', label: 'Date', align: 'center' },
   { id: 'Schedule by', label: 'Schedule by', align: 'center' },
   { id: 'Attended by', label: 'Attended by', align: 'center' },

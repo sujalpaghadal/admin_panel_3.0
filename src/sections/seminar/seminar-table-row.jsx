@@ -30,7 +30,7 @@ export default function SeminarTableRow({
   onSelectRow,
   onDeleteRow,
 }) {
-  const { title, desc, date_time, schedule_by, attended_by } = row;
+  const { title, desc, date_time, schedule_by, details, attended_by } = row;
 
   const confirm = useBoolean();
   const popover = usePopover();

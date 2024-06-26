@@ -63,10 +63,10 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     total_amount: Yup.number().required('Total Amount is required'),
     amount_paid: Yup.number().required('Amount Paid is required'),
     discount: Yup.number().required('Discount is required'),
-    no_of_installments: Yup.number().required('Number of Installments is required'),
-    upcoming_installment_date: Yup.date()
-      .nullable()
-      .required('Upcoming Installment Date is required'),
+    // no_of_installments: Yup.number().required('Number of Installments is required'),
+    // upcoming_installment_date: Yup.date()
+    //   .nullable()
+    //   .required('Upcoming Installment Date is required'),
     profile_pic: Yup.mixed().required('Profile Picture is required'),
   });
   const defaultValues = useMemo(
@@ -111,6 +111,7 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
+  console.log(watch('total_amount'));
   const values = watch();
   const createStudent = async (studentPayload) => {
     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user?.company_id}/student`;

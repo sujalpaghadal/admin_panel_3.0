@@ -138,6 +138,7 @@ export default function StudentGuardianDetails({ currentStudent , mutate}) {
       </CustomPopover> */}
 
       <GuardianAddForm
+        mutate={mutate}
         open={GuardianNewForm.value}
         onClose={GuardianNewForm.onFalse}
         onCreate={handleAddNewAddress}

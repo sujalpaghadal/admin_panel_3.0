@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Box, Stack } from '@mui/system';
 import axios from 'axios';
@@ -13,12 +13,14 @@ import { useSnackbar } from 'notistack';
 import { useAuthContext } from 'src/auth/hooks';
 import dayjs from 'dayjs';
 import { RHFAutocomplete } from 'src/components/hook-form';
+import { useGetConfigs } from 'src/api/config';
 
 export default function DemoNewEditForm({ open, onClose, currentId }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuthContext();
   const [facultyOptions, setFacultyOptions] = useState([]);
   const [selectedFacultyId, setSelectedFacultyId] = useState(null);
+  const { configs, mutate } = useGetConfigs();
 
   const NewUserSchema = Yup.object().shape({
     date: Yup.date().required('Date is required'),
@@ -114,7 +116,7 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack>
               <Box
-              sx={{py:"15px"}}
+                sx={{ py: '15px' }}
                 columnGap={2}
                 rowGap={3}
                 display="grid"
@@ -124,7 +126,6 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                 }}
               >
                 <RHFAutocomplete
-                
                   name="faculty_name"
                   label="Faculty Name"
                   placeholder="Faculty Name"
@@ -152,8 +153,8 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                     name="date"
                     control={control}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
-                      <DatePicker
-                        label="Date"
+                      <DateTimePicker
+                        label="Date and Time"
                         value={value}
                         onChange={onChange}
                         renderInput={(params) => (
@@ -168,20 +169,17 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                     )}
                   />
                 </LocalizationProvider>
-                <Controller
-                  name="technology"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <TextField
-                      {...field}
-                      label="Technology"
-                      placeholder="Technology"
-                      error={!!error}
-                      helperText={error ? error.message : null}
-                      fullWidth
-                    />
-                  )}
-                />
+                {configs?.developer_type && (
+                  <RHFAutocomplete
+                    name="technology"
+                    type="technology"
+                    label="Technology"
+                    placeholder="Choose a Technology"
+                    fullWidth
+                    options={configs?.developer_type?.map((option) => option)}
+                    getOptionLabel={(option) => option}
+                  />
+                )}
                 <Controller
                   name="detail"
                   control={control}
