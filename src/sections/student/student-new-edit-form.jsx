@@ -67,13 +67,7 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
     upcoming_installment_date: Yup.date()
       .nullable()
       .required('Upcoming Installment Date is required'),
-    profile_pic: Yup.mixed()
-      .test('fileType', 'Unsupported File Format', (value) => {
-        if (!value) return false; // No file uploaded is valid
-        const supportedFormats = ['image/jpeg', 'image/png', 'image/webp'];
-        return supportedFormats.includes(value.type);
-      })
-      .required('Profile Picture is required'),
+    profile_pic: Yup.mixed().required('Profile Picture is required'),
   });
   const defaultValues = useMemo(
     () => ({
@@ -167,7 +161,7 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
       blood_group: data.blood_group,
       address_1: data.address_1,
       address_2: data.address_2,
-      country: data.country.label,
+      country: data.country,
       state: data.state,
       city: data.city,
       zipcode: data.zipcode,
@@ -344,8 +338,8 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
                 options={
                   watch('country')
                     ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.map((state) => state.name) || []
+                        .find((country) => country.name === watch('country'))
+                        ?.states.map((state) => state.name) || []
                     : []
                 }
                 isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -357,9 +351,9 @@ export default function StudentNewEditForm({ currentStudent, mutate }) {
                 options={
                   watch('state')
                     ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.find((state) => state.name === watch('state'))
-                    ?.cities.map((city) => city.name) || []
+                        .find((country) => country.name === watch('country'))
+                        ?.states.find((state) => state.name === watch('state'))
+                        ?.cities.map((city) => city.name) || []
                     : []
                 }
                 isOptionEqualToValue={(option, value) => option.value === value.value}
