@@ -10,7 +10,12 @@ import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
-import { TimePicker, LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import {
+  TimePicker,
+  LocalizationProvider,
+  DatePicker,
+  MobileTimePicker,
+} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Box, Stack } from '@mui/system';
 import axios from 'axios';
@@ -65,12 +70,13 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
       const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/demo/${demoID}`;
       const response = await axios.get(URL);
       if (response) {
-        const { faculty, detail, date, time, technology, status } = response.data.data;
+        const { faculty, detail, date, technology, status } = response.data.data;
+        console.log(date, 'date');
         const faculty_name = { label: `${faculty.firstName} ${faculty.lastName}`, id: faculty._id };
         setValue('faculty_name', faculty_name);
         setValue('details', detail);
         setValue('date', dayjs(date));
-        setValue('time', dayjs(time));
+        setValue('time', dayjs(date));
         setValue('technology', technology);
         setValue('status', status);
         setFacultyID(faculty._id);
@@ -206,7 +212,7 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
                       name="time"
                       control={control}
                       render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <TimePicker
+                        <MobileTimePicker
                           label="Time"
                           value={value}
                           onChange={(time) => onChange(time)}
@@ -222,7 +228,6 @@ export default function DemoFormDialog({ open, setOpen, demosID, demoID, mutate 
                       )}
                     />
                   </LocalizationProvider>
-                  {/* <RHFTextField name="technology" label="Technology" /> */}
                   {configs?.developer_type && (
                     <RHFAutocomplete
                       name="technology"

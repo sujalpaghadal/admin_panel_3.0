@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DatePicker, DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Box, Stack } from '@mui/system';
 import axios from 'axios';
@@ -20,7 +20,8 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
   const { user } = useAuthContext();
   const [facultyOptions, setFacultyOptions] = useState([]);
   const [selectedFacultyId, setSelectedFacultyId] = useState(null);
-  const { configs, mutate } = useGetConfigs();
+  const { configs } = useGetConfigs();
+  const [dateTime, setDateTime] = useState(null);
 
   const NewUserSchema = Yup.object().shape({
     date: Yup.date().required('Date is required'),
@@ -148,27 +149,31 @@ export default function DemoNewEditForm({ open, onClose, currentId }) {
                   )}
                 />
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Controller
-                    name="date"
-                    control={control}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                      <DateTimePicker
-                        label="Date and Time"
+                <Controller
+                  name="date"
+                  control={control}
+                  defaultValue={null}
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <MobileDateTimePicker
                         value={value}
-                        onChange={onChange}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            error={!!error}
-                            helperText={error ? error.message : null}
-                            fullWidth
-                          />
-                        )}
+                        onChange={(newValue) => {
+                          onChange(newValue);
+                          setDateTime(newValue); 
+                        }}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            margin: 'normal',
+                            error: !!error,
+                            helperText: error ? error.message : null,
+                          },
+                        }}
                       />
-                    )}
-                  />
-                </LocalizationProvider>
+                    </LocalizationProvider>
+                  )}
+                />
+
                 {configs?.developer_type && (
                   <RHFAutocomplete
                     name="technology"

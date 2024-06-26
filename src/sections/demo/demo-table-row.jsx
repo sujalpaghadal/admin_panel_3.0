@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { usePopover } from 'src/components/custom-popover';
 import { useDeleteDemo } from 'src/api/demo';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import moment from 'moment';
 // ----------------------------------------------------------------------
 export default function DemoTableRow({
   row,
@@ -130,7 +131,7 @@ export default function DemoTableRow({
                     <TableCell sx={{ mx: 5 }}>
                       <ListItemText
                         primary={fDate(item.date)}
-                        secondary={fTime(item.date)}
+                        secondary={moment(item.date).format('h:mm A')}
                         primaryTypographyProps={{ variant: 'body2', noWrap: true }}
                         secondaryTypographyProps={{
                           mt: 0.5,
